@@ -1,166 +1,101 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Deal</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-:root {
-  --bg: #f2f2f7;
-  --text: #111;
-  --secondary: #8e8e93;
-  --card: #ffffff;
-  --accent: #16a34a;
-}
-
 body {
   margin: 0;
+  background: #0f1115;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-}
-
-/* Splash */
-.splash {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-  transition: opacity 0.4s ease;
-}
-
-.logo-circle {
-  width: 90px;
-  height: 90px;
-  border-radius: 28px;
-  background: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 15px 40px rgba(22,163,74,0.25);
-  margin-bottom: 20px;
-}
-
-.logo-circle svg {
-  width: 40px;
-  height: 40px;
-  stroke: white;
-}
-
-.brand-name {
-  font-size: 22px;
-  font-weight: 600;
-}
-
-.container {
-  padding: 24px 20px 40px;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: all 0.3s ease;
-}
-
-.container.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 28px;
-}
-
-.header-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  background: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-}
-
-.header-logo svg {
-  width: 18px;
-  height: 18px;
-  stroke: white;
+  color: white;
 }
 
 h1 {
+  text-align: center;
+  padding: 24px 0 10px;
   font-size: 22px;
-  font-weight: 600;
-  margin: 0;
+  font-weight: 700;
 }
 
-.card {
-  background: var(--card);
+.categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
   padding: 20px;
+}
+
+.category-card {
+  background: linear-gradient(135deg, #1DB954, #16a34a);
   border-radius: 22px;
-  margin-bottom: 16px;
-  font-size: 17px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  transform: translateY(10px);
-  opacity: 0;
-  animation: cardIn 0.4s ease forwards;
-}
-
-.card:active {
-  transform: scale(0.97);
-}
-
-.price {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.back {
-  margin-bottom: 20px;
-  font-size: 15px;
-  color: var(--secondary);
+  padding: 28px 20px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 10px 25px rgba(29,185,84,0.35);
+  transition: all 0.25s ease;
   cursor: pointer;
 }
 
-@keyframes cardIn {
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.category-card:active {
+  transform: scale(0.96);
+}
+
+.icon {
+  margin-bottom: 12px;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.prices {
+  display: none;
+  padding: 20px;
+}
+
+.price-btn {
+  display: block;
+  width: 100%;
+  background: #1c1f26;
+  border: 1px solid rgba(29,185,84,0.3);
+  color: white;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.back-btn {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.6;
+  cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="splash" id="splash">
-  <div class="logo-circle">
-    <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
-      <path d="M5 12l5 5L20 7"></path>
-    </svg>
-  </div>
-  <div class="brand-name">Smart Deal</div>
-</div>
+<h1>Smart Deal</h1>
 
-<div class="container" id="app"></div>
+<div class="categories" id="categories"></div>
+<div class="prices" id="prices"></div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
+// 🔥 ВАЖНО: вставь свою ссылку CSV
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1-JYl4b-6H_iWvBS2Zsez1K1DPx35iBUCCPPRiSrVY7o/export?format=csv";
 
-const app = document.getElementById("app");
 let data = {};
 
 async function loadData() {
@@ -174,73 +109,71 @@ async function loadData() {
     data[category].push({ price, link });
   });
 
-  showCategories();
-
-  setTimeout(() => {
-    document.getElementById("splash").style.opacity = "0";
-    setTimeout(() => {
-      document.getElementById("splash").style.display = "none";
-      app.classList.add("active");
-    }, 400);
-  }, 600);
+  renderCategories();
 }
 
-function haptic() {
-  if (tg.HapticFeedback) {
-    tg.HapticFeedback.impactOccurred("light");
+function getIcon(category) {
+  if (category === "Смартфоны") {
+    return `
+    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+      <line x1="11" y1="18" x2="13" y2="18"></line>
+    </svg>`;
   }
+
+  if (category === "Ноутбуки") {
+    return `
+    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="5" width="16" height="10" rx="2"></rect>
+      <path d="M2 17h20"></path>
+    </svg>`;
+  }
+
+  return "🛍️";
 }
 
-function renderHeader() {
-  return `
-    <div class="header">
-      <div class="header-logo">
-        <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M5 12l5 5L20 7"></path>
-        </svg>
-      </div>
-      <h1>Smart Deal</h1>
-    </div>
-  `;
-}
+function renderCategories() {
+  const container = document.getElementById("categories");
+  container.innerHTML = "";
 
-function showCategories() {
-  app.innerHTML = renderHeader();
-  Object.keys(data).forEach((category, index) => {
+  Object.keys(data).forEach(category => {
     const div = document.createElement("div");
-    div.className = "card";
-    div.style.animationDelay = `${index * 0.05}s`;
-    div.innerHTML = `<span>${category}</span><span>›</span>`;
-    div.onclick = () => {
-      haptic();
-      showPrices(category);
-    };
-    app.appendChild(div);
+    div.className = "category-card";
+    div.innerHTML = `
+      <div class="icon">${getIcon(category)}</div>
+      <div class="label">${category}</div>
+    `;
+    div.onclick = () => showPrices(category);
+    container.appendChild(div);
   });
 }
 
 function showPrices(category) {
-  app.innerHTML = renderHeader() + `
-    <div class="back" onclick="showCategories()">← Назад</div>
-  `;
+  document.getElementById("categories").style.display = "none";
+  const pricesDiv = document.getElementById("prices");
+  pricesDiv.style.display = "block";
+  pricesDiv.innerHTML = "";
 
-  data[category].forEach((item, index) => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.style.animationDelay = `${index * 0.05}s`;
-    div.innerHTML = `
-      <span class="price">${item.price}</span>
-      <span>↗</span>
-    `;
-    div.onclick = () => {
-      haptic();
-      tg.openLink(item.link);
-    };
-    app.appendChild(div);
+  data[category].forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "price-btn";
+    btn.innerText = item.price;
+    btn.onclick = () => tg.openLink(item.link);
+    pricesDiv.appendChild(btn);
   });
+
+  const back = document.createElement("div");
+  back.className = "back-btn";
+  back.innerText = "← Назад";
+  back.onclick = () => {
+    pricesDiv.style.display = "none";
+    document.getElementById("categories").style.display = "grid";
+  };
+  pricesDiv.appendChild(back);
 }
 
 loadData();
 </script>
+
 </body>
 </html>
