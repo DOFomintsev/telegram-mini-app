@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mini App</title>
+  <title>Shop Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
   <style>
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f4f4f5;
+      background: #f5f5f7;
       color: #111;
     }
 
@@ -22,32 +23,80 @@
       margin-bottom: 20px;
     }
 
-    .button {
-      display: block;
+    .card {
       background: white;
-      padding: 15px;
-      border-radius: 14px;
-      margin-bottom: 12px;
+      padding: 16px;
+      border-radius: 16px;
+      margin-bottom: 14px;
       text-decoration: none;
       color: black;
       font-weight: 500;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      display: block;
+      transition: 0.2s;
+    }
+
+    .card:active {
+      transform: scale(0.98);
+    }
+
+    .back {
+      margin-bottom: 20px;
+      display: inline-block;
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>Категории</h1>
-
-    <a href="#" class="button">📱 Смартфоны</a>
-    <a href="#" class="button">💻 Ноутбуки</a>
-    <a href="#" class="button">🎧 Аксессуары</a>
-
-  </div>
+  <div class="container" id="app"></div>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
+
+    const data = {
+      "Смартфоны": [
+        { price: "10 000 ₽", link: "https://ссылка1" },
+        { price: "15 000 ₽", link: "https://ссылка2" }
+      ],
+      "Ноутбуки": [
+        { price: "10 000 ₽", link: "https://ссылка1" },
+        { price: "15 000 ₽", link: "https://ссылка2" }
+      ]
+    };
+
+    const app = document.getElementById("app");
+
+    function showCategories() {
+      app.innerHTML = "<h1>Категории</h1>";
+      Object.keys(data).forEach(category => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerText = category;
+        div.onclick = () => showPrices(category);
+        app.appendChild(div);
+      });
+    }
+
+    function showPrices(category) {
+      app.innerHTML = `
+        <div class="back" onclick="showCategories()">← Назад</div>
+        <h1>${category}</h1>
+      `;
+
+      data[category].forEach(item => {
+        const link = document.createElement("a");
+        link.className = "card";
+        link.innerText = item.price;
+        link.href = item.link;
+        link.target = "_blank";
+        app.appendChild(link);
+      });
+    }
+    showCategories();
   </script>
 </body>
 </html>
