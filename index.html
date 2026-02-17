@@ -80,7 +80,6 @@ h1{
 .prices{
   display:none;
   padding:20px;
-  animation:fadeUp .4s ease;
 }
 
 .price-btn{
@@ -98,11 +97,14 @@ h1{
   font-weight:600;
   cursor:pointer;
   transition:.2s ease;
+  opacity:0;
+  transform:translateY(10px);
 }
 
 .price-btn:hover{
   border-color:var(--accent);
-  box-shadow:0 0 12px rgba(29,185,84,.4);
+  box-shadow:0 0 18px rgba(29,185,84,.5);
+  transform:translateY(-2px);
 }
 
 .price-btn:active{
@@ -117,6 +119,10 @@ h1{
   cursor:pointer;
 }
 
+.fade-out{
+  animation:fadeOut .25s ease forwards;
+}
+
 @keyframes fadeUp{
   from{opacity:0;transform:translateY(20px);}
   to{opacity:1;transform:translateY(0);}
@@ -125,6 +131,11 @@ h1{
 @keyframes fadeDown{
   from{opacity:0;transform:translateY(-20px);}
   to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes fadeOut{
+  from{opacity:1;transform:translateY(0);}
+  to{opacity:0;transform:translateY(10px);}
 }
 </style>
 </head>
@@ -139,6 +150,12 @@ h1{
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
+
+function haptic(type="light"){
+  if(tg.HapticFeedback){
+    tg.HapticFeedback.impactOccurred(type);
+  }
+}
 
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1-JYl4b-6H_iWvBS2Zsez1K1DPx35iBUCCPPRiSrVY7o/export?format=csv";
 
@@ -171,6 +188,7 @@ function getIcon(category){
 function renderCategories(){
   const container=document.getElementById("categories");
   container.innerHTML="";
+  container.style.display="grid";
 
   Object.keys(data).forEach(category=>{
     const div=document.createElement("div");
@@ -185,32 +203,63 @@ function renderCategories(){
 }
 
 function showPrices(category){
-  document.getElementById("categories").style.display="none";
-  const pricesDiv=document.getElementById("prices");
-  pricesDiv.style.display="block";
-  pricesDiv.innerHTML="";
 
-  data[category].forEach(item=>{
-    const btn=document.createElement("button");
-    btn.className="price-btn";
-    btn.innerHTML=`
-      ${item.price}
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1DB954" stroke-width="2">
-        <path d="M5 12h14M13 5l7 7-7 7"/>
-      </svg>
-    `;
-    btn.onclick=()=>tg.openLink(item.link);
-    pricesDiv.appendChild(btn);
-  });
+  const categoriesBlock = document.getElementById("categories");
+  const pricesDiv = document.getElementById("prices");
 
-  const back=document.createElement("div");
-  back.className="back-btn";
-  back.innerText="← Назад";
-  back.onclick=()=>{
-    pricesDiv.style.display="none";
-    document.getElementById("categories").style.display="grid";
-  };
-  pricesDiv.appendChild(back);
+  haptic("medium");
+
+  categoriesBlock.classList.add("fade-out");
+
+  setTimeout(()=>{
+    categoriesBlock.style.display="none";
+    categoriesBlock.classList.remove("fade-out");
+
+    pricesDiv.style.display="block";
+    pricesDiv.innerHTML="";
+
+    data[category].forEach((item,index)=>{
+      const btn=document.createElement("button");
+      btn.className="price-btn";
+
+      btn.innerHTML=`
+        ${item.price}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1DB954" stroke-width="2">
+          <path d="M5 12h14M13 5l7 7-7 7"/>
+        </svg>
+      `;
+
+      btn.onclick=()=>{
+        haptic("light");
+        tg.openLink(item.link);
+      };
+
+      pricesDiv.appendChild(btn);
+
+      setTimeout(()=>{
+        btn.style.transition=".3s ease";
+        btn.style.opacity="1";
+        btn.style.transform="translateY(0)";
+      }, index*80);
+    });
+
+    const back=document.createElement("div");
+    back.className="back-btn";
+    back.innerText="← Назад";
+    back.onclick=()=>{
+      haptic("light");
+      pricesDiv.classList.add("fade-out");
+
+      setTimeout(()=>{
+        pricesDiv.style.display="none";
+        pricesDiv.classList.remove("fade-out");
+        categoriesBlock.style.display="grid";
+      },250);
+    };
+
+    pricesDiv.appendChild(back);
+
+  },250);
 }
 
 loadData();
