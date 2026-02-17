@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini App</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f4f4f5;
+      color: #111;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .button {
+      display: block;
+      background: white;
+      padding: 15px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      text-decoration: none;
+      color: black;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Категории</h1>
+
+    <a href="#" class="button">📱 Смартфоны</a>
+    <a href="#" class="button">💻 Ноутбуки</a>
+    <a href="#" class="button">🎧 Аксессуары</a>
+
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+  </script>
+</body>
+</html>
