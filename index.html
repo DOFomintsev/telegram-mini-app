@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Premium Shop</title>
+<title>Smart Deal</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 :root {
-  --bg: var(--tg-theme-bg-color, #f2f2f7);
-  --text: var(--tg-theme-text-color, #000);
-  --secondary: var(--tg-theme-hint-color, #8e8e93);
-  --card: var(--tg-theme-secondary-bg-color, #ffffff);
+  --bg: #f2f2f7;
+  --text: #111;
+  --secondary: #8e8e93;
+  --card: #ffffff;
+  --accent: #16a34a; /* зелёный */
 }
 
 body {
@@ -20,16 +21,78 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
   color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Splash */
+.splash {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: opacity 0.4s ease;
+}
+
+.logo-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 28px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 15px 40px rgba(22,163,74,0.25);
+  margin-bottom: 20px;
+}
+
+.logo-circle svg {
+  width: 40px;
+  height: 40px;
+  stroke: white;
+}
+
+.brand-name {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
 }
 
 .container {
   padding: 24px 20px 40px;
+  animation: fade 0.3s ease;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.header-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+}
+
+.header-logo svg {
+  width: 18px;
+  height: 18px;
+  stroke: white;
 }
 
 h1 {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 600;
-  margin-bottom: 28px;
+  margin: 0;
 }
 
 .card {
@@ -49,6 +112,11 @@ h1 {
   transform: scale(0.97);
 }
 
+.price {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 .back {
   margin-bottom: 20px;
   font-size: 15px;
@@ -56,22 +124,30 @@ h1 {
   cursor: pointer;
 }
 
-.arrow {
-  color: var(--secondary);
+@keyframes fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
 
 <body>
-<div class="container" id="app">
-  <h1>Загрузка...</h1>
+
+<div class="splash" id="splash">
+  <div class="logo-circle">
+    <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M5 12l5 5L20 7"></path>
+    </svg>
+  </div>
+  <div class="brand-name">Smart Deal</div>
 </div>
+
+<div class="container" id="app" style="display:none;"></div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-// ⚠️ ВСТАВЬ СЮДА СВОЮ CSV ССЫЛКУ
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1-JYl4b-6H_iWvBS2Zsez1K1DPx35iBUCCPPRiSrVY7o/export?format=csv";
 
 const app = document.getElementById("app");
@@ -89,29 +165,52 @@ async function loadData() {
   });
 
   showCategories();
+
+  setTimeout(() => {
+    document.getElementById("splash").style.opacity = "0";
+    setTimeout(() => {
+      document.getElementById("splash").style.display = "none";
+      app.style.display = "block";
+    }, 400);
+  }, 600);
+}
+
+function renderHeader() {
+  return `
+    <div class="header">
+      <div class="header-logo">
+        <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M5 12l5 5L20 7"></path>
+        </svg>
+      </div>
+      <h1>Smart Deal</h1>
+    </div>
+  `;
 }
 
 function showCategories() {
-  app.innerHTML = "<h1>Категории</h1>";
+  app.innerHTML = renderHeader();
   Object.keys(data).forEach(category => {
     const div = document.createElement("div");
     div.className = "card";
-    div.innerHTML = `<span>${category}</span><span class="arrow">›</span>`;
+    div.innerHTML = `<span>${category}</span><span>›</span>`;
     div.onclick = () => showPrices(category);
     app.appendChild(div);
   });
 }
 
 function showPrices(category) {
-  app.innerHTML = `
+  app.innerHTML = renderHeader() + `
     <div class="back" onclick="showCategories()">← Назад</div>
-    <h1>${category}</h1>
   `;
 
   data[category].forEach(item => {
     const div = document.createElement("div");
     div.className = "card";
-    div.innerHTML = `<span>${item.price}</span><span class="arrow">↗</span>`;
+    div.innerHTML = `
+      <span class="price">${item.price}</span>
+      <span>↗</span>
+    `;
     div.onclick = () => tg.openLink(item.link);
     app.appendChild(div);
   });
