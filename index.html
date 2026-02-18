@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Deal</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 :root{
   --bg:#000000;
-  --card:#111111;
-  --glass:rgba(255,255,255,0.05);
+  --card1:#1DB954;
+  --card2:#16a34a;
 }
 
 body{
@@ -19,22 +20,16 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   color:#fff;
   overflow-x:hidden;
-  padding-bottom:110px;
+  padding-bottom:90px;
+  position:relative;
 }
 
-/* ===== Анимация появления ===== */
-
-.fade-in{
-  opacity:0;
-  transform:translateY(20px) scale(0.98);
-  animation:appear 0.7s cubic-bezier(.2,.8,.2,1) forwards;
-}
-
-@keyframes appear{
-  to{
-    opacity:1;
-    transform:translateY(0) scale(1);
-  }
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+  pointer-events:none;
 }
 
 h1{
@@ -42,7 +37,16 @@ h1{
   padding:24px 0 10px;
   font-size:22px;
   font-weight:700;
+  opacity:0;
+  transform:translateY(-20px);
+  animation:titleAppear .8s ease forwards;
 }
+
+@keyframes titleAppear{
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ===== Категории ===== */
 
 .categories{
   display:grid;
@@ -52,14 +56,50 @@ h1{
 }
 
 .category-card{
-  background:var(--glass);
-  backdrop-filter:blur(20px);
+  background:linear-gradient(135deg,var(--card1),var(--card2));
   border-radius:24px;
   padding:30px 20px;
   text-align:center;
+  box-shadow:0 12px 35px rgba(29,185,84,0.35);
   cursor:pointer;
-  border:1px solid rgba(255,255,255,0.08);
+  position:relative;
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(50px) scale(.9);
+  filter:blur(14px);
 }
+
+.category-card.show{
+  animation:ultraAppear 1s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+@keyframes ultraAppear{
+  0%{opacity:0;transform:translateY(50px) scale(.9);filter:blur(14px);}
+  100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}
+}
+
+.category-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at top left, rgba(255,255,255,.18), transparent 60%);
+  opacity:.6;
+}
+
+.icon svg{
+  width:46px;
+  height:46px;
+  stroke:rgba(255,255,255,0.95);
+  fill:rgba(255,255,255,0.08);
+  stroke-width:1.8;
+}
+
+.label{
+  font-size:15px;
+  font-weight:600;
+}
+
+/* ===== Цены ===== */
 
 .prices{
   display:none;
@@ -68,81 +108,128 @@ h1{
 
 .price-btn{
   width:100%;
-  padding:16px;
-  margin-bottom:12px;
-  border:none;
+  background:#111111;
+  border:1px solid rgba(255,255,255,.08);
+  color:white;
+  padding:16px 18px;
+  margin-bottom:14px;
   border-radius:16px;
-  background:#111;
-  color:#fff;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.25s ease;
+}
+
+.back-btn{
+  text-align:center;
+  font-size:14px;
+  opacity:.6;
+  margin-top:6px;
   cursor:pointer;
 }
 
-.admin-btn{
-  position:fixed;
-  bottom:80px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#222;
-  border:none;
-  border-radius:16px;
-  padding:14px 20px;
-  color:#fff;
-  cursor:pointer;
-}
-
-.admin-item{
-  background:#111;
-  padding:12px;
-  border-radius:12px;
-  margin-bottom:12px;
-}
+/* ===== Feedback ===== */
 
 .feedback-btn{
   position:fixed;
   bottom:20px;
   left:50%;
   transform:translateX(-50%);
-  background:#222;
+  width:85%;
+  max-width:420px;
+  background:linear-gradient(135deg,var(--card1),var(--card2));
   border:none;
   border-radius:18px;
   padding:16px;
   font-size:15px;
   font-weight:600;
   color:#fff;
+  box-shadow:0 15px 40px rgba(29,185,84,.5);
   cursor:pointer;
+}
+
+/* ===== Admin ===== */
+
+.admin-btn{
+  position:fixed;
+  top:18px;
+  right:18px;
+  background:#111;
+  border:1px solid rgba(255,255,255,.15);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.admin-panel{
+  position:fixed;
+  inset:0;
+  background:#000;
+  padding:25px;
+  overflow-y:auto;
+  display:none;
+  z-index:999;
+}
+
+.admin-card{
+  background:#111;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:12px;
 }
 </style>
 </head>
+
 <body>
 
-<h1 class="fade-in">Smart Deal</h1>
+<h1>Smart Deal</h1>
 
-<div class="categories fade-in" id="categories"></div>
-<div class="prices fade-in" id="prices"></div>
-<div id="adminPanel"></div>
+<div class="categories" id="categories"></div>
+<div class="prices" id="prices"></div>
 
-<button class="feedback-btn" onclick="openFeedback()">💬 Обратная связь</button>
+<button class="feedback-btn" onclick="openFeedback()">
+  💬 Обратная связь
+</button>
+
+<button id="adminBtn" class="admin-btn" style="display:none;">⚙</button>
+
+<div id="adminPanel" class="admin-panel"></div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-const ADMIN_ID = DFomintsev; // ← ВСТАВЬ СВОЙ TELEGRAM ID
+const ADMIN_ID = 929524875; // ← ВСТАВЬ СВОЙ TELEGRAM ID
 
 const user = tg.initDataUnsafe?.user;
 const isAdmin = user && user.id === ADMIN_ID;
 
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1-JYl4b-6H_iWvBS2Zsez1K1DPx35iBUCCPPRiSrVY7o/export?format=csv";
+if(isAdmin){
+  document.getElementById("adminBtn").style.display="block";
+}
 
-let data = {};
+function haptic(type="light"){
+  if(tg.HapticFeedback){
+    tg.HapticFeedback.impactOccurred(type);
+  }
+}
 
-/* ===== СТАТИСТИКА MVP ===== */
+function openFeedback(){
+  haptic("medium");
+  tg.openTelegramLink("https://t.me/DFomintsev");
+}
+
+/* ===== СТАТИСТИКА ===== */
 
 let stats = JSON.parse(localStorage.getItem("smartDealStats")) || {
-  launches: 0,
-  users: [],
-  categories: {},
-  products: {}
+  launches:0,
+  users:[],
+  categories:{},
+  products:{}
 };
 
 stats.launches++;
@@ -153,16 +240,18 @@ if(user && !stats.users.includes(user.id)){
 
 localStorage.setItem("smartDealStats", JSON.stringify(stats));
 
-/* ===== Загрузка Google Sheets ===== */
+/* ===== Google Sheets ===== */
+
+const SHEET_URL="https://docs.google.com/spreadsheets/d/1-JYl4b-6H_iWvBS2Zsez1K1DPx35iBUCCPPRiSrVY7o/export?format=csv";
+let data={};
 
 async function loadData(){
-
-  const response = await fetch(SHEET_URL);
-  const text = await response.text();
-  const rows = text.split("\n").slice(1);
+  const response=await fetch(SHEET_URL);
+  const text=await response.text();
+  const rows=text.split("\n").slice(1);
 
   rows.forEach(row=>{
-    const [category,price,link] = row.split(",");
+    const [category,price,link]=row.split(",");
     if(!data[category]) data[category]=[];
     data[category].push({price,link});
   });
@@ -170,41 +259,46 @@ async function loadData(){
   renderCategories();
 }
 
-/* ===== Интерфейс ===== */
+/* ===== Категории ===== */
 
 function renderCategories(){
   const container=document.getElementById("categories");
   container.innerHTML="";
   container.style.display="grid";
-  document.getElementById("prices").style.display="none";
 
-  Object.keys(data).forEach(category=>{
+  Object.keys(data).forEach((category,index)=>{
     const div=document.createElement("div");
     div.className="category-card";
-    div.innerText=category;
-    div.onclick=()=>showPrices(category);
+    div.innerHTML=`<div class="label">${category}</div>`;
+
+    div.onclick=()=>{
+      if(!stats.categories[category]) stats.categories[category]=0;
+      stats.categories[category]++;
+      localStorage.setItem("smartDealStats", JSON.stringify(stats));
+      showPrices(category);
+    };
+
     container.appendChild(div);
+    setTimeout(()=>div.classList.add("show"), index*140);
   });
 }
 
 function showPrices(category){
-
-  if(!stats.categories[category]) stats.categories[category]=0;
-  stats.categories[category]++;
-  localStorage.setItem("smartDealStats", JSON.stringify(stats));
-
-  document.getElementById("categories").style.display="none";
+  const categoriesBlock=document.getElementById("categories");
   const pricesDiv=document.getElementById("prices");
+
+  haptic("medium");
+  categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
   pricesDiv.innerHTML="";
 
-  data[category].forEach(item=>{
+  data[category].forEach((item,index)=>{
     const btn=document.createElement("button");
     btn.className="price-btn";
     btn.innerText=item.price;
 
     btn.onclick=()=>{
-      const key = category + " | " + item.price;
+      const key=category+" | "+item.price;
       if(!stats.products[key]) stats.products[key]=0;
       stats.products[key]++;
       localStorage.setItem("smartDealStats", JSON.stringify(stats));
@@ -212,65 +306,51 @@ function showPrices(category){
     };
 
     pricesDiv.appendChild(btn);
+    setTimeout(()=>{
+      btn.style.opacity="1";
+      btn.style.transform="translateY(0)";
+    },index*80);
   });
 
-  const back=document.createElement("button");
-  back.className="price-btn";
+  const back=document.createElement("div");
+  back.className="back-btn";
   back.innerText="← Назад";
-  back.onclick=renderCategories;
+  back.onclick=()=>{
+    pricesDiv.style.display="none";
+    categoriesBlock.style.display="grid";
+    renderCategories();
+  };
+
   pricesDiv.appendChild(back);
 }
 
-function openFeedback(){
-  tg.openTelegramLink("https://t.me/DFomintsev");
-}
+/* ===== ADMIN PANEL ===== */
 
-/* ===== Админ ===== */
-
-if(isAdmin){
-  const btn=document.createElement("button");
-  btn.className="admin-btn";
-  btn.innerText="⚙ Админ";
-  btn.onclick=openAdmin;
-  document.body.appendChild(btn);
-}
-
-function openAdmin(){
-  document.getElementById("categories").style.display="none";
-  document.getElementById("prices").style.display="none";
-
+document.getElementById("adminBtn").onclick=()=>{
   const panel=document.getElementById("adminPanel");
   panel.style.display="block";
-  panel.innerHTML="<h2>Админ панель</h2>";
 
-  panel.innerHTML+=`
-    <button class="admin-btn" style="position:relative;bottom:auto;margin-bottom:20px;" onclick="openStats()">
-      📊 Статистика
-    </button>
+  panel.innerHTML=`
+    <h2>📊 Статистика</h2>
+
+    <div class="admin-card">
+      Запусков: ${stats.launches}
+    </div>
+
+    <div class="admin-card">
+      Уникальных пользователей: ${stats.users.length}
+    </div>
+
+    <h3>Категории</h3>
   `;
-
-  panel.innerHTML+=`<button onclick="exitAdmin()">← Выйти</button>`;
-}
-
-function openStats(){
-
-  const panel=document.getElementById("adminPanel");
-  panel.innerHTML="<h2>📊 Статистика</h2>";
-
-  panel.innerHTML+=`
-    <div class="admin-item"><strong>Запусков:</strong> ${stats.launches}</div>
-    <div class="admin-item"><strong>Уникальных пользователей:</strong> ${stats.users.length}</div>
-  `;
-
-  panel.innerHTML+="<h3>Категории</h3>";
 
   Object.keys(stats.categories)
     .sort((a,b)=>stats.categories[b]-stats.categories[a])
     .forEach(cat=>{
       panel.innerHTML+=`
-        <div class="admin-item">${cat}: ${stats.categories[cat]} кликов</div>
+        <div class="admin-card">${cat}: ${stats.categories[cat]}</div>
       `;
-  });
+    });
 
   panel.innerHTML+="<h3>Товары</h3>";
 
@@ -278,33 +358,28 @@ function openStats(){
     .sort((a,b)=>stats.products[b]-stats.products[a])
     .forEach(prod=>{
       panel.innerHTML+=`
-        <div class="admin-item">${prod}: ${stats.products[prod]} кликов</div>
+        <div class="admin-card">${prod}: ${stats.products[prod]}</div>
       `;
-  });
+    });
 
   panel.innerHTML+=`
     <br>
-    <button onclick="resetStats()" style="background:#aa0000;margin-bottom:15px;">
-      🗑 Сбросить статистику
-    </button>
-    <br>
-    <button onclick="openAdmin()">← Назад</button>
+    <button onclick="resetStats()">🗑 Сбросить</button>
+    <button onclick="closeAdmin()">Закрыть</button>
   `;
+};
+
+function closeAdmin(){
+  document.getElementById("adminPanel").style.display="none";
 }
 
 function resetStats(){
-  if(confirm("Сбросить всю статистику?")){
-    localStorage.removeItem("smartDealStats");
-    location.reload();
-  }
-}
-
-function exitAdmin(){
-  document.getElementById("adminPanel").style.display="none";
-  renderCategories();
+  localStorage.removeItem("smartDealStats");
+  location.reload();
 }
 
 loadData();
 </script>
+
 </body>
 </html>
