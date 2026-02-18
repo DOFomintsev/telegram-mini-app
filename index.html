@@ -46,8 +46,6 @@ h1{
   to{opacity:1;transform:translateY(0);}
 }
 
-/* ===== Категории ===== */
-
 .categories{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -104,8 +102,6 @@ h1{
   font-weight:600;
 }
 
-/* ===== Цены ===== */
-
 .prices{
   display:none;
   padding:20px;
@@ -135,8 +131,6 @@ h1{
   cursor:pointer;
 }
 
-/* ===== Feedback ===== */
-
 .feedback-btn{
   position:fixed;
   bottom:20px;
@@ -154,8 +148,6 @@ h1{
   box-shadow:0 15px 40px rgba(29,185,84,.5);
   cursor:pointer;
 }
-
-/* ===== Admin ===== */
 
 .admin-btn{
   position:fixed;
@@ -209,7 +201,6 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 const ADMIN_ID = 929524875;
-
 const user = tg.initDataUnsafe?.user;
 const isAdmin = user && user.id === ADMIN_ID;
 
@@ -228,7 +219,18 @@ function openFeedback(){
   tg.openTelegramLink("https://t.me/DFomintsev");
 }
 
-/* ===== СТАТИСТИКА ===== */
+/* ===== РЕФЕРАЛЬНАЯ ФУНКЦИЯ ===== */
+
+function addReferral(url){
+  const ref = "utm_source=smartdeal";
+  if(url.includes("?")){
+    return url + "&" + ref;
+  } else {
+    return url + "?" + ref;
+  }
+}
+
+/* ===== СТАТИСТИКА (local) ===== */
 
 let stats = JSON.parse(localStorage.getItem("smartDealStats")) || {
   launches:0,
@@ -329,7 +331,9 @@ function showPrices(category){
       if(!stats.products[key]) stats.products[key]=0;
       stats.products[key]++;
       localStorage.setItem("smartDealStats", JSON.stringify(stats));
-      tg.openLink(item.link);
+
+      const finalLink = addReferral(item.link);
+      tg.openLink(finalLink);
     };
 
     pricesDiv.appendChild(btn);
