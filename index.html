@@ -26,7 +26,6 @@ h1{
   padding:24px 0 10px;
   font-size:22px;
   font-weight:700;
-  animation:fadeDown .6s ease;
 }
 
 /* GRID */
@@ -35,51 +34,58 @@ h1{
   grid-template-columns:repeat(2,1fr);
   gap:18px;
   padding:20px;
-  animation:fadeUp .6s ease;
 }
 
 /* GLASS CARD */
 .category-card{
-  background:rgba(29,185,84,0.08);
+  background:rgba(29,185,84,0.06);
   backdrop-filter:blur(14px);
-  border:1px solid rgba(29,185,84,.25);
+  border:1px solid rgba(255,255,255,.08);
   border-radius:24px;
   padding:30px 20px;
   text-align:center;
-  transition:.25s ease;
+  transition:.3s ease;
   cursor:pointer;
-  position:relative;
 }
 
 .category-card:hover{
-  box-shadow:0 0 30px rgba(29,185,84,.35);
   transform:translateY(-4px);
+  border-color:rgba(255,255,255,.25);
 }
 
-.category-card:active{
-  transform:scale(.95);
-}
-
-/* ICON NEON */
+/* ICON */
 .icon{
   margin-bottom:14px;
 }
 
 .icon svg{
   color:var(--accent);
+  animation:whitePulse 3.2s ease-in-out infinite;
   transition:.3s ease;
-  filter:
-    drop-shadow(0 0 4px var(--accent))
-    drop-shadow(0 0 8px var(--accent))
-    drop-shadow(0 0 16px rgba(29,185,84,.6));
+}
+
+/* SOFT WHITE GLOW */
+@keyframes whitePulse{
+  0%{
+    filter:
+      drop-shadow(0 0 3px rgba(255,255,255,.25))
+      drop-shadow(0 0 6px rgba(255,255,255,.15));
+  }
+  50%{
+    filter:
+      drop-shadow(0 0 8px rgba(255,255,255,.6))
+      drop-shadow(0 0 18px rgba(255,255,255,.35));
+  }
+  100%{
+    filter:
+      drop-shadow(0 0 3px rgba(255,255,255,.25))
+      drop-shadow(0 0 6px rgba(255,255,255,.15));
+  }
 }
 
 .category-card:hover .icon svg{
-  filter:
-    drop-shadow(0 0 6px var(--accent))
-    drop-shadow(0 0 14px var(--accent))
-    drop-shadow(0 0 28px var(--accent));
   transform:scale(1.08);
+  animation-duration:2s;
 }
 
 .label{
@@ -99,7 +105,7 @@ h1{
   align-items:center;
   width:100%;
   background:#1c1f26;
-  border:1px solid rgba(29,185,84,.3);
+  border:1px solid rgba(255,255,255,.08);
   color:white;
   padding:16px 18px;
   margin-bottom:14px;
@@ -107,19 +113,15 @@ h1{
   font-size:15px;
   font-weight:600;
   cursor:pointer;
-  transition:.2s ease;
+  transition:.25s ease;
   opacity:0;
   transform:translateY(10px);
 }
 
 .price-btn:hover{
-  border-color:var(--accent);
-  box-shadow:0 0 18px rgba(29,185,84,.5);
+  border-color:rgba(255,255,255,.35);
+  box-shadow:0 0 20px rgba(255,255,255,.15);
   transform:translateY(-2px);
-}
-
-.price-btn:active{
-  transform:scale(.97);
 }
 
 .back-btn{
@@ -130,7 +132,7 @@ h1{
   cursor:pointer;
 }
 
-/* FEEDBACK BUTTON */
+/* FEEDBACK */
 .feedback-btn{
   position:fixed;
   bottom:18px;
@@ -138,34 +140,23 @@ h1{
   transform:translateX(-50%);
   width:90%;
   max-width:420px;
-  background:var(--accent);
+  background:#ffffff;
   color:#000;
   padding:14px;
   border-radius:16px;
   text-align:center;
   font-weight:600;
   cursor:pointer;
-  box-shadow:0 0 25px rgba(29,185,84,.5);
   transition:.25s ease;
+  box-shadow:0 0 25px rgba(255,255,255,.25);
 }
 
 .feedback-btn:hover{
   transform:translateX(-50%) scale(1.03);
 }
 
-/* ANIMATIONS */
 .fade-out{
   animation:fadeOut .25s ease forwards;
-}
-
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
-}
-
-@keyframes fadeDown{
-  from{opacity:0;transform:translateY(-20px);}
-  to{opacity:1;transform:translateY(0);}
 }
 
 @keyframes fadeOut{
@@ -232,48 +223,32 @@ function getIcon(category){
   `;
 
   if(category==="Смартфоны"){
-    return `
-      <svg ${base}>
-        <rect x="7" y="2.5" width="10" height="19" rx="2.5"
-          fill="currentColor" fill-opacity="0.08"/>
-        <rect x="7" y="2.5" width="10" height="19" rx="2.5"/>
-        <circle cx="12" cy="18.5" r="0.7"/>
-      </svg>
-    `;
+    return `<svg ${base}>
+      <rect x="7" y="2.5" width="10" height="19" rx="2.5"/>
+      <circle cx="12" cy="18.5" r="0.7"/>
+    </svg>`;
   }
 
   if(category==="Ноутбуки"){
-    return `
-      <svg ${base}>
-        <rect x="4" y="5" width="16" height="10" rx="2"
-          fill="currentColor" fill-opacity="0.08"/>
-        <rect x="4" y="5" width="16" height="10" rx="2"/>
-        <line x1="2.5" y1="17" x2="21.5" y2="17"/>
-      </svg>
-    `;
+    return `<svg ${base}>
+      <rect x="4" y="5" width="16" height="10" rx="2"/>
+      <line x1="2.5" y1="17" x2="21.5" y2="17"/>
+    </svg>`;
   }
 
   if(category==="Планшеты"){
-    return `
-      <svg ${base}>
-        <rect x="5.5" y="3" width="13" height="18" rx="2.5"
-          fill="currentColor" fill-opacity="0.08"/>
-        <rect x="5.5" y="3" width="13" height="18" rx="2.5"/>
-        <circle cx="12" cy="17.8" r="0.6"/>
-      </svg>
-    `;
+    return `<svg ${base}>
+      <rect x="5.5" y="3" width="13" height="18" rx="2.5"/>
+      <circle cx="12" cy="17.8" r="0.6"/>
+    </svg>`;
   }
 
   if(category==="Телевизоры"){
-    return `
-      <svg ${base}>
-        <rect x="3" y="5" width="18" height="11" rx="2"
-          fill="currentColor" fill-opacity="0.08"/>
-        <rect x="3" y="5" width="18" height="11" rx="2"/>
-        <line x1="9" y1="20" x2="15" y2="20"/>
-        <line x1="12" y1="16" x2="12" y2="20"/>
-      </svg>
-    `;
+    return `<svg ${base}>
+      <rect x="3" y="5" width="18" height="11" rx="2"/>
+      <line x1="9" y1="20" x2="15" y2="20"/>
+      <line x1="12" y1="16" x2="12" y2="20"/>
+    </svg>`;
   }
 }
 
@@ -315,7 +290,7 @@ function showPrices(category){
 
       btn.innerHTML=`
         ${item.price}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1DB954" stroke-width="2">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
           <path d="M5 12h14M13 5l7 7-7 7"/>
         </svg>
       `;
@@ -328,7 +303,6 @@ function showPrices(category){
       pricesDiv.appendChild(btn);
 
       setTimeout(()=>{
-        btn.style.transition=".3s ease";
         btn.style.opacity="1";
         btn.style.transform="translateY(0)";
       }, index*80);
