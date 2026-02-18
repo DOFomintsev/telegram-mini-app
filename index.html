@@ -185,6 +185,7 @@ h1{
   padding:14px;
   border-radius:14px;
   margin-bottom:12px;
+  border:1px solid rgba(255,255,255,.08);
 }
 </style>
 </head>
@@ -207,7 +208,7 @@ h1{
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-const ADMIN_ID = 929524875; // ← ВСТАВЬ СВОЙ ID
+const ADMIN_ID = 929524875;
 
 const user = tg.initDataUnsafe?.user;
 const isAdmin = user && user.id === ADMIN_ID;
@@ -351,23 +352,60 @@ function showPrices(category){
   pricesDiv.appendChild(back);
 }
 
-/* ===== Admin ===== */
+/* ===== ADMIN 2.0 ===== */
 
-document.getElementById("adminBtn").onclick=()=>{
-  const panel=document.getElementById("adminPanel");
-  panel.style.display="block";
-  panel.innerHTML=`<h2>📊 Статистика</h2>
-  <div class="admin-card">Запусков: ${stats.launches}</div>
-  <div class="admin-card">Уникальных пользователей: ${stats.users.length}</div>`;
+document.getElementById("adminBtn").onclick = () => {
+  const panel = document.getElementById("adminPanel");
+  panel.style.display = "block";
 
-  Object.keys(stats.categories).forEach(cat=>{
-    panel.innerHTML+=`<div class="admin-card">${cat}: ${stats.categories[cat]}</div>`;
-  });
+  const totalCategoryClicks = Object.values(stats.categories).reduce((a,b)=>a+b,0);
+  const totalProductClicks = Object.values(stats.products).reduce((a,b)=>a+b,0);
+  const conversion = stats.launches > 0
+    ? ((totalProductClicks / stats.launches) * 100).toFixed(1)
+    : 0;
 
-  panel.innerHTML+=`<br>
-  <button onclick="resetStats()">🗑 Сбросить</button>
-  <button onclick="closeAdmin()">Закрыть</button>`;
+  panel.innerHTML = `
+    <h2 style="margin-bottom:20px;">📊 Smart Deal Analytics</h2>
+
+    <div class="admin-card">🚀 Запусков: <b>${stats.launches}</b></div>
+    <div class="admin-card">👤 Уникальных пользователей: <b>${stats.users.length}</b></div>
+    <div class="admin-card">🛒 Клики по товарам: <b>${totalProductClicks}</b></div>
+    <div class="admin-card">📈 Конверсия: <b>${conversion}%</b></div>
+
+    <h3 style="margin-top:25px;">🔥 Топ категории</h3>
+    ${renderTop(stats.categories)}
+
+    <h3 style="margin-top:25px;">💰 Топ товары</h3>
+    ${renderTop(stats.products)}
+
+    <br>
+    <button onclick="resetStats()">🗑 Сбросить</button>
+    <button onclick="closeAdmin()">Закрыть</button>
+  `;
 };
+
+function renderTop(obj){
+  if(Object.keys(obj).length === 0){
+    return `<div class="admin-card">Нет данных</div>`;
+  }
+
+  const total = Object.values(obj).reduce((a,b)=>a+b,0);
+
+  return Object.entries(obj)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,3)
+    .map((item,i)=>{
+      const percent = ((item[1] / total) * 100).toFixed(1);
+
+      return `
+        <div class="admin-card">
+          ${i+1}. ${item[0]}<br>
+          <small>${item[1]} кликов (${percent}%)</small>
+        </div>
+      `;
+    })
+    .join("");
+}
 
 function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
