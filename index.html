@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Deal Premium 5.0</title>
+<title>Smart Deal Ultra 6.0</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 :root{
   --accent:#1DB954;
+  --bg1:#0f141a;
+  --bg2:#0c1118;
 }
 
-/* ===== BACKGROUND ===== */
+/* ===== BACKGROUND WITH BLOBS ===== */
 
 body{
   margin:0;
@@ -21,15 +23,26 @@ body{
   overflow-x:hidden;
   padding-bottom:120px;
 
-  background:linear-gradient(-45deg,#0f141a,#0c1118,#141c26,#0c1118);
-  background-size:400% 400%;
-  animation:bgShift 18s ease infinite;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
 }
 
-@keyframes bgShift{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
+.blob{
+  position:fixed;
+  width:420px;
+  height:420px;
+  background:radial-gradient(circle,var(--accent),transparent 70%);
+  filter:blur(120px);
+  opacity:.25;
+  animation:float 18s ease-in-out infinite;
+  z-index:-1;
+}
+
+.blob:nth-child(1){ top:-120px; left:-120px; }
+.blob:nth-child(2){ bottom:-150px; right:-150px; animation-delay:6s; }
+
+@keyframes float{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(60px,40px)}
 }
 
 h1{
@@ -46,10 +59,10 @@ h1{
   grid-template-columns:repeat(2,1fr);
   gap:22px;
   padding:22px;
-  perspective:1400px;
+  perspective:1500px;
 }
 
-/* ===== LIQUID GLASS CARD ===== */
+/* ===== ULTRA GLASS ===== */
 
 .category-card{
   position:relative;
@@ -60,73 +73,61 @@ h1{
   overflow:hidden;
 
   background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(32px) saturate(140%);
-  -webkit-backdrop-filter:blur(32px) saturate(140%);
-  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(34px) saturate(160%);
+  -webkit-backdrop-filter:blur(34px) saturate(160%);
+  border:1px solid rgba(255,255,255,.2);
 
   transform-style:preserve-3d;
   transition:transform .2s ease, box-shadow .4s ease, opacity .6s ease;
+
   box-shadow:
-    0 20px 60px rgba(0,0,0,.7),
-    inset 0 1px 1px rgba(255,255,255,.15);
+    0 25px 70px rgba(0,0,0,.7),
+    inset 0 1px 1px rgba(255,255,255,.2);
 
   opacity:0;
   transform:translateY(20px);
 }
 
-/* stagger animation */
+/* noise layer */
+.category-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml,\
+  <svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'>\
+  <filter id='n'><feTurbulence baseFrequency='0.8' numOctaves='3'/></filter>\
+  <rect width='100%' height='100%' filter='url(%23n)' opacity='0.05'/>\
+  </svg>");
+  pointer-events:none;
+}
+
 .category-card.show{
   opacity:1;
   transform:translateY(0);
 }
 
-/* liquid moving light */
 .category-card::before{
   content:"";
   position:absolute;
   inset:-3px;
   border-radius:30px;
   background:radial-gradient(circle at var(--x,50%) var(--y,50%),
-    rgba(29,185,84,.55),
+    var(--accent),
     transparent 60%);
-  opacity:.65;
+  opacity:.45;
   transition:.2s;
   z-index:0;
 }
 
-/* animated gloss */
-.category-card::after{
-  content:"";
-  position:absolute;
-  top:-60%;
-  left:-60%;
-  width:220%;
-  height:220%;
-  background:linear-gradient(
-    120deg,
-    transparent 40%,
-    rgba(255,255,255,.2),
-    transparent 60%
-  );
-  transform:rotate(25deg);
-  animation:shine 6s infinite linear;
-  pointer-events:none;
-}
-
-@keyframes shine{
-  0%{transform:translateX(-100%) rotate(25deg);}
-  100%{transform:translateX(100%) rotate(25deg);}
-}
-
 .category-card:hover{
   box-shadow:
-    0 30px 80px rgba(0,0,0,.85),
-    0 0 80px rgba(29,185,84,.35);
+    0 30px 90px rgba(0,0,0,.85),
+    0 0 80px var(--accent);
 }
 
 .icon{
   margin-bottom:16px;
-  transform:translateZ(50px);
+  transform:translateZ(60px);
   position:relative;
   z-index:1;
 }
@@ -134,22 +135,16 @@ h1{
 .label{
   font-size:16px;
   font-weight:600;
-  transform:translateZ(40px);
+  transform:translateZ(50px);
   position:relative;
   z-index:1;
 }
 
-/* ===== PRICE SCREEN ===== */
+/* ===== PRICES ===== */
 
 .prices{
   display:none;
   padding:22px;
-  animation:fadeIn .4s ease;
-}
-
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(20px)}
-  to{opacity:1;transform:translateY(0)}
 }
 
 .price-btn{
@@ -164,11 +159,10 @@ h1{
   font-weight:600;
   cursor:pointer;
   transition:.3s;
-  box-shadow:0 12px 40px rgba(0,0,0,.6);
 }
 
 .price-btn:hover{
-  box-shadow:0 0 60px rgba(29,185,84,.45);
+  box-shadow:0 0 60px var(--accent);
   transform:translateY(-4px);
 }
 
@@ -179,7 +173,7 @@ h1{
   cursor:pointer;
 }
 
-/* ===== FEEDBACK BUTTON ===== */
+/* ===== FEEDBACK ===== */
 
 .feedback-btn{
   position:fixed;
@@ -193,8 +187,8 @@ h1{
   font-weight:600;
   border:none;
   color:white;
-  background:linear-gradient(135deg,#1DB954,#14a346);
-  box-shadow:0 25px 70px rgba(29,185,84,.7);
+  background:var(--accent);
+  box-shadow:0 25px 70px var(--accent);
   cursor:pointer;
   transition:.3s;
 }
@@ -206,6 +200,9 @@ h1{
 </head>
 
 <body>
+
+<div class="blob"></div>
+<div class="blob"></div>
 
 <h1>Smart Deal</h1>
 
@@ -220,19 +217,24 @@ h1{
 const tg=window.Telegram.WebApp;
 tg.expand();
 
-function haptic(type="light"){
-  if(tg.HapticFeedback){
-    tg.HapticFeedback.impactOccurred(type);
+/* ===== THEME AUTO ADAPT ===== */
+
+if(tg.themeParams){
+  document.documentElement.style.setProperty(
+    "--accent",
+    tg.themeParams.button_color || "#1DB954"
+  );
+
+  if(tg.colorScheme==="light"){
+    document.documentElement.style.setProperty("--bg1","#e8eef3");
+    document.documentElement.style.setProperty("--bg2","#dfe6ec");
+    document.body.style.color="#111";
   }
 }
 
-function openFeedback(){
-  haptic("medium");
-  tg.openTelegramLink("https://t.me/DFomintsev");
-}
+/* ===== DATA ===== */
 
 const SHEET_URL="https://docs.google.com/spreadsheets/d/1-JYl4b-6H_iWvBS2Zsez1K1DPx35iBUCCPPRiSrVY7o/export?format=csv";
-
 let data={};
 
 async function loadData(){
@@ -249,9 +251,11 @@ async function loadData(){
   renderCategories();
 }
 
+/* ===== ICONS ===== */
+
 function getIcon(category){
   const base=`width="48" height="48" viewBox="0 0 24 24"
-  fill="none" stroke="white" stroke-opacity="0.9"
+  fill="none" stroke="currentColor"
   stroke-width="1.6" stroke-linecap="round"
   stroke-linejoin="round"`;
 
@@ -265,10 +269,11 @@ function getIcon(category){
     return `<svg ${base}><rect x="3" y="5" width="18" height="11" rx="2"/></svg>`;
 }
 
+/* ===== RENDER ===== */
+
 function renderCategories(){
   const container=document.getElementById("categories");
   container.innerHTML="";
-  container.style.display="grid";
 
   Object.keys(data).forEach((category,i)=>{
     const card=document.createElement("div");
@@ -278,10 +283,8 @@ function renderCategories(){
       <div class="label">${category}</div>
     `;
 
-    // stagger animation
-    setTimeout(()=>card.classList.add("show"), i*120);
+    setTimeout(()=>card.classList.add("show"),i*120);
 
-    // pointer parallax
     card.addEventListener("mousemove",(e)=>{
       const rect=card.getBoundingClientRect();
       const x=e.clientX-rect.left;
@@ -306,8 +309,6 @@ function renderCategories(){
 }
 
 function showPrices(category){
-  haptic("heavy");
-
   const categories=document.getElementById("categories");
   const prices=document.getElementById("prices");
 
@@ -319,10 +320,7 @@ function showPrices(category){
     const btn=document.createElement("button");
     btn.className="price-btn";
     btn.innerHTML=`${item.price} ➜`;
-    btn.onclick=()=>{
-      haptic("light");
-      tg.openLink(item.link);
-    };
+    btn.onclick=()=>tg.openLink(item.link);
     prices.appendChild(btn);
   });
 
@@ -336,7 +334,22 @@ function showPrices(category){
   prices.appendChild(back);
 }
 
+function openFeedback(){
+  tg.openTelegramLink("https://t.me/DFomintsev");
+}
+
 loadData();
+
+/* ===== GYRO TILT ===== */
+
+if(window.DeviceOrientationEvent){
+  window.addEventListener("deviceorientation",(e)=>{
+    const x=e.gamma/30;
+    const y=e.beta/30;
+    document.body.style.transform=
+      `rotateX(${y}deg) rotateY(${x}deg)`;
+  });
+}
 </script>
 
 </body>
