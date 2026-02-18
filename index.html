@@ -4,14 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Deal</title>
-
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 :root{
   --bg:#000000;
-  --card1:#1DB954;
-  --card2:#16a34a;
+  --card:#111111;
+  --glass:rgba(255,255,255,0.05);
 }
 
 body{
@@ -20,140 +19,47 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   color:#fff;
   overflow-x:hidden;
-  padding-bottom:90px;
-  position:relative;
+  padding-bottom:110px;
 }
 
-/* Виньетка */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%);
-  pointer-events:none;
+/* ===== Анимация появления ===== */
+
+.fade-in{
+  opacity:0;
+  transform:translateY(20px) scale(0.98);
+  animation:appear 0.7s cubic-bezier(.2,.8,.2,1) forwards;
 }
 
-/* ===== Заголовок ===== */
+@keyframes appear{
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
 
 h1{
   text-align:center;
   padding:24px 0 10px;
   font-size:22px;
   font-weight:700;
-
-  opacity:0;
-  transform:translateY(-20px);
-  animation:titleAppear .8s ease forwards;
 }
-
-@keyframes titleAppear{
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-
-/* ===== Категории ===== */
 
 .categories{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:18px;
   padding:20px;
-  transform:translateZ(0);
 }
 
 .category-card{
-  background:linear-gradient(135deg,var(--card1),var(--card2));
+  background:var(--glass);
+  backdrop-filter:blur(20px);
   border-radius:24px;
   padding:30px 20px;
   text-align:center;
-  box-shadow:0 12px 35px rgba(29,185,84,0.35);
   cursor:pointer;
-  position:relative;
-  overflow:hidden;
-
-  opacity:0;
-  transform:translateY(50px) scale(.9);
-  filter:blur(14px);
-  will-change:transform, opacity, filter;
+  border:1px solid rgba(255,255,255,0.08);
 }
-
-.category-card.show{
-  animation:ultraAppear 1s cubic-bezier(.22,1,.36,1) forwards;
-}
-
-@keyframes ultraAppear{
-  0%{
-    opacity:0;
-    transform:translateY(50px) scale(.9);
-    filter:blur(14px);
-  }
-  45%{
-    opacity:1;
-    filter:blur(6px);
-    transform:translateY(-8px) scale(1.06);
-  }
-  70%{
-    filter:blur(2px);
-    transform:translateY(3px) scale(.98);
-  }
-  85%{
-    transform:translateY(-1px) scale(1.01);
-  }
-  100%{
-    opacity:1;
-    transform:translateY(0) scale(1);
-    filter:blur(0);
-  }
-}
-
-.category-card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at top left, rgba(255,255,255,.18), transparent 60%);
-  opacity:.6;
-}
-
-.category-card:hover{
-  box-shadow:0 18px 45px rgba(29,185,84,0.6);
-  transform:translateY(-4px);
-}
-
-.category-card:active{
-  transform:scale(.95);
-}
-
-/* ===== Иконки ===== */
-
-.icon{
-  margin-bottom:14px;
-}
-
-.icon svg{
-  width:46px;
-  height:46px;
-  stroke:rgba(255,255,255,0.95);
-  fill:rgba(255,255,255,0.08);
-  stroke-width:1.8;
-  transition:.3s ease;
-  filter:drop-shadow(0 0 8px rgba(255,255,255,0.4));
-}
-
-.category-card:hover .icon svg{
-  stroke:#fff;
-  fill:rgba(255,255,255,0.18);
-  filter:drop-shadow(0 0 16px rgba(255,255,255,0.6));
-  transform:scale(1.08);
-}
-
-.label{
-  font-size:15px;
-  font-weight:600;
-}
-
-/* ===== Цены ===== */
 
 .prices{
   display:none;
@@ -161,115 +67,96 @@ h1{
 }
 
 .price-btn{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
   width:100%;
-  background:#111111;
-  border:1px solid rgba(255,255,255,.08);
-  color:white;
-  padding:16px 18px;
-  margin-bottom:14px;
+  padding:16px;
+  margin-bottom:12px;
+  border:none;
   border-radius:16px;
-  font-size:15px;
-  font-weight:600;
-  cursor:pointer;
-  transition:.25s ease;
-  opacity:0;
-  transform:translateY(10px);
-}
-
-.price-btn:hover{
-  border-color:rgba(255,255,255,.35);
-  box-shadow:0 0 20px rgba(255,255,255,.12);
-  transform:translateY(-2px);
-}
-
-.back-btn{
-  text-align:center;
-  font-size:14px;
-  opacity:.6;
-  margin-top:6px;
+  background:#111;
+  color:#fff;
   cursor:pointer;
 }
 
-/* ===== Feedback ===== */
+.admin-btn{
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#222;
+  border:none;
+  border-radius:16px;
+  padding:14px 20px;
+  color:#fff;
+  cursor:pointer;
+}
+
+.admin-item{
+  background:#111;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:12px;
+}
 
 .feedback-btn{
   position:fixed;
   bottom:20px;
   left:50%;
   transform:translateX(-50%);
-  width:85%;
-  max-width:420px;
-  background:linear-gradient(135deg,var(--card1),var(--card2));
+  background:#222;
   border:none;
   border-radius:18px;
   padding:16px;
   font-size:15px;
   font-weight:600;
   color:#fff;
-  box-shadow:0 15px 40px rgba(29,185,84,.5);
   cursor:pointer;
-  transition:.25s ease;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-}
-
-.feedback-btn:hover{
-  transform:translateX(-50%) translateY(-3px);
-}
-
-.feedback-btn:active{
-  transform:translateX(-50%) scale(.96);
-}
-
-/* ===== Fade ===== */
-
-.fade-out{
-  animation:fadeOut .25s ease forwards;
-}
-
-@keyframes fadeOut{
-  from{opacity:1;transform:translateY(0);}
-  to{opacity:0;transform:translateY(10px);}
 }
 </style>
 </head>
-
 <body>
 
-<h1>Smart Deal</h1>
+<h1 class="fade-in">Smart Deal</h1>
 
-<div class="categories" id="categories"></div>
-<div class="prices" id="prices"></div>
+<div class="categories fade-in" id="categories"></div>
+<div class="prices fade-in" id="prices"></div>
+<div id="adminPanel"></div>
 
-<button class="feedback-btn" onclick="openFeedback()">
-  💬 Обратная связь
-</button>
+<button class="feedback-btn" onclick="openFeedback()">💬 Обратная связь</button>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-function haptic(type="light"){
-  if(tg.HapticFeedback){
-    tg.HapticFeedback.impactOccurred(type);
-  }
-}
+const ADMIN_ID = 123456789; // ← ВСТАВЬ СВОЙ TELEGRAM ID
 
-function openFeedback(){
-  haptic("medium");
-  tg.openTelegramLink("https://t.me/DFomintsev");
-}
+const user = tg.initDataUnsafe?.user;
+const isAdmin = user && user.id === ADMIN_ID;
 
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/1-JYl4b-6H_iWvBS2Zsez1K1DPx35iBUCCPPRiSrVY7o/export?format=csv";
 
 let data = {};
 
+/* ===== СТАТИСТИКА MVP ===== */
+
+let stats = JSON.parse(localStorage.getItem("smartDealStats")) || {
+  launches: 0,
+  users: [],
+  categories: {},
+  products: {}
+};
+
+stats.launches++;
+
+if(user && !stats.users.includes(user.id)){
+  stats.users.push(user.id);
+}
+
+localStorage.setItem("smartDealStats", JSON.stringify(stats));
+
+/* ===== Загрузка Google Sheets ===== */
+
 async function loadData(){
+
   const response = await fetch(SHEET_URL);
   const text = await response.text();
   const rows = text.split("\n").slice(1);
@@ -283,104 +170,141 @@ async function loadData(){
   renderCategories();
 }
 
-function getIcon(category){
-  if(category==="Смартфоны"){
-    return `<svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`;
-  }
-  if(category==="Ноутбуки"){
-    return `<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="10" rx="2"/><line x1="2" y1="17" x2="22" y2="17"/></svg>`;
-  }
-  if(category==="Планшеты"){
-    return `<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="17" r="0.7"/></svg>`;
-  }
-  if(category==="Телевизоры"){
-    return `<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`;
-  }
-  return "";
-}
+/* ===== Интерфейс ===== */
 
 function renderCategories(){
   const container=document.getElementById("categories");
   container.innerHTML="";
   container.style.display="grid";
+  document.getElementById("prices").style.display="none";
 
-  Object.keys(data).forEach((category,index)=>{
+  Object.keys(data).forEach(category=>{
     const div=document.createElement("div");
     div.className="category-card";
-
-    div.innerHTML=`
-      <div class="icon">${getIcon(category)}</div>
-      <div class="label">${category}</div>
-    `;
-
+    div.innerText=category;
     div.onclick=()=>showPrices(category);
     container.appendChild(div);
-
-    setTimeout(()=>{
-      div.classList.add("show");
-    }, index * 140);
   });
 }
 
 function showPrices(category){
-  const categoriesBlock=document.getElementById("categories");
+
+  if(!stats.categories[category]) stats.categories[category]=0;
+  stats.categories[category]++;
+  localStorage.setItem("smartDealStats", JSON.stringify(stats));
+
+  document.getElementById("categories").style.display="none";
   const pricesDiv=document.getElementById("prices");
+  pricesDiv.style.display="block";
+  pricesDiv.innerHTML="";
 
-  haptic("medium");
-  categoriesBlock.classList.add("fade-out");
+  data[category].forEach(item=>{
+    const btn=document.createElement("button");
+    btn.className="price-btn";
+    btn.innerText=item.price;
 
-  setTimeout(()=>{
-    categoriesBlock.style.display="none";
-    categoriesBlock.classList.remove("fade-out");
-
-    pricesDiv.style.display="block";
-    pricesDiv.innerHTML="";
-
-    data[category].forEach((item,index)=>{
-      const btn=document.createElement("button");
-      btn.className="price-btn";
-
-      btn.innerHTML=`
-        ${item.price}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-          <path d="M5 12h14M13 5l7 7-7 7"/>
-        </svg>
-      `;
-
-      btn.onclick=()=>{
-        haptic("light");
-        tg.openLink(item.link);
-      };
-
-      pricesDiv.appendChild(btn);
-
-      setTimeout(()=>{
-        btn.style.opacity="1";
-        btn.style.transform="translateY(0)";
-      }, index*80);
-    });
-
-    const back=document.createElement("div");
-    back.className="back-btn";
-    back.innerText="← Назад";
-    back.onclick=()=>{
-      haptic("light");
-      pricesDiv.classList.add("fade-out");
-      setTimeout(()=>{
-        pricesDiv.style.display="none";
-        pricesDiv.classList.remove("fade-out");
-        categoriesBlock.style.display="grid";
-        renderCategories();
-      },250);
+    btn.onclick=()=>{
+      const key = category + " | " + item.price;
+      if(!stats.products[key]) stats.products[key]=0;
+      stats.products[key]++;
+      localStorage.setItem("smartDealStats", JSON.stringify(stats));
+      tg.openLink(item.link);
     };
 
-    pricesDiv.appendChild(back);
+    pricesDiv.appendChild(btn);
+  });
 
-  },250);
+  const back=document.createElement("button");
+  back.className="price-btn";
+  back.innerText="← Назад";
+  back.onclick=renderCategories;
+  pricesDiv.appendChild(back);
+}
+
+function openFeedback(){
+  tg.openTelegramLink("https://t.me/DFomintsev");
+}
+
+/* ===== Админ ===== */
+
+if(isAdmin){
+  const btn=document.createElement("button");
+  btn.className="admin-btn";
+  btn.innerText="⚙ Админ";
+  btn.onclick=openAdmin;
+  document.body.appendChild(btn);
+}
+
+function openAdmin(){
+  document.getElementById("categories").style.display="none";
+  document.getElementById("prices").style.display="none";
+
+  const panel=document.getElementById("adminPanel");
+  panel.style.display="block";
+  panel.innerHTML="<h2>Админ панель</h2>";
+
+  panel.innerHTML+=`
+    <button class="admin-btn" style="position:relative;bottom:auto;margin-bottom:20px;" onclick="openStats()">
+      📊 Статистика
+    </button>
+  `;
+
+  panel.innerHTML+=`<button onclick="exitAdmin()">← Выйти</button>`;
+}
+
+function openStats(){
+
+  const panel=document.getElementById("adminPanel");
+  panel.innerHTML="<h2>📊 Статистика</h2>";
+
+  panel.innerHTML+=`
+    <div class="admin-item"><strong>Запусков:</strong> ${stats.launches}</div>
+    <div class="admin-item"><strong>Уникальных пользователей:</strong> ${stats.users.length}</div>
+  `;
+
+  panel.innerHTML+="<h3>Категории</h3>";
+
+  Object.keys(stats.categories)
+    .sort((a,b)=>stats.categories[b]-stats.categories[a])
+    .forEach(cat=>{
+      panel.innerHTML+=`
+        <div class="admin-item">${cat}: ${stats.categories[cat]} кликов</div>
+      `;
+  });
+
+  panel.innerHTML+="<h3>Товары</h3>";
+
+  Object.keys(stats.products)
+    .sort((a,b)=>stats.products[b]-stats.products[a])
+    .forEach(prod=>{
+      panel.innerHTML+=`
+        <div class="admin-item">${prod}: ${stats.products[prod]} кликов</div>
+      `;
+  });
+
+  panel.innerHTML+=`
+    <br>
+    <button onclick="resetStats()" style="background:#aa0000;margin-bottom:15px;">
+      🗑 Сбросить статистику
+    </button>
+    <br>
+    <button onclick="openAdmin()">← Назад</button>
+  `;
+}
+
+function resetStats(){
+  if(confirm("Сбросить всю статистику?")){
+    localStorage.removeItem("smartDealStats");
+    location.reload();
+  }
+}
+
+function exitAdmin(){
+  document.getElementById("adminPanel").style.display="none";
+  renderCategories();
 }
 
 loadData();
 </script>
-
 </body>
 </html>
