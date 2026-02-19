@@ -210,6 +210,17 @@ tg.expand();
 
 const ADMIN_ID = 929524875;
 
+/* ===== SERVER ANALYTICS ===== */
+
+const ANALYTICS_URL = "https://script.google.com/macros/s/AKfycbxcIbUNFvrbt1BMSTPsAt6X7WBf44PXaDoSBu8x5PyqkwndQZVa2w2180AYaYQrRx7y/exec";
+
+function sendAnalytics(data){
+  fetch(ANALYTICS_URL,{
+    method:"POST",
+    body:JSON.stringify(data)
+  }).catch(()=>{});
+}
+
 const user = tg.initDataUnsafe?.user;
 const isAdmin = user && user.id === ADMIN_ID;
 
@@ -238,6 +249,11 @@ let stats = JSON.parse(localStorage.getItem("smartDealStats")) || {
 };
 
 stats.launches++;
+sendAnalytics({
+  user_id: user?.id || 0,
+  username: user?.username || "",
+  action: "launch"
+});
 if(user && !stats.users.includes(user.id)){
   stats.users.push(user.id);
 }
@@ -299,6 +315,12 @@ function renderCategories(){
     div.onclick=()=>{
       if(!stats.categories[category]) stats.categories[category]=0;
       stats.categories[category]++;
+      sendAnalytics({
+  user_id: user?.id || 0,
+  username: user?.username || "",
+  action: "category_click",
+  category: category
+});
       localStorage.setItem("smartDealStats", JSON.stringify(stats));
       showPrices(category);
     };
@@ -328,6 +350,14 @@ function showPrices(category){
       const key=category+" | "+item.price;
       if(!stats.products[key]) stats.products[key]=0;
       stats.products[key]++;
+      sendAnalytics({
+  user_id: user?.id || 0,
+  username: user?.username || "",
+  action: "product_click",
+  category: category,
+  product: item.price,
+  price: item.price
+});
       localStorage.setItem("smartDealStats", JSON.stringify(stats));
       tg.openLink(item.link);
     };
