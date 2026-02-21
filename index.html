@@ -382,9 +382,38 @@ function showPrices(category){
   pricesDiv.appendChild(back);
 }
 
-/* ===== ADMIN 2.0 ===== */
+/* ===== ADMIN SERVER VERSION ===== */
 
-document.getElementById("adminBtn").onclick = () => {
+document.getElementById("adminBtn").onclick = async () => {
+
+  const panel = document.getElementById("adminPanel");
+  panel.style.display = "block";
+  panel.innerHTML = "Загрузка...";
+
+  try{
+    const response = await fetch(ANALYTICS_URL);
+    const serverStats = await response.json();
+
+    const conversion = serverStats.launches > 0
+      ? ((serverStats.product_clicks / serverStats.launches) * 100).toFixed(1)
+      : 0;
+
+    panel.innerHTML = `
+      <h2 style="margin-bottom:20px;">📊 Smart Deal Analytics</h2>
+
+      <div class="admin-card">🚀 Запусков: <b>${serverStats.launches}</b></div>
+      <div class="admin-card">👤 Уникальных пользователей: <b>${serverStats.unique_users}</b></div>
+      <div class="admin-card">🛒 Клики по товарам: <b>${serverStats.product_clicks}</b></div>
+      <div class="admin-card">📈 Конверсия: <b>${conversion}%</b></div>
+
+      <br>
+      <button onclick="closeAdmin()">Закрыть</button>
+    `;
+
+  } catch(e){
+    panel.innerHTML = "Ошибка загрузки данных";
+  }
+};
   const panel = document.getElementById("adminPanel");
   panel.style.display = "block";
 
