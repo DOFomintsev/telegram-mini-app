@@ -437,7 +437,10 @@ function renderTop(obj){
     .sort((a,b)=>b[1]-a[1])
     .slice(0,3)
     .map((item,i)=>{
-      const percent = ((item[1] / total) * 100).toFixed(1);
+      const percent = total > 0
+        ? ((item[1] / total) * 100).toFixed(1)
+        : 0;
+
       return `
         <div class="admin-card">
           ${i+1}. ${item[0]}<br>
