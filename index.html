@@ -428,7 +428,7 @@ document.getElementById("adminBtn").onclick = async () => {
 
 function renderTop(obj){
   if(!obj || Object.keys(obj).length === 0){
-    return `<div class="admin-card">Нет данных</div>;
+    return `<div class="admin-card">Нет данных</div>`;
   }
 
   const total = Object.values(obj).reduce((a,b)=>a+b,0);
