@@ -392,19 +392,30 @@ document.getElementById("adminBtn").onclick = async () => {
 
   try{
     const response = await fetch(ANALYTICS_URL);
-    const serverStats = await response.json();
+    const s = await response.json();
 
-    const conversion = serverStats.launches > 0
-      ? ((serverStats.product_clicks / serverStats.launches) * 100).toFixed(1)
+    const conversion = s.launches > 0
+      ? ((s.product_clicks / s.launches) * 100).toFixed(1)
       : 0;
 
     panel.innerHTML = `
-      <h2 style="margin-bottom:20px;">📊 Smart Deal Analytics</h2>
+      <h2 style="margin-bottom:20px;">📊 Smart Deal Admin 3.0</h2>
 
-      <div class="admin-card">🚀 Запусков: <b>${serverStats.launches}</b></div>
-      <div class="admin-card">👤 Уникальных пользователей: <b>${serverStats.unique_users}</b></div>
-      <div class="admin-card">🛒 Клики по товарам: <b>${serverStats.product_clicks}</b></div>
-      <div class="admin-card">📈 Конверсия: <b>${conversion}%</b></div>
+      <div class="admin-card">🚀 Всего запусков: <b>${s.launches}</b></div>
+      <div class="admin-card">👤 Всего пользователей: <b>${s.unique_users}</b></div>
+      <div class="admin-card">🛒 Всего кликов: <b>${s.product_clicks}</b></div>
+      <div class="admin-card">📈 Общая конверсия: <b>${conversion}%</b></div>
+
+      <h3 style="margin-top:25px;">📅 Сегодня</h3>
+      <div class="admin-card">🚀 Запусков сегодня: <b>${s.today_launches}</b></div>
+      <div class="admin-card">👤 Новых сегодня: <b>${s.today_users}</b></div>
+      <div class="admin-card">🛒 Кликов сегодня: <b>${s.today_product_clicks}</b></div>
+
+      <h3 style="margin-top:25px;">🔥 Топ категории</h3>
+      ${renderTop(s.top_categories)}
+
+      <h3 style="margin-top:25px;">💰 Топ товары</h3>
+      ${renderTop(s.top_products)}
 
       <br>
       <button onclick="closeAdmin()">Закрыть</button>
@@ -415,9 +426,32 @@ document.getElementById("adminBtn").onclick = async () => {
   }
 };
 
- function closeAdmin(){
+function renderTop(obj){
+  if(!obj || Object.keys(obj).length === 0){
+    return <div class="admin-card">Нет данных</div>;
+  }
+
+  const total = Object.values(obj).reduce((a,b)=>a+b,0);
+
+  return Object.entries(obj)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,3)
+    .map((item,i)=>{
+      const percent = ((item[1] / total) * 100).toFixed(1);
+      return `
+        <div class="admin-card">
+          ${i+1}. ${item[0]}<br>
+          <small>${item[1]} кликов (${percent}%)</small>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
-} 
+}
+
 
 loadData();
 </script>
