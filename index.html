@@ -403,7 +403,13 @@ function showPrices(category){
   data[category].forEach((item,index)=>{
     const btn=document.createElement("button");
     btn.className="price-btn";
-    btn.innerText=item.price;
+    btn.innerHTML = `
+  <div class="price-left">
+    <div class="price-icon">💰</div>
+    <div>${item.price}</div>
+  </div>
+  <div class="price-arrow">→</div>
+`;
 
     btn.onclick=()=>{
       const key=category+" | "+item.price;
