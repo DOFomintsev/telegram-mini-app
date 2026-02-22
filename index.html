@@ -209,6 +209,7 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 const ADMIN_ID = 929524875;
+
 /* ===== SERVER ANALYTICS ===== */
 
 const ANALYTICS_URL = "https://script.google.com/macros/s/AKfycbxcIbUNFvrbt1BMSTPsAt6X7WBf44PXaDoSBu8x5PyqkwndQZVa2w2180AYaYQrRx7y/exec";
@@ -332,104 +333,89 @@ function renderCategories(){
 /* ===== Цены ===== */
 
 function showPrices(category){
+  const categoriesBlock=document.getElementById("categories");
+  const pricesDiv=document.getElementById("prices");
 
-  const pricesDiv = document.getElementById("prices");
-  const categoriesBlock = document.getElementById("categories");
-
-  pricesDiv.innerHTML="";
+  haptic("medium");
   categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
+  pricesDiv.innerHTML="";
 
-  products[category].forEach((product,i)=>{
+  data[category].forEach((item,index)=>{
+    const btn=document.createElement("button");
+    btn.className="price-btn";
+    btn.innerText=item.price;
 
-    const card = document.createElement("div");
-    card.className="product-card";
-
-    card.innerHTML = `
-      <img src="${product.image}" class="product-img">
-      <div class="product-info">
-        <div class="product-title">${product.name}</div>
-        <div class="product-price">${product.price} ₽</div>
-      </div>
-    `;
-
-    card.onclick = ()=>{
-      tg.HapticFeedback.impactOccurred("medium");
-
+    btn.onclick=()=>{
+      const key=category+" | "+item.price;
+      if(!stats.products[key]) stats.products[key]=0;
+      stats.products[key]++;
       sendAnalytics({
-        action:"product_click",
-        product:product.name,
-        price:product.price
-      });
-
-      window.open(product.link,"_blank");
+  user_id: user?.id || 0,
+  username: user?.username || "",
+  action: "product_click",
+  category: category,
+  product: item.price,
+  price: item.price
+});
+      localStorage.setItem("smartDealStats", JSON.stringify(stats));
+      tg.openLink(item.link);
     };
 
-    pricesDiv.appendChild(card);
+    pricesDiv.appendChild(btn);
 
     setTimeout(()=>{
-      card.classList.add("show");
-    }, i*120);
-
+      btn.style.opacity="1";
+      btn.style.transform="translateY(0)";
+    },index*80);
   });
 
-  const back = document.createElement("div");
+  const back=document.createElement("div");
   back.className="back-btn";
-  back.innerText="Назад";
+  back.innerText="← Назад";
   back.onclick=()=>{
     pricesDiv.style.display="none";
     categoriesBlock.style.display="grid";
+    renderCategories();
   };
 
   pricesDiv.appendChild(back);
 }
 
-/* ===== ADMIN SERVER VERSION ===== */
+/* ===== ADMIN 2.0 ===== */
 
-document.getElementById("adminBtn").onclick = async () => {
-
+document.getElementById("adminBtn").onclick = () => {
   const panel = document.getElementById("adminPanel");
   panel.style.display = "block";
-  panel.innerHTML = "Загрузка...";
 
-  try{
-    const response = await fetch(ANALYTICS_URL);
-    const s = await response.json();
+  const totalCategoryClicks = Object.values(stats.categories).reduce((a,b)=>a+b,0);
+  const totalProductClicks = Object.values(stats.products).reduce((a,b)=>a+b,0);
+  const conversion = stats.launches > 0
+    ? ((totalProductClicks / stats.launches) * 100).toFixed(1)
+    : 0;
 
-    const conversion = s.launches > 0
-      ? ((s.product_clicks / s.launches) * 100).toFixed(1)
-      : 0;
+  panel.innerHTML = `
+    <h2 style="margin-bottom:20px;">📊 Smart Deal Analytics</h2>
 
-    panel.innerHTML = `
-      <h2 style="margin-bottom:20px;">📊 Smart Deal Admin 3.0</h2>
+    <div class="admin-card">🚀 Запусков: <b>${stats.launches}</b></div>
+    <div class="admin-card">👤 Уникальных пользователей: <b>${stats.users.length}</b></div>
+    <div class="admin-card">🛒 Клики по товарам: <b>${totalProductClicks}</b></div>
+    <div class="admin-card">📈 Конверсия: <b>${conversion}%</b></div>
 
-      <div class="admin-card">🚀 Всего запусков: <b>${s.launches}</b></div>
-      <div class="admin-card">👤 Всего пользователей: <b>${s.unique_users}</b></div>
-      <div class="admin-card">🛒 Всего кликов: <b>${s.product_clicks}</b></div>
-      <div class="admin-card">📈 Общая конверсия: <b>${conversion}%</b></div>
+    <h3 style="margin-top:25px;">🔥 Топ категории</h3>
+    ${renderTop(stats.categories)}
 
-      <h3 style="margin-top:25px;">📅 Сегодня</h3>
-      <div class="admin-card">🚀 Запусков сегодня: <b>${s.today_launches}</b></div>
-      <div class="admin-card">👤 Новых сегодня: <b>${s.today_users}</b></div>
-      <div class="admin-card">🛒 Кликов сегодня: <b>${s.today_product_clicks}</b></div>
+    <h3 style="margin-top:25px;">💰 Топ товары</h3>
+    ${renderTop(stats.products)}
 
-      <h3 style="margin-top:25px;">🔥 Топ категории</h3>
-      ${renderTop(s.top_categories)}
-
-      <h3 style="margin-top:25px;">💰 Топ товары</h3>
-      ${renderTop(s.top_products)}
-
-      <br>
-      <button onclick="closeAdmin()">Закрыть</button>
-    `;
-
-  } catch(e){
-    panel.innerHTML = "Ошибка загрузки данных";
-  }
+    <br>
+    <button onclick="resetStats()">🗑 Сбросить</button>
+    <button onclick="closeAdmin()">Закрыть</button>
+  `;
 };
 
 function renderTop(obj){
-  if(!obj || Object.keys(obj).length === 0){
+  if(Object.keys(obj).length === 0){
     return `<div class="admin-card">Нет данных</div>`;
   }
 
@@ -439,9 +425,7 @@ function renderTop(obj){
     .sort((a,b)=>b[1]-a[1])
     .slice(0,3)
     .map((item,i)=>{
-      const percent = total > 0
-        ? ((item[1] / total) * 100).toFixed(1)
-        : 0;
+      const percent = ((item[1] / total) * 100).toFixed(1);
 
       return `
         <div class="admin-card">
@@ -455,6 +439,11 @@ function renderTop(obj){
 
 function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
+}
+
+function resetStats(){
+  localStorage.removeItem("smartDealStats");
+  location.reload();
 }
 
 loadData();
