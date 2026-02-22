@@ -113,54 +113,77 @@ h1{
 
 .price-btn{
   width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+
   background:linear-gradient(145deg,#121212,#1c1c1c);
   border:1px solid rgba(255,255,255,.06);
   color:#fff;
   padding:18px 20px;
   margin-bottom:16px;
-  border-radius:18px;
+  border-radius:20px;
   font-size:15px;
   font-weight:600;
   letter-spacing:.3px;
   cursor:pointer;
   position:relative;
   overflow:hidden;
+
   opacity:0;
   transform:translateY(15px);
-  transition:all .3s cubic-bezier(.22,1,.36,1);
+  transition:all .35s cubic-bezier(.22,1,.36,1);
+
   box-shadow:
     0 8px 25px rgba(0,0,0,.6),
     inset 0 1px 0 rgba(255,255,255,.05);
 }
 
-/* блеск */
-.price-btn::after{
-  content:"";
-  position:absolute;
-  top:0;
-  left:-100%;
-  width:100%;
-  height:100%;
-  background:linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,.08),
-    transparent
-  );
-  transition:.6s;
+/* левая часть */
+.price-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 
-/* hover / tap */
+/* иконка */
+.price-icon{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(29,185,84,.12);
+  color:#1DB954;
+  font-size:16px;
+}
+
+/* стрелка */
+.price-arrow{
+  font-size:18px;
+  opacity:.4;
+  transition:.3s;
+}
+
+/* glow эффект */
 .price-btn:hover{
-  transform:translateY(-3px);
+  transform:translateY(-4px);
   border-color:rgba(29,185,84,.5);
   box-shadow:
-    0 12px 35px rgba(29,185,84,.25),
+    0 15px 40px rgba(29,185,84,.25),
     inset 0 1px 0 rgba(255,255,255,.08);
 }
 
-.price-btn:hover::after{
-  left:100%;
+.price-btn:hover .price-arrow{
+  opacity:1;
+  transform:translateX(6px);
+}
+
+/* анимация нажатия */
+.price-btn:active{
+  transform:scale(.97);
 }
 
 .back-btn{
