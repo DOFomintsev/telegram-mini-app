@@ -371,50 +371,53 @@ function renderCategories(){
 /* ===== Цены ===== */
 
 function showPrices(category){
-  const categoriesBlock=document.getElementById("categories");
-  const pricesDiv=document.getElementById("prices");
 
-  haptic("medium");
+  const pricesDiv = document.getElementById("prices");
+  const categoriesBlock = document.getElementById("categories");
+
+  pricesDiv.innerHTML="";
   categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
-  pricesDiv.innerHTML="";
 
-  data[category].forEach((item,index)=>{
-    const btn=document.createElement("button");
-    btn.className="price-btn";
-    btn.innerText=item.price;
+  products[category].forEach((product,i)=>{
 
-    btn.onclick=()=>{
-      const key=category+" | "+item.price;
-      if(!stats.products[key]) stats.products[key]=0;
-      stats.products[key]++;
+    const card = document.createElement("div");
+    card.className="product-card";
+
+    card.innerHTML = `
+      <img src="${product.image}" class="product-img">
+      <div class="product-info">
+        <div class="product-title">${product.name}</div>
+        <div class="product-price">${product.price} ₽</div>
+      </div>
+    `;
+
+    card.onclick = ()=>{
+      tg.HapticFeedback.impactOccurred("medium");
+
       sendAnalytics({
-  user_id: user?.id || 0,
-  username: user?.username || "",
-  action: "product_click",
-  category: category,
-  product: item.price,
-  price: item.price
-});
-      localStorage.setItem("smartDealStats", JSON.stringify(stats));
-      tg.openLink(item.link);
+        action:"product_click",
+        product:product.name,
+        price:product.price
+      });
+
+      window.open(product.link,"_blank");
     };
 
-    pricesDiv.appendChild(btn);
+    pricesDiv.appendChild(card);
 
     setTimeout(()=>{
-      btn.style.opacity="1";
-      btn.style.transform="translateY(0)";
-    },index*80);
+      card.classList.add("show");
+    }, i*120);
+
   });
 
-  const back=document.createElement("div");
+  const back = document.createElement("div");
   back.className="back-btn";
-  back.innerText="← Назад";
+  back.innerText="Назад";
   back.onclick=()=>{
     pricesDiv.style.display="none";
     categoriesBlock.style.display="grid";
-    renderCategories();
   };
 
   pricesDiv.appendChild(back);
