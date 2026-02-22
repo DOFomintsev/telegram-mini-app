@@ -111,58 +111,20 @@ h1{
   padding:20px;
 }
 
-/* ===== Premium Product Card ===== */
-
-.product-card{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  background:linear-gradient(145deg,#111,#1a1a1a);
+.price-btn{
+  width:100%;
+  background:#111111;
   border:1px solid rgba(255,255,255,.08);
-  border-radius:18px;
-  padding:14px;
+  color:white;
+  padding:16px 18px;
   margin-bottom:14px;
+  border-radius:16px;
+  font-size:15px;
+  font-weight:600;
   cursor:pointer;
   opacity:0;
-  transform:translateY(15px);
-  transition:.35s ease;
-  backdrop-filter:blur(8px);
-}
-
-.product-card.show{
-  opacity:1;
-  transform:translateY(0);
-}
-
-.product-card:hover{
-  transform:scale(1.02);
-  border-color:rgba(29,185,84,.4);
-}
-
-.product-img{
-  width:64px;
-  height:64px;
-  border-radius:14px;
-  object-fit:cover;
-  background:#000;
-  flex-shrink:0;
-}
-
-.product-info{
-  flex:1;
-}
-
-.product-title{
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:6px;
-  line-height:1.2;
-}
-
-.product-price{
-  font-size:15px;
-  font-weight:700;
-  color:#1DB954;
+  transform:translateY(10px);
+  transition:.25s ease;
 }
 
 .back-btn{
@@ -247,7 +209,6 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 const ADMIN_ID = 929524875;
-
 /* ===== SERVER ANALYTICS ===== */
 
 const ANALYTICS_URL = "https://script.google.com/macros/s/AKfycbxcIbUNFvrbt1BMSTPsAt6X7WBf44PXaDoSBu8x5PyqkwndQZVa2w2180AYaYQrRx7y/exec";
