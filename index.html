@@ -382,69 +382,42 @@ function showPrices(category){
   pricesDiv.appendChild(back);
 }
 
-/* ===== ADMIN 2.0 ===== */
+/* ===== ADMIN SERVER VERSION ===== */
 
-document.getElementById("adminBtn").onclick = () => {
+document.getElementById("adminBtn").onclick = async () => {
+
   const panel = document.getElementById("adminPanel");
   panel.style.display = "block";
+  panel.innerHTML = "Загрузка...";
 
-  const totalCategoryClicks = Object.values(stats.categories).reduce((a,b)=>a+b,0);
-  const totalProductClicks = Object.values(stats.products).reduce((a,b)=>a+b,0);
-  const conversion = stats.launches > 0
-    ? ((totalProductClicks / stats.launches) * 100).toFixed(1)
-    : 0;
+  try{
+    const response = await fetch(ANALYTICS_URL);
+    const serverStats = await response.json();
 
-  panel.innerHTML = `
-    <h2 style="margin-bottom:20px;">📊 Smart Deal Analytics</h2>
+    const conversion = serverStats.launches > 0
+      ? ((serverStats.product_clicks / serverStats.launches) * 100).toFixed(1)
+      : 0;
 
-    <div class="admin-card">🚀 Запусков: <b>${stats.launches}</b></div>
-    <div class="admin-card">👤 Уникальных пользователей: <b>${stats.users.length}</b></div>
-    <div class="admin-card">🛒 Клики по товарам: <b>${totalProductClicks}</b></div>
-    <div class="admin-card">📈 Конверсия: <b>${conversion}%</b></div>
+    panel.innerHTML = `
+      <h2 style="margin-bottom:20px;">📊 Smart Deal Analytics</h2>
 
-    <h3 style="margin-top:25px;">🔥 Топ категории</h3>
-    ${renderTop(stats.categories)}
+      <div class="admin-card">🚀 Запусков: <b>${serverStats.launches}</b></div>
+      <div class="admin-card">👤 Уникальных пользователей: <b>${serverStats.unique_users}</b></div>
+      <div class="admin-card">🛒 Клики по товарам: <b>${serverStats.product_clicks}</b></div>
+      <div class="admin-card">📈 Конверсия: <b>${conversion}%</b></div>
 
-    <h3 style="margin-top:25px;">💰 Топ товары</h3>
-    ${renderTop(stats.products)}
+      <br>
+      <button onclick="closeAdmin()">Закрыть</button>
+    `;
 
-    <br>
-    <button onclick="resetStats()">🗑 Сбросить</button>
-    <button onclick="closeAdmin()">Закрыть</button>
-  `;
-};
-
-function renderTop(obj){
-  if(Object.keys(obj).length === 0){
-    return `<div class="admin-card">Нет данных</div>`;
+  } catch(e){
+    panel.innerHTML = "Ошибка загрузки данных";
   }
-
-  const total = Object.values(obj).reduce((a,b)=>a+b,0);
-
-  return Object.entries(obj)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0,3)
-    .map((item,i)=>{
-      const percent = ((item[1] / total) * 100).toFixed(1);
-
-      return `
-        <div class="admin-card">
-          ${i+1}. ${item[0]}<br>
-          <small>${item[1]} кликов (${percent}%)</small>
-        </div>
-      `;
-    })
-    .join("");
-}
+};
 
 function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
-}
-
-function resetStats(){
-  localStorage.removeItem("smartDealStats");
-  location.reload();
-}
+} 
 
 loadData();
 </script>
