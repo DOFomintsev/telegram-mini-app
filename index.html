@@ -238,11 +238,40 @@ h1{
   transform:scale(.96);
 }
 
-/* вторая кнопка — более спокойная */
-.action-btn.outline{
-  background:#111;
-  border:1px solid rgba(255,255,255,.15);
-  box-shadow:0 8px 25px rgba(0,0,0,.5);
+/* Стиль кнопок "Обратная связь" и "Сайт" */
+  
+.action-btn{
+  flex:1;
+  padding:13px 16px;
+  font-size:14px;
+  font-weight:600;
+  border-radius:18px;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.08);
+  color:#fff;
+
+  background:linear-gradient(145deg,#121212,#1c1c1c);
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.05);
+
+  transition:all .35s cubic-bezier(.22,1,.36,1);
+  position:relative;
+  overflow:hidden;
+}
+
+/* hover glow */
+.action-btn:hover{
+  transform:translateY(-3px);
+  border-color:rgba(29,185,84,.4);
+  box-shadow:
+    0 15px 40px rgba(29,185,84,.25),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+/* press */
+.action-btn:active{
+  transform:scale(.96);
 }
 
 /* ===== Admin ===== */
