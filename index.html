@@ -392,6 +392,14 @@ h1{
   from{ background-position:0% center; }
   to{ background-position:250% center; }
 }
+
+/* hide bottom panel when needed */
+.bottom-actions.hidden{
+  opacity:0 !important;
+  transform:translateX(-50%) translateY(30px) !important;
+  pointer-events:none !important;
+}
+  
 </style>
 </head>
 
@@ -569,6 +577,7 @@ function showPrices(category){
   const pricesDiv=document.getElementById("prices");
 
   haptic("medium");
+  hideBottom();
   categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
   pricesDiv.innerHTML="";
@@ -615,6 +624,7 @@ function showPrices(category){
     pricesDiv.style.display="none";
     categoriesBlock.style.display="grid";
     renderCategories();
+    showBottom();
   };
 
   pricesDiv.appendChild(back);
@@ -733,6 +743,7 @@ swipeContainer.addEventListener("touchend", () => {
       document.getElementById("prices").style.display="none";
       document.getElementById("categories").style.display="grid";
       renderCategories();
+      showBottom();
       swipeContainer.style.transition="none";
       swipeContainer.style.transform="translateX(0)";
       setTimeout(()=>{
@@ -746,7 +757,14 @@ swipeContainer.addEventListener("touchend", () => {
 
   isSwiping = false;
 });
-  
+
+function hideBottom(){
+  document.getElementById("bottomActions")?.classList.add("hidden");
+}
+function showBottom(){
+  document.getElementById("bottomActions")?.classList.remove("hidden");
+}
+
 loadData();
 </script>
 
