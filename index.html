@@ -342,6 +342,74 @@ h1{
   from{ opacity:.7; }
   to{ opacity:1; }
 }
+
+/* ===== Luxury Signature ===== */
+
+.signature-wrapper{
+  width:100%;
+  text-align:center;
+  margin-bottom:14px;
+  opacity:0;
+  transform:translateY(8px);
+  transition:.8s cubic-bezier(.22,1,.36,1);
+}
+
+.bottom-actions.show .signature-wrapper{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.signature{
+  font-size:12px;
+  letter-spacing:.8px;
+  font-family:"Brush Script MT","Segoe Script",cursive;
+  position:relative;
+
+  background:linear-gradient(
+    110deg,
+    #8f6b1f 0%,
+    #d4af37 25%,
+    #f6e27a 45%,
+    #ffffff 50%,
+    #f6e27a 55%,
+    #d4af37 75%,
+    #8f6b1f 100%
+  );
+
+  background-size:250% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  animation:goldShimmer 6s linear infinite;
+
+  text-shadow:
+    0 0 4px rgba(212,175,55,.35),
+    0 0 10px rgba(212,175,55,.15);
+}
+
+/* тонкая золотая линия */
+.signature-line{
+  margin:6px auto 0;
+  width:120px;
+  height:1px;
+
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(212,175,55,.9),
+    transparent
+  );
+
+  box-shadow:0 0 8px rgba(212,175,55,.4);
+  opacity:.8;
+}
+
+/* shimmer анимация */
+@keyframes goldShimmer{
+  from{ background-position:0% center; }
+  to{ background-position:250% center; }
+}
+
 </style>
 </head>
 
@@ -355,9 +423,14 @@ h1{
 </div>
   
 <div class="bottom-actions" id="bottomActions">
-<div class="signature">
-  The idea is developed — Fomintsev Denis
+  
+  <div class="signature-wrapper">
+  <div class="signature">
+    The idea is developed — Fomintsev Denis
+  </div>
+  <div class="signature-line"></div>
 </div>
+  
   <button class="action-btn" onclick="openFeedback()">
     💬 Обратная связь
   </button>
