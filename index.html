@@ -205,10 +205,10 @@ h1{
   max-width:420px;
 
   display:flex;
-  flex-direction:column;   /* ВАЖНО */
-  align-items:center;      /* центрируем */
+  flex-direction:column;
+  align-items:stretch;   /* ВАЖНО */
 
-  gap:10px;
+  gap:12px;
 
   opacity:0;
   transition:.6s cubic-bezier(.22,1,.36,1);
@@ -405,21 +405,22 @@ h1{
 </div>
   
 <div class="bottom-actions" id="bottomActions">
-  
-  <div class="signature-wrapper">
-  <div class="signature">
-    The idea is developed — Fomintsev Denis
-  </div>
-  <div class="signature-line"></div>
- </div>
-  
-  <button class="action-btn" onclick="openFeedback()">
-    💬 Обратная связь
-  </button>
 
-  <button class="action-btn outline" onclick="openSite()">
-    🌐 Зайти на сайт
-  </button>
+  <div class="signature-plate">
+    <span class="plate-text">
+      The idea is developed — Fomintsev Denis
+    </span>
+  </div>
+
+  <div class="bottom-buttons">
+    <button class="action-btn" onclick="openFeedback()">
+      💬 Обратная связь
+    </button>
+
+    <button class="action-btn outline" onclick="openSite()">
+      🌐 Зайти на сайт
+    </button>
+  </div>
 
 </div>
 
