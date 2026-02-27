@@ -314,101 +314,71 @@ h1{
   will-change: transform;
 } 
 
-/* ===== Engraved Gold Plate ===== */
+/* ===== Luxury Signature ===== */
 
-.signature-plate{
+.signature-wrapper{
   width:100%;
-  display:flex;
-  justify-content:center;
-  margin-bottom:12px;
-
+  text-align:center;
+  margin-bottom:14px;
   opacity:0;
   transform:translateY(8px);
   transition:.8s cubic-bezier(.22,1,.36,1);
 }
 
-.bottom-actions.show .signature-plate{
+.bottom-actions.show .signature-wrapper{
   opacity:1;
   transform:translateY(0);
 }
 
-/* сама "пластина" */
-.signature-plate{
-  position:relative;
-  padding:6px 12px;
-  border-radius:999px;
-
-/* металл */
-  background:
-    radial-gradient(120px 40px at 30% 20%, rgba(255,255,255,.22), transparent 55%),
-    radial-gradient(140px 60px at 70% 80%, rgba(0,0,0,.35), transparent 60%),
-    linear-gradient(135deg,#2a220e 0%, #a57b1f 18%, #f3dc7b 40%, #caa132 62%, #6c5316 100%);
-
-/* кант + глубина */
-  border:1px solid rgba(255,255,255,.14);
-  box-shadow:
-    0 10px 30px rgba(0,0,0,.55),
-    inset 0 1px 0 rgba(255,255,255,.22),
-    inset 0 -1px 0 rgba(0,0,0,.55);
-}
-
-/* микротекст "гравировка" */
-.plate-text{
-  display:block;
-  font-size:11px;
-  letter-spacing:.9px;
+.signature{
+  font-size:12px;
+  letter-spacing:.8px;
   font-family:"Brush Script MT","Segoe Script",cursive;
-  white-space:nowrap;
-
-/* текст как выгравированный: темнее + подсвет сверху */
-  color:rgba(28,18,3,.78);
-  text-shadow:
-    0 1px 0 rgba(255,255,255,.20),
-    0 -1px 0 rgba(0,0,0,.45),
-    0 2px 4px rgba(0,0,0,.35);
-  opacity:.95;
-}
-
-/* тонкая "гравировальная" рамка внутри */
-.signature-plate::before{
-  content:"";
-  position:absolute;
-  inset:2px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,.25);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
-  pointer-events:none;
-  opacity:.55;
-}
-
-/* спекулярный блик (очень деликатный) */
-.signature-plate::after{
-  content:"";
-  position:absolute;
-  inset:-10px -30px;
-  border-radius:999px;
-  pointer-events:none;
+  position:relative;
 
   background:linear-gradient(
-    120deg,
-    transparent 0%,
-    rgba(255,255,255,.00) 35%,
-    rgba(255,255,255,.18) 50%,
-    rgba(255,255,255,.00) 65%,
-    transparent 100%
+    110deg,
+    #8f6b1f 0%,
+    #d4af37 25%,
+    #f6e27a 45%,
+    #ffffff 50%,
+    #f6e27a 55%,
+    #d4af37 75%,
+    #8f6b1f 100%
   );
 
-  transform:translateX(-55%);
-  opacity:.55;
-  mix-blend-mode:screen;
-  animation:plateSheen 7.5s ease-in-out infinite;
+  background-size:250% auto;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  animation:goldShimmer 6s linear infinite;
+
+  text-shadow:
+    0 0 4px rgba(212,175,55,.35),
+    0 0 10px rgba(212,175,55,.15);
 }
 
-@keyframes plateSheen{
-  0%   { transform:translateX(-65%); opacity:.20; }
-  45%  { opacity:.55; }
-  55%  { opacity:.55; }
-  100% { transform:translateX(65%); opacity:.20; }
+/* тонкая золотая линия */
+.signature-line{
+  margin:6px auto 0;
+  width:120px;
+  height:1px;
+
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(212,175,55,.9),
+    transparent
+  );
+
+  box-shadow:0 0 8px rgba(212,175,55,.4);
+  opacity:.8;
+}
+
+/* shimmer анимация */
+@keyframes goldShimmer{
+  from{ background-position:0% center; }
+  to{ background-position:250% center; }
 }
 </style>
 </head>
@@ -424,9 +394,12 @@ h1{
   
 <div class="bottom-actions" id="bottomActions">
   
-  <div class="signature-plate" aria-label="Credits">
-  <span class="plate-text">The idea is developed — Fomintsev Denis</span>
+  <div class="signature-wrapper">
+  <div class="signature">
+    The idea is developed — Fomintsev Denis
   </div>
+  <div class="signature-line"></div>
+ </div>
   
   <button class="action-btn" onclick="openFeedback()">
     💬 Обратная связь
