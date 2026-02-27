@@ -314,36 +314,7 @@ h1{
   will-change: transform;
 } 
 
-/* ===== Gold Signature ===== */
-
-.signature{
-  width:100%;
-  text-align:center;
-  font-size:12px;
-  margin-bottom:10px;
-  letter-spacing:.6px;
-
-  font-family:"Brush Script MT", "Segoe Script", cursive;
-
-  background:linear-gradient(90deg,#d4af37,#f6e27a,#d4af37);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-
-  opacity:.85;
-
-  text-shadow:
-    0 0 6px rgba(212,175,55,.4),
-    0 0 12px rgba(212,175,55,.2);
-
-  animation:goldGlow 3s ease-in-out infinite alternate;
-}
-
-@keyframes goldGlow{
-  from{ opacity:.7; }
-  to{ opacity:1; }
-}
-
-/* ===== Luxury Signature ===== */
+/* ===== Engraved Gold Signature ===== */
 
 .signature-wrapper{
   width:100%;
@@ -359,57 +330,88 @@ h1{
   transform:translateY(0);
 }
 
+/* базовая "золото" */
 .signature{
   font-size:12px;
   letter-spacing:.8px;
   font-family:"Brush Script MT","Segoe Script",cursive;
   position:relative;
+  display:inline-block;
 
   background:linear-gradient(
     110deg,
-    #8f6b1f 0%,
-    #d4af37 25%,
+    #6f5416 0%,
+    #caa132 22%,
     #f6e27a 45%,
-    #ffffff 50%,
+    #fff3b0 50%,
     #f6e27a 55%,
-    #d4af37 75%,
-    #8f6b1f 100%
+    #caa132 78%,
+    #6f5416 100%
   );
-
-  background-size:250% auto;
+  background-size:220% auto;
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-
-  animation:goldShimmer 6s linear infinite;
-
-  text-shadow:
-    0 0 4px rgba(212,175,55,.35),
-    0 0 10px rgba(212,175,55,.15);
 }
 
-/* тонкая золотая линия */
+/* гравировка: "вдавленный" эффект */
+.signature.engraved{
+  /* темная внутренняя тень + светлый кант */
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.14),     /* верхний подсвет */
+    0 -1px 0 rgba(0,0,0,.55),          /* нижний контур */
+    0 2px 4px rgba(0,0,0,.55);         /* глубина */
+
+  filter:contrast(1.08) saturate(1.1);
+}
+
+/* тончайший micro-specular блик "по гравировке" */
+.signature.engraved::after{
+  content:"";
+  position:absolute;
+  inset:-2px -10px;
+  pointer-events:none;
+
+  background:linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,.10) 35%,
+    rgba(255,255,255,.22) 50%,
+    rgba(255,255,255,.10) 65%,
+    transparent 100%
+  );
+
+  mix-blend-mode:screen;
+  opacity:.55;
+  transform:translateX(-60%);
+  animation:engravedSheen 7s ease-in-out infinite;
+  border-radius:999px;
+}
+
+@keyframes engravedSheen{
+  0%   { transform:translateX(-70%); opacity:.25; }
+  40%  { opacity:.55; }
+  60%  { opacity:.55; }
+  100% { transform:translateX(70%); opacity:.25; }
+}
+
+/* тонкая линия */
 .signature-line{
   margin:6px auto 0;
-  width:120px;
+  width:128px;
   height:1px;
-
   background:linear-gradient(
     90deg,
     transparent,
-    rgba(212,175,55,.9),
+    rgba(246,226,122,.85),
+    rgba(202,161,50,.9),
+    rgba(246,226,122,.85),
     transparent
   );
-
-  box-shadow:0 0 8px rgba(212,175,55,.4);
-  opacity:.8;
+  box-shadow:
+    0 0 10px rgba(212,175,55,.22),
+    0 1px 0 rgba(255,255,255,.06);
+  opacity:.75;
 }
-
-/* shimmer анимация */
-@keyframes goldShimmer{
-  from{ background-position:0% center; }
-  to{ background-position:250% center; }
-}
-
 </style>
 </head>
 
@@ -424,8 +426,8 @@ h1{
   
 <div class="bottom-actions" id="bottomActions">
   
-  <div class="signature-wrapper">
-  <div class="signature">
+<div class="signature-wrapper">
+  <div class="signature engraved">
     The idea is developed — Fomintsev Denis
   </div>
   <div class="signature-line"></div>
