@@ -507,13 +507,12 @@ h1{
 }
 /* ===== 3D Arrow for Price Cards (Index 20) ===== */
 
-/* превращаем правую часть в объёмную капсулу */
-/* ===== Arrow same size as left icon ===== */
+/* превращаем правую часть в объёмную /* ===== Smaller Arrow (50% size) ===== */
 
 .price-arrow{
-  width:34px;
-  height:34px;
-  border-radius:10px; /* как у .price-icon */
+  width:17px;
+  height:17px;
+  border-radius:6px;
 
   display:flex;
   align-items:center;
@@ -524,16 +523,15 @@ h1{
 
   background:
     radial-gradient(circle at 25% 20%, rgba(255,255,255,.16), transparent 55%),
-    linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+    linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
 
-  border:1px solid rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.08);
 
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.10),
-    inset 0 -8px 14px rgba(0,0,0,.35),
-    0 8px 18px rgba(0,0,0,.55);
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -4px 8px rgba(0,0,0,.35),
+    0 4px 10px rgba(0,0,0,.5);
 }
-
 /* “объём” самой SVG-стрелки */
 .price-arrow svg{
   filter:
