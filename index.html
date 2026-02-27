@@ -12,60 +12,118 @@
   --bg:#000000;
   --card1:#1DB954;
   --card2:#16a34a;
+  --px: 0px;
 }
+
+*{ box-sizing:border-box; }
 
 body{
   margin:0;
-  background:var(--bg);
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   overflow-x:hidden;
-  padding-bottom:90px;
+  padding-bottom:110px;
   position:relative;
+
+  background:
+    radial-gradient(circle at 20% 30%, rgba(29,185,84,.12), transparent 45%),
+    radial-gradient(circle at 80% 70%, rgba(22,163,74,.12), transparent 45%),
+    #000;
 }
 
 body::before{
   content:"";
   position:fixed;
   inset:0;
-  background:radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+  background:radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.65) 100%);
   pointer-events:none;
+  z-index:1;
+}
+
+.bg-parallax{
+  position:fixed;
+  inset:-40px;
+  pointer-events:none;
+  z-index:0;
+  transform:translateX(calc(var(--px) * .18));
+  transition:transform .18s ease;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255,255,255,.06), transparent 40%),
+    radial-gradient(circle at 82% 78%, rgba(255,255,255,.04), transparent 42%),
+    radial-gradient(circle at 30% 80%, rgba(29,185,84,.08), transparent 45%),
+    radial-gradient(circle at 80% 25%, rgba(22,163,74,.07), transparent 45%);
+  opacity:.9;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:2;
+  opacity:.055;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
 }
 
 h1{
   text-align:center;
   padding:24px 0 10px;
   font-size:22px;
-  font-weight:700;
+  font-weight:750;
   opacity:0;
-  transform:translateY(-20px);
-  animation:titleAppear .8s ease forwards;
+  transform:translateY(-16px);
+  animation:titleAppear .8s cubic-bezier(.22,1,.36,1) forwards;
+  position:relative;
+  z-index:3;
 }
 
 @keyframes titleAppear{
   to{opacity:1;transform:translateY(0);}
 }
 
-/* ===== Категории ===== */
+#swipeContainer{
+  position:relative;
+  z-index:3;
+}
+
+.swipeable{
+  transition: transform .25s cubic-bezier(.22,1,.36,1);
+  will-change: transform;
+}
 
 .categories{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:18px;
   padding:20px;
+  opacity:1;
+  transform:translateX(0);
+  transition:opacity .35s ease, transform .35s ease;
+}
+
+.categories.fadeOut{
+  opacity:0;
+  transform:translateX(-10px);
 }
 
 .category-card{
-  background:linear-gradient(135deg,var(--card1),var(--card2));
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255,255,255,.16), transparent 42%),
+    linear-gradient(135deg,var(--card1),var(--card2));
   border-radius:24px;
   padding:30px 20px;
   text-align:center;
-  box-shadow:0 12px 35px rgba(29,185,84,0.35);
   cursor:pointer;
   position:relative;
   overflow:hidden;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.06),
+    0 18px 45px rgba(0,0,0,.65),
+    0 0 70px rgba(29,185,84,.14);
+
   opacity:0;
-  transform:translateY(50px) scale(.9);
+  transform:translateY(50px) scale(.92);
   filter:blur(14px);
 }
 
@@ -74,16 +132,8 @@ h1{
 }
 
 @keyframes ultraAppear{
-  0%{opacity:0;transform:translateY(50px) scale(.9);filter:blur(14px);}
+  0%{opacity:0;transform:translateY(50px) scale(.92);filter:blur(14px);}
   100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}
-}
-
-.category-card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at top left, rgba(255,255,255,.18), transparent 60%);
-  opacity:.6;
 }
 
 .icon{ margin-bottom:14px; }
@@ -91,118 +141,29 @@ h1{
 .icon svg{
   width:46px;
   height:46px;
-  stroke:rgba(255,255,255,0.95);
-  fill:rgba(255,255,255,0.08);
-  stroke-width:1.8;
-  filter:drop-shadow(0 0 10px rgba(255,255,255,.35));
+  stroke:rgba(255,255,255,0.92);
+  fill:rgba(255,255,255,0.06);
+  stroke-width:1.55;
+  filter:drop-shadow(0 0 10px rgba(255,255,255,.28));
+  opacity:.95;
 }
 
 .label{
   font-size:15px;
-  font-weight:600;
+  font-weight:650;
+  letter-spacing:.2px;
 }
 
-/* ===== Цены ===== */
-
-.prices{
-  display:none;
-  padding:20px;
-}
-
-.price-btn{
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-
-  background:linear-gradient(145deg,#121212,#1c1c1c);
-  border:1px solid rgba(255,255,255,.06);
-  color:#fff;
-  padding:18px 20px;
-  margin-bottom:16px;
-  border-radius:20px;
-  font-size:15px;
-  font-weight:600;
-  letter-spacing:.3px;
-  cursor:pointer;
-  position:relative;
-  overflow:hidden;
-
-  opacity:0;
-  transform:translateY(15px);
-  transition:all .35s cubic-bezier(.22,1,.36,1);
-
-  box-shadow:
-    0 8px 25px rgba(0,0,0,.6),
-    inset 0 1px 0 rgba(255,255,255,.05);
-}
-
-.price-left{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.price-icon{
-  width:34px;
-  height:34px;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(29,185,84,.12);
-  color:#1DB954;
-  font-size:16px;
-}
-
-.price-arrow{
-  font-size:18px;
-  opacity:.4;
-  transition:.3s;
-}
-
-.price-btn:hover{
-  transform:translateY(-4px);
-  border-color:rgba(29,185,84,.5);
-  box-shadow:
-    0 15px 40px rgba(29,185,84,.25),
-    inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-.price-btn:hover .price-arrow{
-  opacity:1;
-  transform:translateX(6px);
-}
-
-.price-btn:active{ transform:scale(.97); }
-
-.back-btn{
-  text-align:center;
-  font-size:14px;
-  opacity:.6;
-  margin-top:6px;
-  cursor:pointer;
-}
-
-/* ===== iOS Swipe Back ===== */
-
-.swipeable{
-  transition: transform .25s ease;
-  will-change: transform;
-}
-
-/* ===============================
-   BOTTOM ACTIONS — CLEAN VERSION
-   =============================== */
+/* Glass Bottom Panel */
 
 .bottom-actions{
   position:fixed;
   bottom:18px;
   left:50%;
   transform:translateX(-50%) translateY(30px);
-  width:90%;
-  max-width:420px;
+  width:92%;
+  max-width:430px;
+  z-index:50;
 
   display:flex;
   flex-direction:column;
@@ -210,7 +171,19 @@ h1{
 
   opacity:0;
   transition:.6s cubic-bezier(.22,1,.36,1);
-  z-index:50;
+
+  background:rgba(12,12,12,.55);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;
+  padding:14px;
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.05),
+    0 18px 55px rgba(0,0,0,.72),
+    0 0 70px rgba(29,185,84,.08);
 }
 
 .bottom-actions.show{
@@ -224,125 +197,46 @@ h1{
   pointer-events:none !important;
 }
 
-/* Signature (gold) */
-
-.signature-wrapper{
-  text-align:center;
-  opacity:0;
-  transform:translateY(6px);
-  transition:.8s cubic-bezier(.22,1,.36,1);
-}
-
-.bottom-actions.show .signature-wrapper{
-  opacity:1;
-  transform:translateY(0);
-}
-
-.signature{
-  font-size:12px;
-  letter-spacing:.8px;
-  font-family:"Brush Script MT","Segoe Script",cursive;
-
-  background:linear-gradient(
-    110deg,
-    #8f6b1f 0%,
-    #d4af37 25%,
-    #f6e27a 45%,
-    #ffffff 50%,
-    #f6e27a 55%,
-    #d4af37 75%,
-    #8f6b1f 100%
-  );
-
-  background-size:250% auto;
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-
-  animation:goldShimmer 6s linear infinite;
-
-  text-shadow:
-    0 0 4px rgba(212,175,55,.35),
-    0 0 10px rgba(212,175,55,.15);
-}
-
-.signature-line{
-  margin:6px auto 0;
-  width:120px;
-  height:1px;
-  background:linear-gradient(90deg, transparent, rgba(212,175,55,.9), transparent);
-  box-shadow:0 0 8px rgba(212,175,55,.4);
-  opacity:.8;
-}
-
-@keyframes goldShimmer{
-  from{ background-position:0% center; }
-  to{ background-position:250% center; }
-}
-
-/* Buttons row */
-
 .bottom-buttons{
   width:100%;
   display:flex;
-  flex-direction:row;
   gap:12px;
 }
 
 .bottom-buttons .action-btn{
   flex:1;
-  min-width:0;
 }
-
-/* Base button */
 
 .action-btn{
   padding:13px 16px;
   font-size:14px;
-  font-weight:600;
+  font-weight:650;
   border-radius:18px;
   cursor:pointer;
   border:1px solid rgba(255,255,255,.08);
   color:#fff;
-
-  background:linear-gradient(145deg,#121212,#1c1c1c);
+  background:linear-gradient(145deg,#111,#1b1b1b);
   box-shadow:
-    0 8px 25px rgba(0,0,0,.6),
-    inset 0 1px 0 rgba(255,255,255,.05);
-
-  transition:all .35s cubic-bezier(.22,1,.36,1);
+    0 1px 0 rgba(255,255,255,.05),
+    0 10px 28px rgba(0,0,0,.72);
+  transition:all .5s cubic-bezier(.22,1.4,.36,1);
+  position:relative;
+  overflow:hidden;
 }
-
-.action-btn:hover{
-  transform:translateY(-3px);
-  border-color:rgba(29,185,84,.4);
-  box-shadow:
-    0 15px 40px rgba(29,185,84,.25),
-    inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-.action-btn:active{ transform:scale(.96); }
-
-/* Accent button */
 
 .action-btn.primary{
   border:none;
   background:linear-gradient(135deg,var(--card1),var(--card2));
-  box-shadow:0 10px 30px rgba(29,185,84,.35);
+  box-shadow:0 14px 38px rgba(29,185,84,.28);
 }
-
-.action-btn.primary:hover{
-  box-shadow:0 15px 40px rgba(29,185,84,.45);
-}
-
-/* ===== Admin ===== */
 
 .admin-btn{
   position:fixed;
-  top:18px !important;
-  right:18px !important;
-  z-index:1001; /* ✅ выше bottom-actions (50) и panel (1000) */
-  background:#111;
-  border:1px solid rgba(255,255,255,.15);
+  top:18px;
+  right:18px;
+  z-index:1001;
+  background:rgba(17,17,17,.92);
+  border:1px solid rgba(255,255,255,.16);
   color:#fff;
   padding:10px 14px;
   border-radius:12px;
@@ -353,61 +247,33 @@ h1{
 .admin-panel{
   position:fixed;
   inset:0;
-  background:#000;
+  background:rgba(0,0,0,.92);
   padding:25px;
   overflow-y:auto;
   display:none;
   z-index:1000;
-}
-
-.admin-card{
-  background:#111;
-  padding:14px;
-  border-radius:14px;
-  margin-bottom:12px;
-  border:1px solid rgba(255,255,255,.08);
-}
-
-.admin-panel .close-x{
-  position:fixed;
-  top:18px;
-  right:18px;
-  z-index:1002;
-  background:#111;
-  border:1px solid rgba(255,255,255,.15);
-  color:#fff;
-  padding:10px 12px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="bg-parallax"></div>
+
 <h1>Smart Deal</h1>
 
-<!-- ✅ swipeContainer содержит ТОЛЬКО экраны -->
 <div id="swipeContainer" class="swipeable">
   <div class="categories" id="categories"></div>
   <div class="prices" id="prices"></div>
 </div>
 
-<!-- ✅ Нижняя панель отдельно, НЕ внутри swipeContainer -->
 <div class="bottom-actions" id="bottomActions">
-  <div class="signature-wrapper">
-    <div class="signature">Design and Developed by Fomintsev Denis</div>
-    <div class="signature-line"></div>
-  </div>
-
   <div class="bottom-buttons">
     <button class="action-btn primary" onclick="openFeedback()">💬 Обратная связь</button>
-    <button class="action-btn outline" onclick="openSite()">🌐 Зайти на сайт</button>
+    <button class="action-btn" onclick="openSite()">🌐 Зайти на сайт</button>
   </div>
 </div>
 
-<!-- ✅ Админ-кнопка отдельно, фиксирована и над всем -->
 <button id="adminBtn" class="admin-btn" style="display:none;">⚙</button>
 <div id="adminPanel" class="admin-panel"></div>
 
@@ -416,336 +282,215 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 const ADMIN_ID = 929524875;
-
-/* ===== SERVER ANALYTICS ===== */
 const ANALYTICS_URL = "https://script.google.com/macros/s/AKfycbxcIbUNFvrbt1BMSTPsAt6X7WBf44PXaDoSBu8x5PyqkwndQZVa2w2180AYaYQrRx7y/exec";
 
-function sendAnalytics(data){
-  fetch(ANALYTICS_URL,{ method:"POST", body:JSON.stringify(data) }).catch(()=>{});
-}
-
 const user = tg.initDataUnsafe?.user;
-const isAdmin = user && user.id === ADMIN_ID;
-
-if(isAdmin){
+if(user && user.id === ADMIN_ID){
   document.getElementById("adminBtn").style.display="block";
 }
 
-function haptic(type="light"){
-  if(tg.HapticFeedback){
-    tg.HapticFeedback.impactOccurred(type);
-  }
+function sendAnalytics(data){
+  fetch(ANALYTICS_URL,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify(data)
+  }).catch(()=>{});
 }
 
 function openFeedback(){
-  haptic("medium");
+  tg.HapticFeedback?.impactOccurred("medium");
   tg.openTelegramLink("https://t.me/DFomintsev");
 }
 
 function openSite(){
-  haptic("medium");
-  tg.openLink("https://niceprice.pro", { try_instant_view: false });
+  tg.HapticFeedback?.impactOccurred("medium");
+  tg.openLink("https://niceprice.pro",{try_instant_view:false});
 }
 
-/* ===== Bottom panel show/hide ===== */
 function hideBottom(){
-  document.getElementById("bottomActions")?.classList.add("hidden");
+  document.getElementById("bottomActions").classList.add("hidden");
 }
+
 function showBottom(){
-  document.getElementById("bottomActions")?.classList.remove("hidden");
+  document.getElementById("bottomActions").classList.remove("hidden");
 }
 
-/* ===== LOCAL STATS (fallback) ===== */
-let stats = JSON.parse(localStorage.getItem("smartDealStats")) || {
-  launches:0,
-  users:[],
-  categories:{},
-  products:{}
-};
-
-stats.launches++;
-sendAnalytics({
-  user_id: user?.id || 0,
-  username: user?.username || "",
-  action: "launch"
-});
-
-if(user && !stats.users.includes(user.id)){
-  stats.users.push(user.id);
+/* Ripple */
+function attachRipples(){
+  document.querySelectorAll(".action-btn, .category-card, .price-btn").forEach(el=>{
+    el.addEventListener("click",e=>{
+      const ripple=document.createElement("span");
+      ripple.className="ripple";
+      const rect=el.getBoundingClientRect();
+      const size=Math.max(rect.width,rect.height);
+      ripple.style.width=ripple.style.height=size+"px";
+      ripple.style.left=(e.clientX-rect.left-size/2)+"px";
+      ripple.style.top=(e.clientY-rect.top-size/2)+"px";
+      el.appendChild(ripple);
+      setTimeout(()=>ripple.remove(),600);
+    });
+  });
 }
-localStorage.setItem("smartDealStats", JSON.stringify(stats));
 
-/* ===== Google Sheets ===== */
+/* Data */
 const SHEET_URL="https://docs.google.com/spreadsheets/d/1-JYl4b-6H_iWvBS2Zsez1K1DPx35iBUCCPPRiSrVY7o/export?format=csv";
-let data = {};
+let data={};
 
 async function loadData(){
-  const response = await fetch(SHEET_URL);
-  const text = await response.text();
-  const rows = text.split("\n").slice(1);
+  const res=await fetch(SHEET_URL);
+  const text=await res.text();
+  const rows=text.split("\n").slice(1);
 
-  rows.forEach(rawRow=>{
-    const row = rawRow.trim();
+  rows.forEach(r=>{
+    const row=r.trim();
     if(!row) return;
-
-    // ✅ чуть безопаснее: link собираем из "остатка", если там были запятые
-    const parts = row.split(",");
-    const category = (parts[0] || "").trim();
-    const price = (parts[1] || "").trim();
-    const link = parts.slice(2).join(",").trim();
-
+    const parts=row.split(",");
+    const category=parts[0]?.trim();
+    const price=parts[1]?.trim();
+    const link=parts.slice(2).join(",").trim();
     if(!category) return;
-    if(!data[category]) data[category] = [];
-    data[category].push({ price, link });
+    if(!data[category]) data[category]=[];
+    data[category].push({price,link});
   });
 
   renderCategories();
-  setTimeout(()=>{
-    document.getElementById("bottomActions").classList.add("show");
-  }, 700);
+  setTimeout(()=>document.getElementById("bottomActions").classList.add("show"),600);
 }
 
-/* ===== Icons ===== */
+/* Icons */
 function getIcon(category){
-  if(category==="Смартфоны"){
-    return `<svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`;
-  }
-  if(category==="Ноутбуки"){
-    return `<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="10" rx="2"/><line x1="2" y1="17" x2="22" y2="17"/></svg>`;
-  }
-  if(category==="Планшеты"){
-    return `<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="17" r="0.7"/></svg>`;
-  }
-  if(category==="Телевизоры"){
-    return `<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`;
-  }
+  if(category==="Смартфоны") return `<svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/></svg>`;
+  if(category==="Ноутбуки") return `<svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="10" rx="2"/></svg>`;
+  if(category==="Планшеты") return `<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/></svg>`;
+  if(category==="Телевизоры") return `<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/></svg>`;
   return "";
 }
 
-/* ===== Categories ===== */
+/* Categories */
 function renderCategories(){
-  const container = document.getElementById("categories");
-  container.innerHTML = "";
-  container.style.display = "grid";
-  showBottom(); // ✅ на главном экране панель показываем
+  const container=document.getElementById("categories");
+  const prices=document.getElementById("prices");
 
-  Object.keys(data).forEach((category,index)=>{
-    const div = document.createElement("div");
-    div.className = "category-card";
+  prices.style.display="none";
+  container.innerHTML="";
+  container.style.display="grid";
+  showBottom();
 
-    div.innerHTML = `
+  Object.keys(data).forEach((category,i)=>{
+    const div=document.createElement("div");
+    div.className="category-card";
+    div.innerHTML=`
       <div class="icon">${getIcon(category)}</div>
       <div class="label">${category}</div>
     `;
-
-    div.onclick = ()=>{
-      if(!stats.categories[category]) stats.categories[category]=0;
-      stats.categories[category]++;
-
-      sendAnalytics({
-        user_id: user?.id || 0,
-        username: user?.username || "",
-        action: "category_click",
-        category
-      });
-
-      localStorage.setItem("smartDealStats", JSON.stringify(stats));
-      showPrices(category);
-    };
-
+    div.onclick=()=>showPrices(category);
     container.appendChild(div);
-    setTimeout(()=>div.classList.add("show"), index*140);
+    setTimeout(()=>div.classList.add("show"),i*120);
   });
+
+  attachRipples();
 }
 
-/* ===== Prices ===== */
+/* Prices */
 function showPrices(category){
-  const categoriesBlock = document.getElementById("categories");
-  const pricesDiv = document.getElementById("prices");
+  const container=document.getElementById("categories");
+  const prices=document.getElementById("prices");
 
-  haptic("medium");
-  hideBottom(); // ✅ чтобы не перекрывало цены
+  container.style.display="none";
+  prices.innerHTML="";
+  prices.style.display="block";
+  hideBottom();
 
-  categoriesBlock.style.display="none";
-  pricesDiv.style.display="block";
-  pricesDiv.innerHTML="";
-
-  (data[category] || []).forEach((item,index)=>{
+  data[category].forEach((item,i)=>{
     const btn=document.createElement("button");
     btn.className="price-btn";
-    btn.innerHTML = `
+    btn.innerHTML=`
       <div class="price-left">
         <div class="price-icon">💰</div>
-        <div>${item.price || ""}</div>
+        <div>${item.price}</div>
       </div>
       <div class="price-arrow">→</div>
     `;
-
-    btn.onclick=()=>{
-      const key=category+" | "+(item.price || "");
-      if(!stats.products[key]) stats.products[key]=0;
-      stats.products[key]++;
-
-      sendAnalytics({
-        user_id: user?.id || 0,
-        username: user?.username || "",
-        action: "product_click",
-        category,
-        product: item.price,
-        price: item.price
-      });
-
-      localStorage.setItem("smartDealStats", JSON.stringify(stats));
-      if(item.link) tg.openLink(item.link);
-    };
-
-    pricesDiv.appendChild(btn);
-
+    btn.onclick=()=>item.link && tg.openLink(item.link);
+    prices.appendChild(btn);
     setTimeout(()=>{
       btn.style.opacity="1";
       btn.style.transform="translateY(0)";
-    },index*80);
+    },i*70);
   });
 
   const back=document.createElement("div");
   back.className="back-btn";
   back.innerText="← Назад";
-  back.onclick=()=>{
-    pricesDiv.style.display="none";
-    categoriesBlock.style.display="grid";
-    renderCategories();
-    showBottom();
-  };
+  back.onclick=renderCategories;
+  prices.appendChild(back);
 
-  pricesDiv.appendChild(back);
+  attachRipples();
 }
 
-/* ===== Admin Panel (server) ===== */
-document.getElementById("adminBtn").onclick = async () => {
-  const panel = document.getElementById("adminPanel");
-  panel.style.display = "block";
-  panel.innerHTML = `<button class="close-x" onclick="closeAdmin()">✕</button>Загрузка...`;
-  hideBottom(); // ✅ чтобы не мешало
+/* Swipe Back */
+let startX=0,startY=0,currentX=0,isSwiping=false;
+const swipeZone=40,threshold=90;
+const swipeContainer=document.getElementById("swipeContainer");
 
-  try{
-    const response = await fetch(ANALYTICS_URL);
-    const s = await response.json();
-
-    const conversion = s.launches > 0
-      ? ((s.product_clicks / s.launches) * 100).toFixed(1)
-      : 0;
-
-    panel.innerHTML = `
-      <button class="close-x" onclick="closeAdmin()">✕</button>
-      <h2 style="margin-bottom:20px;">📊 Smart Deal Admin 3.0</h2>
-
-      <div class="admin-card">🚀 Всего запусков: <b>${s.launches}</b></div>
-      <div class="admin-card">👤 Всего пользователей: <b>${s.unique_users}</b></div>
-      <div class="admin-card">🛒 Всего кликов: <b>${s.product_clicks}</b></div>
-      <div class="admin-card">📈 Общая конверсия: <b>${conversion}%</b></div>
-
-      <h3 style="margin-top:25px;">📅 Сегодня</h3>
-      <div class="admin-card">🚀 Запусков сегодня: <b>${s.today_launches}</b></div>
-      <div class="admin-card">👤 Новых сегодня: <b>${s.today_users}</b></div>
-      <div class="admin-card">🛒 Кликов сегодня: <b>${s.today_product_clicks}</b></div>
-
-      <h3 style="margin-top:25px;">🔥 Топ категории</h3>
-      ${renderTop(s.top_categories)}
-
-      <h3 style="margin-top:25px;">💰 Топ товары</h3>
-      ${renderTop(s.top_products)}
-    `;
-  } catch(e){
-    panel.innerHTML = `<button class="close-x" onclick="closeAdmin()">✕</button>Ошибка загрузки данных`;
+swipeContainer.addEventListener("touchstart",e=>{
+  if(document.getElementById("prices").style.display!=="block") return;
+  const tx=e.touches[0].clientX;
+  if(tx<swipeZone){
+    isSwiping=true;
+    startX=tx;
+    startY=e.touches[0].clientY;
+    currentX=startX;
   }
+},{passive:true});
+
+swipeContainer.addEventListener("touchmove",e=>{
+  if(!isSwiping) return;
+  const tx=e.touches[0].clientX;
+  const ty=e.touches[0].clientY;
+  const dx=tx-startX;
+  const dy=Math.abs(ty-startY);
+  if(dy>Math.abs(dx)) return;
+  currentX=tx;
+  if(dx>0){
+    swipeContainer.style.transform=`translateX(${dx}px)`;
+    document.documentElement.style.setProperty("--px",dx+"px");
+  }
+},{passive:true});
+
+swipeContainer.addEventListener("touchend",()=>{
+  if(!isSwiping) return;
+  const diff=currentX-startX;
+  if(diff>threshold){
+    swipeContainer.style.transform="translateX(100%)";
+    setTimeout(()=>{
+      renderCategories();
+      swipeContainer.style.transition="none";
+      swipeContainer.style.transform="translateX(0)";
+      document.documentElement.style.setProperty("--px","0px");
+      setTimeout(()=>swipeContainer.style.transition="transform .25s cubic-bezier(.22,1,.36,1)",50);
+    },200);
+  } else {
+    swipeContainer.style.transform="translateX(0)";
+    document.documentElement.style.setProperty("--px","0px");
+  }
+  isSwiping=false;
+},{passive:true});
+
+/* Admin */
+document.getElementById("adminBtn").onclick=async()=>{
+  const panel=document.getElementById("adminPanel");
+  panel.style.display="block";
+  panel.innerHTML=`<button onclick="closeAdmin()">✕</button>Загрузка...`;
+  hideBottom();
 };
-
-function renderTop(obj){
-  if(!obj || Object.keys(obj).length === 0){
-    return '<div class="admin-card">Нет данных</div>';
-  }
-
-  const total = Object.values(obj).reduce((a,b)=>a+b,0);
-
-  return Object.entries(obj)
-    .sort((a,b)=>b[1]-a[1])
-    .slice(0,3)
-    .map((item,i)=>{
-      const percent = total > 0 ? ((item[1] / total) * 100).toFixed(1) : "0.0";
-      return `
-        <div class="admin-card">
-          ${i+1}. ${item[0]}<br>
-          <small>${item[1]} кликов (${percent}%)</small>
-        </div>
-      `;
-    })
-    .join("");
-}
 
 function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
-  // возвращаем нижнюю панель только если мы на главном экране
-  const pricesVisible = document.getElementById("prices").style.display === "block";
-  if(!pricesVisible) showBottom();
+  showBottom();
 }
-
-/* ===== SWIPE BACK SYSTEM ===== */
-let startX = 0;
-let currentX = 0;
-let isSwiping = false;
-const swipeZone = 40; // зона от левого края
-const threshold = 90; // сколько нужно провести
-
-const swipeContainer = document.getElementById("swipeContainer");
-
-swipeContainer.addEventListener("touchstart", e => {
-  if(document.getElementById("prices").style.display !== "block") return;
-
-  if(e.touches[0].clientX < swipeZone){
-    isSwiping = true;
-    startX = e.touches[0].clientX;
-    currentX = startX; // ✅ фикс: если не было touchmove
-  }
-});
-
-swipeContainer.addEventListener("touchmove", e => {
-  if(!isSwiping) return;
-
-  currentX = e.touches[0].clientX;
-  const diff = currentX - startX;
-
-  if(diff > 0){
-    swipeContainer.style.transform = `translateX(${diff}px)`;
-  }
-});
-
-swipeContainer.addEventListener("touchend", () => {
-  if(!isSwiping) return;
-
-  const diff = currentX - startX;
-
-  if(diff > threshold){
-    swipeContainer.style.transform = "translateX(100%)";
-
-    setTimeout(()=>{
-      document.getElementById("prices").style.display="none";
-      document.getElementById("categories").style.display="grid";
-      renderCategories();
-      showBottom();
-
-      swipeContainer.style.transition="none";
-      swipeContainer.style.transform="translateX(0)";
-      setTimeout(()=>{ swipeContainer.style.transition=".25s ease"; },50);
-    },200);
-  } else {
-    swipeContainer.style.transform = "translateX(0)";
-  }
-
-  isSwiping = false;
-});
 
 loadData();
 </script>
-
 </body>
 </html>
