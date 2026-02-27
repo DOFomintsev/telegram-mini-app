@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Smart Deal</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -86,9 +86,7 @@ h1{
   opacity:.6;
 }
 
-.icon{
-  margin-bottom:14px;
-}
+.icon{ margin-bottom:14px; }
 
 .icon svg{
   width:46px;
@@ -140,14 +138,12 @@ h1{
     inset 0 1px 0 rgba(255,255,255,.05);
 }
 
-/* левая часть */
 .price-left{
   display:flex;
   align-items:center;
   gap:12px;
 }
 
-/* иконка */
 .price-icon{
   width:34px;
   height:34px;
@@ -160,14 +156,12 @@ h1{
   font-size:16px;
 }
 
-/* стрелка */
 .price-arrow{
   font-size:18px;
   opacity:.4;
   transition:.3s;
 }
 
-/* glow эффект */
 .price-btn:hover{
   transform:translateY(-4px);
   border-color:rgba(29,185,84,.5);
@@ -181,10 +175,7 @@ h1{
   transform:translateX(6px);
 }
 
-/* анимация нажатия */
-.price-btn:active{
-  transform:scale(.97);
-}
+.price-btn:active{ transform:scale(.97); }
 
 .back-btn{
   text-align:center;
@@ -192,6 +183,13 @@ h1{
   opacity:.6;
   margin-top:6px;
   cursor:pointer;
+}
+
+/* ===== iOS Swipe Back ===== */
+
+.swipeable{
+  transition: transform .25s ease;
+  will-change: transform;
 }
 
 /* ===============================
@@ -226,7 +224,7 @@ h1{
   pointer-events:none !important;
 }
 
-/* ===== Plate / Signature ===== */
+/* Signature (gold) */
 
 .signature-wrapper{
   text-align:center;
@@ -271,12 +269,7 @@ h1{
   margin:6px auto 0;
   width:120px;
   height:1px;
-  background:linear-gradient(
-    90deg,
-    transparent,
-    rgba(212,175,55,.9),
-    transparent
-  );
+  background:linear-gradient(90deg, transparent, rgba(212,175,55,.9), transparent);
   box-shadow:0 0 8px rgba(212,175,55,.4);
   opacity:.8;
 }
@@ -286,7 +279,7 @@ h1{
   to{ background-position:250% center; }
 }
 
-/* ===== Buttons row ===== */
+/* Buttons row */
 
 .bottom-buttons{
   width:100%;
@@ -300,7 +293,7 @@ h1{
   min-width:0;
 }
 
-/* ===== Base button style ===== */
+/* Base button */
 
 .action-btn{
   padding:13px 16px;
@@ -319,7 +312,6 @@ h1{
   transition:all .35s cubic-bezier(.22,1,.36,1);
 }
 
-/* Hover */
 .action-btn:hover{
   transform:translateY(-3px);
   border-color:rgba(29,185,84,.4);
@@ -328,12 +320,9 @@ h1{
     inset 0 1px 0 rgba(255,255,255,.08);
 }
 
-/* Active */
-.action-btn:active{
-  transform:scale(.96);
-}
+.action-btn:active{ transform:scale(.96); }
 
-/* ===== Accent (Primary) button ===== */
+/* Accent button */
 
 .action-btn.primary{
   border:none;
@@ -345,11 +334,53 @@ h1{
   box-shadow:0 15px 40px rgba(29,185,84,.45);
 }
 
-/* Optional outline style (если понадобится) */
-.action-btn.outline{
-  background:linear-gradient(145deg,#121212,#1c1c1c);
+/* ===== Admin ===== */
+
+.admin-btn{
+  position:fixed;
+  top:18px !important;
+  right:18px !important;
+  z-index:1001; /* ✅ выше bottom-actions (50) и panel (1000) */
+  background:#111;
+  border:1px solid rgba(255,255,255,.15);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:13px;
 }
-  
+
+.admin-panel{
+  position:fixed;
+  inset:0;
+  background:#000;
+  padding:25px;
+  overflow-y:auto;
+  display:none;
+  z-index:1000;
+}
+
+.admin-card{
+  background:#111;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:12px;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.admin-panel .close-x{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:1002;
+  background:#111;
+  border:1px solid rgba(255,255,255,.15);
+  color:#fff;
+  padding:10px 12px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:14px;
+}
 </style>
 </head>
 
@@ -357,32 +388,26 @@ h1{
 
 <h1>Smart Deal</h1>
 
+<!-- ✅ swipeContainer содержит ТОЛЬКО экраны -->
 <div id="swipeContainer" class="swipeable">
-<div class="categories" id="categories"></div>
-    <div class="prices" id="prices"></div>
+  <div class="categories" id="categories"></div>
+  <div class="prices" id="prices"></div>
 </div>
-  
-<div class="bottom-actions" id="bottomActions">
 
+<!-- ✅ Нижняя панель отдельно, НЕ внутри swipeContainer -->
+<div class="bottom-actions" id="bottomActions">
   <div class="signature-wrapper">
-   <div class="signature">
-    Design and Developed by Fomintsev Denis
-   </div>
-  <div class="signature-line"></div>
+    <div class="signature">Design and Developed by Fomintsev Denis</div>
+    <div class="signature-line"></div>
   </div>
 
   <div class="bottom-buttons">
-    <button class="action-btn" onclick="openFeedback()">
-      💬 Обратная связь
-    </button>
-
-    <button class="action-btn outline" onclick="openSite()">
-      🌐 Зайти на сайт
-    </button>
+    <button class="action-btn primary" onclick="openFeedback()">💬 Обратная связь</button>
+    <button class="action-btn outline" onclick="openSite()">🌐 Зайти на сайт</button>
   </div>
-
 </div>
 
+<!-- ✅ Админ-кнопка отдельно, фиксирована и над всем -->
 <button id="adminBtn" class="admin-btn" style="display:none;">⚙</button>
 <div id="adminPanel" class="admin-panel"></div>
 
@@ -393,14 +418,10 @@ tg.expand();
 const ADMIN_ID = 929524875;
 
 /* ===== SERVER ANALYTICS ===== */
-
 const ANALYTICS_URL = "https://script.google.com/macros/s/AKfycbxcIbUNFvrbt1BMSTPsAt6X7WBf44PXaDoSBu8x5PyqkwndQZVa2w2180AYaYQrRx7y/exec";
 
 function sendAnalytics(data){
-  fetch(ANALYTICS_URL,{
-    method:"POST",
-    body:JSON.stringify(data)
-  }).catch(()=>{});
+  fetch(ANALYTICS_URL,{ method:"POST", body:JSON.stringify(data) }).catch(()=>{});
 }
 
 const user = tg.initDataUnsafe?.user;
@@ -423,11 +444,18 @@ function openFeedback(){
 
 function openSite(){
   haptic("medium");
-  tg.openLink("https://niceprice.pro");
+  tg.openLink("https://niceprice.pro", { try_instant_view: false });
 }
-  
-/* ===== СТАТИСТИКА ===== */
 
+/* ===== Bottom panel show/hide ===== */
+function hideBottom(){
+  document.getElementById("bottomActions")?.classList.add("hidden");
+}
+function showBottom(){
+  document.getElementById("bottomActions")?.classList.remove("hidden");
+}
+
+/* ===== LOCAL STATS (fallback) ===== */
 let stats = JSON.parse(localStorage.getItem("smartDealStats")) || {
   launches:0,
   users:[],
@@ -441,35 +469,43 @@ sendAnalytics({
   username: user?.username || "",
   action: "launch"
 });
+
 if(user && !stats.users.includes(user.id)){
   stats.users.push(user.id);
 }
 localStorage.setItem("smartDealStats", JSON.stringify(stats));
 
 /* ===== Google Sheets ===== */
-
 const SHEET_URL="https://docs.google.com/spreadsheets/d/1-JYl4b-6H_iWvBS2Zsez1K1DPx35iBUCCPPRiSrVY7o/export?format=csv";
-let data={};
+let data = {};
 
 async function loadData(){
-  const response=await fetch(SHEET_URL);
-  const text=await response.text();
-  const rows=text.split("\n").slice(1);
+  const response = await fetch(SHEET_URL);
+  const text = await response.text();
+  const rows = text.split("\n").slice(1);
 
-  rows.forEach(row=>{
-    const [category,price,link]=row.split(",");
-    if(!data[category]) data[category]=[];
-    data[category].push({price,link});
+  rows.forEach(rawRow=>{
+    const row = rawRow.trim();
+    if(!row) return;
+
+    // ✅ чуть безопаснее: link собираем из "остатка", если там были запятые
+    const parts = row.split(",");
+    const category = (parts[0] || "").trim();
+    const price = (parts[1] || "").trim();
+    const link = parts.slice(2).join(",").trim();
+
+    if(!category) return;
+    if(!data[category]) data[category] = [];
+    data[category].push({ price, link });
   });
 
   renderCategories();
   setTimeout(()=>{
-  document.getElementById("bottomActions").classList.add("show");
-}, 700);  
+    document.getElementById("bottomActions").classList.add("show");
+  }, 700);
 }
 
-/* ===== Иконки ===== */
-
+/* ===== Icons ===== */
 function getIcon(category){
   if(category==="Смартфоны"){
     return `<svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>`;
@@ -486,31 +522,33 @@ function getIcon(category){
   return "";
 }
 
-/* ===== Категории ===== */
-
+/* ===== Categories ===== */
 function renderCategories(){
-  const container=document.getElementById("categories");
-  container.innerHTML="";
-  container.style.display="grid";
+  const container = document.getElementById("categories");
+  container.innerHTML = "";
+  container.style.display = "grid";
+  showBottom(); // ✅ на главном экране панель показываем
 
   Object.keys(data).forEach((category,index)=>{
-    const div=document.createElement("div");
-    div.className="category-card";
+    const div = document.createElement("div");
+    div.className = "category-card";
 
-    div.innerHTML=`
+    div.innerHTML = `
       <div class="icon">${getIcon(category)}</div>
       <div class="label">${category}</div>
     `;
 
-    div.onclick=()=>{
+    div.onclick = ()=>{
       if(!stats.categories[category]) stats.categories[category]=0;
       stats.categories[category]++;
+
       sendAnalytics({
-  user_id: user?.id || 0,
-  username: user?.username || "",
-  action: "category_click",
-  category: category
-});
+        user_id: user?.id || 0,
+        username: user?.username || "",
+        action: "category_click",
+        category
+      });
+
       localStorage.setItem("smartDealStats", JSON.stringify(stats));
       showPrices(category);
     };
@@ -520,43 +558,45 @@ function renderCategories(){
   });
 }
 
-/* ===== Цены ===== */
-
+/* ===== Prices ===== */
 function showPrices(category){
-  const categoriesBlock=document.getElementById("categories");
-  const pricesDiv=document.getElementById("prices");
+  const categoriesBlock = document.getElementById("categories");
+  const pricesDiv = document.getElementById("prices");
 
   haptic("medium");
-  hideBottom();
+  hideBottom(); // ✅ чтобы не перекрывало цены
+
   categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
   pricesDiv.innerHTML="";
 
-  data[category].forEach((item,index)=>{
+  (data[category] || []).forEach((item,index)=>{
     const btn=document.createElement("button");
     btn.className="price-btn";
     btn.innerHTML = `
-  <div class="price-left">
-    <div class="price-icon">💰</div>
-    <div>${item.price}</div>
-  </div>
-  <div class="price-arrow">→</div>
-`;
+      <div class="price-left">
+        <div class="price-icon">💰</div>
+        <div>${item.price || ""}</div>
+      </div>
+      <div class="price-arrow">→</div>
+    `;
 
     btn.onclick=()=>{
-      const key=category+" | "+item.price;
+      const key=category+" | "+(item.price || "");
       if(!stats.products[key]) stats.products[key]=0;
       stats.products[key]++;
+
       sendAnalytics({
-  user_id: user?.id || 0,
-  username: user?.username || "",
-  action: "product_click",
-  category: category,
-  product: item.price,
-  price: item.price
-});
+        user_id: user?.id || 0,
+        username: user?.username || "",
+        action: "product_click",
+        category,
+        product: item.price,
+        price: item.price
+      });
+
       localStorage.setItem("smartDealStats", JSON.stringify(stats));
-      tg.openLink(item.link);
+      if(item.link) tg.openLink(item.link);
     };
 
     pricesDiv.appendChild(btn);
@@ -580,13 +620,12 @@ function showPrices(category){
   pricesDiv.appendChild(back);
 }
 
-/* ===== ADMIN SERVER VERSION ===== */
-
+/* ===== Admin Panel (server) ===== */
 document.getElementById("adminBtn").onclick = async () => {
-
   const panel = document.getElementById("adminPanel");
   panel.style.display = "block";
-  panel.innerHTML = "Загрузка...";
+  panel.innerHTML = `<button class="close-x" onclick="closeAdmin()">✕</button>Загрузка...`;
+  hideBottom(); // ✅ чтобы не мешало
 
   try{
     const response = await fetch(ANALYTICS_URL);
@@ -597,6 +636,7 @@ document.getElementById("adminBtn").onclick = async () => {
       : 0;
 
     panel.innerHTML = `
+      <button class="close-x" onclick="closeAdmin()">✕</button>
       <h2 style="margin-bottom:20px;">📊 Smart Deal Admin 3.0</h2>
 
       <div class="admin-card">🚀 Всего запусков: <b>${s.launches}</b></div>
@@ -614,13 +654,9 @@ document.getElementById("adminBtn").onclick = async () => {
 
       <h3 style="margin-top:25px;">💰 Топ товары</h3>
       ${renderTop(s.top_products)}
-
-      <br>
-      <button onclick="closeAdmin()">Закрыть</button>
     `;
-
   } catch(e){
-    panel.innerHTML = "Ошибка загрузки данных";
+    panel.innerHTML = `<button class="close-x" onclick="closeAdmin()">✕</button>Ошибка загрузки данных`;
   }
 };
 
@@ -635,7 +671,7 @@ function renderTop(obj){
     .sort((a,b)=>b[1]-a[1])
     .slice(0,3)
     .map((item,i)=>{
-      const percent = ((item[1] / total) * 100).toFixed(1);
+      const percent = total > 0 ? ((item[1] / total) * 100).toFixed(1) : "0.0";
       return `
         <div class="admin-card">
           ${i+1}. ${item[0]}<br>
@@ -648,10 +684,12 @@ function renderTop(obj){
 
 function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
+  // возвращаем нижнюю панель только если мы на главном экране
+  const pricesVisible = document.getElementById("prices").style.display === "block";
+  if(!pricesVisible) showBottom();
 }
 
 /* ===== SWIPE BACK SYSTEM ===== */
-
 let startX = 0;
 let currentX = 0;
 let isSwiping = false;
@@ -666,6 +704,7 @@ swipeContainer.addEventListener("touchstart", e => {
   if(e.touches[0].clientX < swipeZone){
     isSwiping = true;
     startX = e.touches[0].clientX;
+    currentX = startX; // ✅ фикс: если не было touchmove
   }
 });
 
@@ -673,7 +712,7 @@ swipeContainer.addEventListener("touchmove", e => {
   if(!isSwiping) return;
 
   currentX = e.touches[0].clientX;
-  let diff = currentX - startX;
+  const diff = currentX - startX;
 
   if(diff > 0){
     swipeContainer.style.transform = `translateX(${diff}px)`;
@@ -683,10 +722,9 @@ swipeContainer.addEventListener("touchmove", e => {
 swipeContainer.addEventListener("touchend", () => {
   if(!isSwiping) return;
 
-  let diff = currentX - startX;
+  const diff = currentX - startX;
 
   if(diff > threshold){
-    // возврат назад
     swipeContainer.style.transform = "translateX(100%)";
 
     setTimeout(()=>{
@@ -694,26 +732,17 @@ swipeContainer.addEventListener("touchend", () => {
       document.getElementById("categories").style.display="grid";
       renderCategories();
       showBottom();
+
       swipeContainer.style.transition="none";
       swipeContainer.style.transform="translateX(0)";
-      setTimeout(()=>{
-        swipeContainer.style.transition=".25s ease";
-      },50);
+      setTimeout(()=>{ swipeContainer.style.transition=".25s ease"; },50);
     },200);
-
   } else {
     swipeContainer.style.transform = "translateX(0)";
   }
 
   isSwiping = false;
 });
-
-function hideBottom(){
-  document.getElementById("bottomActions")?.classList.add("hidden");
-}
-function showBottom(){
-  document.getElementById("bottomActions")?.classList.remove("hidden");
-}
 
 loadData();
 </script>
