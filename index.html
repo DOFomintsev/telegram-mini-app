@@ -307,110 +307,108 @@ h1{
   border:1px solid rgba(255,255,255,.08);
 }
 
- /* ===== iOS Swipe Back ===== */
+/* ===== iOS Swipe Back ===== */
 
 .swipeable{
   transition: transform .25s ease;
   will-change: transform;
 } 
 
-/* ===== Engraved Gold Signature ===== */
+/* ===== Engraved Gold Plate ===== */
 
-.signature-wrapper{
+.signature-plate{
   width:100%;
-  text-align:center;
-  margin-bottom:14px;
+  display:flex;
+  justify-content:center;
+  margin-bottom:12px;
+
   opacity:0;
   transform:translateY(8px);
   transition:.8s cubic-bezier(.22,1,.36,1);
 }
 
-.bottom-actions.show .signature-wrapper{
+.bottom-actions.show .signature-plate{
   opacity:1;
   transform:translateY(0);
 }
 
-/* базовая "золото" */
-.signature{
-  font-size:12px;
-  letter-spacing:.8px;
-  font-family:"Brush Script MT","Segoe Script",cursive;
+/* сама "пластина" */
+.signature-plate{
   position:relative;
-  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
 
-  background:linear-gradient(
-    110deg,
-    #6f5416 0%,
-    #caa132 22%,
-    #f6e27a 45%,
-    #fff3b0 50%,
-    #f6e27a 55%,
-    #caa132 78%,
-    #6f5416 100%
-  );
-  background-size:220% auto;
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+/* металл */
+  background:
+    radial-gradient(120px 40px at 30% 20%, rgba(255,255,255,.22), transparent 55%),
+    radial-gradient(140px 60px at 70% 80%, rgba(0,0,0,.35), transparent 60%),
+    linear-gradient(135deg,#2a220e 0%, #a57b1f 18%, #f3dc7b 40%, #caa132 62%, #6c5316 100%);
+
+/* кант + глубина */
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -1px 0 rgba(0,0,0,.55);
 }
 
-/* гравировка: "вдавленный" эффект */
-.signature.engraved{
-  /* темная внутренняя тень + светлый кант */
+/* микротекст "гравировка" */
+.plate-text{
+  display:block;
+  font-size:11px;
+  letter-spacing:.9px;
+  font-family:"Brush Script MT","Segoe Script",cursive;
+  white-space:nowrap;
+
+/* текст как выгравированный: темнее + подсвет сверху */
+  color:rgba(28,18,3,.78);
   text-shadow:
-    0 1px 0 rgba(255,255,255,.14),     /* верхний подсвет */
-    0 -1px 0 rgba(0,0,0,.55),          /* нижний контур */
-    0 2px 4px rgba(0,0,0,.55);         /* глубина */
-
-  filter:contrast(1.08) saturate(1.1);
+    0 1px 0 rgba(255,255,255,.20),
+    0 -1px 0 rgba(0,0,0,.45),
+    0 2px 4px rgba(0,0,0,.35);
+  opacity:.95;
 }
 
-/* тончайший micro-specular блик "по гравировке" */
-.signature.engraved::after{
+/* тонкая "гравировальная" рамка внутри */
+.signature-plate::before{
   content:"";
   position:absolute;
-  inset:-2px -10px;
+  inset:2px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.25);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+  pointer-events:none;
+  opacity:.55;
+}
+
+/* спекулярный блик (очень деликатный) */
+.signature-plate::after{
+  content:"";
+  position:absolute;
+  inset:-10px -30px;
+  border-radius:999px;
   pointer-events:none;
 
   background:linear-gradient(
     120deg,
     transparent 0%,
-    rgba(255,255,255,.10) 35%,
-    rgba(255,255,255,.22) 50%,
-    rgba(255,255,255,.10) 65%,
+    rgba(255,255,255,.00) 35%,
+    rgba(255,255,255,.18) 50%,
+    rgba(255,255,255,.00) 65%,
     transparent 100%
   );
 
-  mix-blend-mode:screen;
+  transform:translateX(-55%);
   opacity:.55;
-  transform:translateX(-60%);
-  animation:engravedSheen 7s ease-in-out infinite;
-  border-radius:999px;
+  mix-blend-mode:screen;
+  animation:plateSheen 7.5s ease-in-out infinite;
 }
 
-@keyframes engravedSheen{
-  0%   { transform:translateX(-70%); opacity:.25; }
-  40%  { opacity:.55; }
-  60%  { opacity:.55; }
-  100% { transform:translateX(70%); opacity:.25; }
-}
-
-/* тонкая линия */
-.signature-line{
-  margin:6px auto 0;
-  width:128px;
-  height:1px;
-  background:linear-gradient(
-    90deg,
-    transparent,
-    rgba(246,226,122,.85),
-    rgba(202,161,50,.9),
-    rgba(246,226,122,.85),
-    transparent
-  );
-  box-shadow:
-    0 0 10px rgba(212,175,55,.22),
-    0 1px 0 rgba(255,255,255,.06);
-  opacity:.75;
+@keyframes plateSheen{
+  0%   { transform:translateX(-65%); opacity:.20; }
+  45%  { opacity:.55; }
+  55%  { opacity:.55; }
+  100% { transform:translateX(65%); opacity:.20; }
 }
 </style>
 </head>
@@ -426,12 +424,9 @@ h1{
   
 <div class="bottom-actions" id="bottomActions">
   
-<div class="signature-wrapper">
-  <div class="signature engraved">
-    The idea is developed — Fomintsev Denis
+  <div class="signature-plate" aria-label="Credits">
+  <span class="plate-text">The idea is developed — Fomintsev Denis</span>
   </div>
-  <div class="signature-line"></div>
-</div>
   
   <button class="action-btn" onclick="openFeedback()">
     💬 Обратная связь
