@@ -293,6 +293,10 @@ h1{
 .bottom-buttons .action-btn{
   flex:1;
   min-width:0;
+  white-space:nowrap;        /* ✅ запрет переноса */
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 /* Base button */
@@ -334,6 +338,15 @@ h1{
 
 .action-btn.primary:hover{
   box-shadow:0 15px 40px rgba(29,185,84,.45);
+}
+
+/* ===== Button Content Layout Fix ===== */
+.btn-content{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  justify-content:center;
+  white-space:nowrap;
 }
 
 /* ===== Admin ===== */
@@ -514,7 +527,7 @@ h1{
 
   <div class="bottom-buttons">
     <button class="action-btn primary" onclick="openFeedback()">
-  <span style="display:inline-flex;align-items:center;gap:10px;justify-content:center;">
+  <span class="btn-content">
     <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M20 12c0 3.9-3.6 7-8 7-1 0-2-.1-2.9-.4L5 20l1-3.2C4.8 15.7 4 13.9 4 12c0-3.9 3.6-7 8-7s8 3.1 8 7z"></path>
       <path d="M8 11.5h8"></path>
@@ -525,7 +538,7 @@ h1{
 </button>
 
 <button class="action-btn outline" onclick="openSite()">
-  <span style="display:inline-flex;align-items:center;gap:10px;justify-content:center;">
+  <span class="btn-content">
     <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="8.5"></circle>
       <path d="M3.8 12h16.4"></path>
