@@ -563,12 +563,39 @@ h1{
     inset 0 -14px 22px rgba(0,0,0,.45),
     0 8px 18px rgba(0,0,0,.55);
 }
+
+/* ===== Mini User Analytics ===== */
+
+.mini-analytics{
+  margin: 0 20px 10px 20px;
+  padding: 14px 16px;
+  border-radius: 16px;
+
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.08), transparent 60%),
+    linear-gradient(145deg,#0f0f0f,#181818);
+
+  border:1px solid rgba(255,255,255,.06);
+
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.05);
+
+  font-size:13px;
+  line-height:1.6;
+  opacity:.85;
+}
+
+.mini-analytics span{
+  display:block;
+}  
 </style>
 </head>
 
 <body>
 
 <h1>Smart Deal</h1>
+<div id="miniAnalytics" class="mini-analytics"></div> 
 
 <!-- ✅ swipeContainer содержит ТОЛЬКО экраны -->
 <div id="swipeContainer" class="swipeable">
@@ -782,6 +809,7 @@ function renderCategories(){
     container.appendChild(div);
     setTimeout(()=>div.classList.add("show"), index*140);
   });
+renderMiniAnalytics();
 }
 
 /* ===== Prices ===== */
@@ -832,6 +860,7 @@ function showPrices(category){
       });
 
       localStorage.setItem("smartDealStats", JSON.stringify(stats));
+      renderMiniAnalytics();
       if(item.link) tg.openLink(item.link);
     };
 
@@ -1015,6 +1044,27 @@ function enableRipples(){
 
   document.querySelectorAll(".action-btn, .price-btn").forEach(attach);
 }
+
+function renderMiniAnalytics(){
+  const el = document.getElementById("miniAnalytics");
+  if(!el) return;
+
+  const totalClicks = Object.values(stats.products)
+    .reduce((a,b)=>a+b,0);
+
+  const topCategory = Object.entries(stats.categories)
+    .sort((a,b)=>b[1]-a[1])[0];
+
+  const topProduct = Object.entries(stats.products)
+    .sort((a,b)=>b[1]-a[1])[0];
+
+  el.innerHTML = `
+    <span>🔥 Самая популярная категория: <b>${topCategory ? topCategory[0] : "—"}</b></span>
+    <span>💰 Самый кликаемый оффер: <b>${topProduct ? topProduct[0].split("|")[1] : "—"}</b></span>
+    <span>📈 Всего переходов: <b>${totalClicks}</b></span>
+  `;
+} 
+  
 loadData();
 </script>
 
