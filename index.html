@@ -306,6 +306,13 @@ h1{
   margin-bottom:12px;
   border:1px solid rgba(255,255,255,.08);
 }
+
+ /* ===== iOS Swipe Back ===== */
+
+.swipeable{
+  transition: transform .25s ease;
+  will-change: transform;
+} 
 </style>
 </head>
 
@@ -313,9 +320,10 @@ h1{
 
 <h1>Smart Deal</h1>
 
-<div class="categories" id="categories"></div>
-<div class="prices" id="prices"></div>
-
+<div id="swipeContainer" class="swipeable">
+  <div class="categories" id="categories"></div>
+  <div class="prices" id="prices"></div>
+</div>
 <div class="bottom-actions" id="bottomActions">
 
   <button class="action-btn" onclick="openFeedback()">
@@ -593,6 +601,63 @@ function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
 }
 
+/* ===== SWIPE BACK SYSTEM ===== */
+
+let startX = 0;
+let currentX = 0;
+let isSwiping = false;
+const swipeZone = 40; // зона от левого края
+const threshold = 90; // сколько нужно провести
+
+const swipeContainer = document.getElementById("swipeContainer");
+
+swipeContainer.addEventListener("touchstart", e => {
+  if(document.getElementById("prices").style.display !== "block") return;
+
+  if(e.touches[0].clientX < swipeZone){
+    isSwiping = true;
+    startX = e.touches[0].clientX;
+  }
+});
+
+swipeContainer.addEventListener("touchmove", e => {
+  if(!isSwiping) return;
+
+  currentX = e.touches[0].clientX;
+  let diff = currentX - startX;
+
+  if(diff > 0){
+    swipeContainer.style.transform = `translateX(${diff}px)`;
+  }
+});
+
+swipeContainer.addEventListener("touchend", () => {
+  if(!isSwiping) return;
+
+  let diff = currentX - startX;
+
+  if(diff > threshold){
+    // возврат назад
+    swipeContainer.style.transform = "translateX(100%)";
+
+    setTimeout(()=>{
+      document.getElementById("prices").style.display="none";
+      document.getElementById("categories").style.display="grid";
+      renderCategories();
+      swipeContainer.style.transition="none";
+      swipeContainer.style.transform="translateX(0)";
+      setTimeout(()=>{
+        swipeContainer.style.transition=".25s ease";
+      },50);
+    },200);
+
+  } else {
+    swipeContainer.style.transform = "translateX(0)";
+  }
+
+  isSwiping = false;
+});
+  
 loadData();
 </script>
 
