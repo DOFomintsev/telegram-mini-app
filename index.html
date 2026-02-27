@@ -194,7 +194,9 @@ h1{
   cursor:pointer;
 }
 
-/* ===== Bottom Actions ===== */
+/* ===============================
+   BOTTOM ACTIONS — CLEAN VERSION
+   =============================== */
 
 .bottom-actions{
   position:fixed;
@@ -206,9 +208,7 @@ h1{
 
   display:flex;
   flex-direction:column;
-  align-items:stretch;   /* ВАЖНО */
-
-  gap:12px;
+  gap:14px;
 
   opacity:0;
   transition:.6s cubic-bezier(.22,1,.36,1);
@@ -220,120 +220,18 @@ h1{
   transform:translateX(-50%) translateY(0);
 }
 
-.bottom-buttons{
-  width:100%;
-  display:flex;
-  gap:12px;
+.bottom-actions.hidden{
+  opacity:0 !important;
+  transform:translateX(-50%) translateY(30px) !important;
+  pointer-events:none !important;
 }
 
-.action-btn{
-  flex:1;
-  padding:12px 14px;
-  font-size:14px;
-  font-weight:600;
-  border-radius:16px;
-  cursor:pointer;
-  border:none;
-  color:#fff;
-
-  background:linear-gradient(135deg,var(--card1),var(--card2));
-  box-shadow:0 10px 30px rgba(29,185,84,.35);
-  transition:.3s ease;
-}
-
-.action-btn:hover{
-  transform:translateY(-3px);
-  box-shadow:0 15px 40px rgba(29,185,84,.45);
-}
-
-.action-btn:active{
-  transform:scale(.96);
-}
-
-/* Стиль кнопок "Обратная связь" и "Сайт" */
-  
-.action-btn{
-  flex:1;
-  padding:13px 16px;
-  font-size:14px;
-  font-weight:600;
-  border-radius:18px;
-  cursor:pointer;
-  border:1px solid rgba(255,255,255,.08);
-  color:#fff;
-
-  background:linear-gradient(145deg,#121212,#1c1c1c);
-  box-shadow:
-    0 8px 25px rgba(0,0,0,.6),
-    inset 0 1px 0 rgba(255,255,255,.05);
-
-  transition:all .35s cubic-bezier(.22,1,.36,1);
-  position:relative;
-  overflow:hidden;
-}
-
-/* hover glow */
-.action-btn:hover{
-  transform:translateY(-3px);
-  border-color:rgba(29,185,84,.4);
-  box-shadow:
-    0 15px 40px rgba(29,185,84,.25),
-    inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-/* press */
-.action-btn:active{
-  transform:scale(.96);
-}
-
-/* ===== Admin ===== */
-
-.admin-btn{
-  position:fixed;
-  top:18px;
-  right:18px;
-  background:#111;
-  border:1px solid rgba(255,255,255,.15);
-  color:#fff;
-  padding:10px 14px;
-  border-radius:12px;
-  cursor:pointer;
-  font-size:13px;
-}
-
-.admin-panel{
-  position:fixed;
-  inset:0;
-  background:#000;
-  padding:25px;
-  overflow-y:auto;
-  display:none;
-  z-index:999;
-}
-
-.admin-card{
-  background:#111;
-  padding:14px;
-  border-radius:14px;
-  margin-bottom:12px;
-  border:1px solid rgba(255,255,255,.08);
-}
-
-/* ===== iOS Swipe Back ===== */
-
-.swipeable{
-  transition: transform .25s ease;
-  will-change: transform;
-} 
-
-/* ===== Luxury Signature ===== */
+/* ===== Plate / Signature ===== */
 
 .signature-wrapper{
-  width:100%;
   text-align:center;
-  margin-bottom:14px;
   opacity:0;
-  transform:translateY(8px);
+  transform:translateY(6px);
   transition:.8s cubic-bezier(.22,1,.36,1);
 }
 
@@ -346,7 +244,6 @@ h1{
   font-size:12px;
   letter-spacing:.8px;
   font-family:"Brush Script MT","Segoe Script",cursive;
-  position:relative;
 
   background:linear-gradient(
     110deg,
@@ -370,34 +267,87 @@ h1{
     0 0 10px rgba(212,175,55,.15);
 }
 
-/* тонкая золотая линия */
 .signature-line{
   margin:6px auto 0;
   width:120px;
   height:1px;
-
   background:linear-gradient(
     90deg,
     transparent,
     rgba(212,175,55,.9),
     transparent
   );
-
   box-shadow:0 0 8px rgba(212,175,55,.4);
   opacity:.8;
 }
 
-/* shimmer анимация */
 @keyframes goldShimmer{
   from{ background-position:0% center; }
   to{ background-position:250% center; }
 }
 
-/* hide bottom panel when needed */
-.bottom-actions.hidden{
-  opacity:0 !important;
-  transform:translateX(-50%) translateY(30px) !important;
-  pointer-events:none !important;
+/* ===== Buttons row ===== */
+
+.bottom-buttons{
+  width:100%;
+  display:flex;
+  flex-direction:row;
+  gap:12px;
+}
+
+.bottom-buttons .action-btn{
+  flex:1;
+  min-width:0;
+}
+
+/* ===== Base button style ===== */
+
+.action-btn{
+  padding:13px 16px;
+  font-size:14px;
+  font-weight:600;
+  border-radius:18px;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.08);
+  color:#fff;
+
+  background:linear-gradient(145deg,#121212,#1c1c1c);
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.05);
+
+  transition:all .35s cubic-bezier(.22,1,.36,1);
+}
+
+/* Hover */
+.action-btn:hover{
+  transform:translateY(-3px);
+  border-color:rgba(29,185,84,.4);
+  box-shadow:
+    0 15px 40px rgba(29,185,84,.25),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+/* Active */
+.action-btn:active{
+  transform:scale(.96);
+}
+
+/* ===== Accent (Primary) button ===== */
+
+.action-btn.primary{
+  border:none;
+  background:linear-gradient(135deg,var(--card1),var(--card2));
+  box-shadow:0 10px 30px rgba(29,185,84,.35);
+}
+
+.action-btn.primary:hover{
+  box-shadow:0 15px 40px rgba(29,185,84,.45);
+}
+
+/* Optional outline style (если понадобится) */
+.action-btn.outline{
+  background:linear-gradient(145deg,#121212,#1c1c1c);
 }
   
 </style>
