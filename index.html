@@ -1,3 +1,7 @@
+Telegram Bot Index 20
+
++ Иконки в одном стиле
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -505,123 +509,6 @@ h1{
   background:rgba(29,185,84,.12);
   color:transparent; /* на всякий случай, если текст останется */
 }
-
-/* ===== Premium Price Cards (Index 20) ===== */
-
-.price-btn{
-  border:1px solid rgba(255,255,255,.08);
-  background:
-    radial-gradient(circle at 18% 18%, rgba(255,255,255,.07), transparent 55%),
-    linear-gradient(145deg,#101010,#1a1a1a);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.06),
-    0 14px 34px rgba(0,0,0,.65);
-}
-
-/* маленький блик сверху (дорого выглядит) */
-.price-btn::before{
-  content:"";
-  position:absolute;
-  left:10px;
-  right:10px;
-  top:8px;
-  height:1px;
-  background:linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
-  opacity:.55;
-  pointer-events:none;
-}
-
-/* контент цены */
-.price-info{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  min-width:0;
-}
-
-.price-main{
-  font-size:18px;
-  font-weight:700;
-  letter-spacing:.2px;
-  line-height:1.05;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.price-sub{
-  font-size:12px;
-  opacity:.6;
-  letter-spacing:.2px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-/* правая капсула со стрелкой */
-.price-cta{
-  width:40px;
-  height:40px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.08);
-
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.06),
-    0 10px 22px rgba(0,0,0,.35);
-
-  transition:all .35s cubic-bezier(.22,1,.36,1);
-}
-
-/* on hover: стрелка в капсуле “оживает” */
-.price-btn:hover .price-cta{
-  transform:translateY(-1px);
-  border-color:rgba(29,185,84,.35);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    0 14px 30px rgba(29,185,84,.14);
-}
-
-/* Featured (первый оффер) */
-.price-btn.featured{
-  border-color:rgba(29,185,84,.35);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.06),
-    0 18px 46px rgba(0,0,0,.70),
-    0 0 55px rgba(29,185,84,.12);
-}
-
-/* бейдж BEST */
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:.6px;
-  text-transform:uppercase;
-
-  padding:6px 10px;
-  border-radius:999px;
-
-  background:rgba(29,185,84,.12);
-  border:1px solid rgba(29,185,84,.25);
-  color:rgba(255,255,255,.92);
-}
-
-/* контейнер для price-left теперь чуть плотнее */
-.price-left{
-  gap:12px;
-}
-
 </style>
 </head>
 
@@ -858,10 +745,7 @@ function showPrices(category){
   (data[category] || []).forEach((item,index)=>{
     const btn=document.createElement("button");
     btn.className="price-btn";
-    // ✅ первый оффер делаем “featured”
-if(index === 0) btn.classList.add("featured");
-
-btn.innerHTML = `
+    btn.innerHTML = `
   <div class="price-left">
     <div class="price-icon">
       <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
@@ -869,16 +753,12 @@ btn.innerHTML = `
         <path d="M12 4v16"></path>
       </svg>
     </div>
-
-    <div class="price-info">
-      <div class="price-main">${item.price || ""}</div>
-      <div class="price-sub">${index === 0 ? '<span class="badge">Best</span>' : 'Открыть предложение'}</div>
-    </div>
+    <div>${item.price || ""}</div>
   </div>
-
-  <div class="price-cta" aria-hidden="true">
-    <svg class="picon-sm" viewBox="0 0 24 24">
-      <path d="M10 7l5 5-5 5"></path>
+  <div class="price-arrow">
+    <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 12h12"></path>
+      <path d="M13 7l5 5-5 5"></path>
     </svg>
   </div>
 `;
