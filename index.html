@@ -563,6 +563,77 @@ h1{
     inset 0 -14px 22px rgba(0,0,0,.45),
     0 8px 18px rgba(0,0,0,.55);
 }
+
+/* ===== Admin Users Buttons + List ===== */
+.admin-card.clickable{
+  cursor:pointer;
+  transition:all .25s cubic-bezier(.22,1,.36,1);
+}
+
+.admin-card.clickable:hover{
+  transform:translateY(-2px);
+  border-color:rgba(29,185,84,.35);
+  box-shadow:0 14px 36px rgba(29,185,84,.12);
+}
+
+.users-box{
+  margin-top:14px;
+}
+
+.users-toolbar{
+  display:flex;
+  gap:10px;
+  margin:10px 0 12px;
+}
+
+.users-toolbar button{
+  flex:1;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(145deg,#0f0f0f,#171717);
+  color:#fff;
+  cursor:pointer;
+}
+
+.users-list{
+  background:linear-gradient(145deg,#0f0f0f,#171717);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:12px;
+}
+
+.user-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:13px;
+}
+
+.user-row:last-child{ border-bottom:none; }
+
+.user-id{
+  opacity:.9;
+  font-variant-numeric: tabular-nums;
+}
+
+.user-name{
+  opacity:.75;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:55%;
+  text-align:right;
+}
+
+.users-empty{
+  opacity:.75;
+  font-size:13px;
+  line-height:1.5;
+}
+
 </style>
 </head>
 
@@ -873,25 +944,64 @@ document.getElementById("adminBtn").onclick = async () => {
       : 0;
 
     panel.innerHTML = `
-      <button class="close-x" onclick="closeAdmin()">✕</button>
-      <h2 style="margin-bottom:20px;">📊 Smart Deal Admin 3.0</h2>
+  <button class="close-x" onclick="closeAdmin()">✕</button>
 
-      <div class="admin-card">🚀 Всего запусков: <b>${s.launches}</b></div>
-      <div class="admin-card">👤 Всего пользователей: <b>${s.unique_users}</b></div>
-      <div class="admin-card">🛒 Всего кликов: <b>${s.product_clicks}</b></div>
-      <div class="admin-card">📈 Общая конверсия: <b>${conversion}%</b></div>
+  <h2 style="margin-bottom:20px;">📊 Smart Deal Admin 3.0</h2>
 
-      <h3 style="margin-top:25px;">📅 Сегодня</h3>
-      <div class="admin-card">🚀 Запусков сегодня: <b>${s.today_launches}</b></div>
-      <div class="admin-card">👤 Новых сегодня: <b>${s.today_users}</b></div>
-      <div class="admin-card">🛒 Кликов сегодня: <b>${s.today_product_clicks}</b></div>
+  <div class="admin-card">
+    🚀 Всего запусков: <b>${s.launches}</b>
+  </div>
 
-      <h3 style="margin-top:25px;">🔥 Топ категории</h3>
-      ${renderTop(s.top_categories)}
+  <div class="admin-card clickable" onclick="showUsers('all')">
+    👤 Всего пользователей: <b>${s.unique_users}</b>
+    <div style="opacity:.6;font-size:12px;margin-top:6px;">
+      Нажми, чтобы показать UserID и username
+    </div>
+  </div>
 
-      <h3 style="margin-top:25px;">💰 Топ товары</h3>
-      ${renderTop(s.top_products)}
-    `;
+  <div class="admin-card">
+    🛒 Всего кликов: <b>${s.product_clicks}</b>
+  </div>
+
+  <div class="admin-card">
+    📈 Общая конверсия: 
+    <b>${s.launches > 0 ? ((s.product_clicks / s.launches) * 100).toFixed(1) : 0}%</b>
+  </div>
+
+  <h3 style="margin-top:25px;">📅 Сегодня</h3>
+
+  <div class="admin-card">
+    🚀 Запусков сегодня: <b>${s.today_launches}</b>
+  </div>
+
+  <div class="admin-card clickable" onclick="showUsers('today')">
+    👤 Новых сегодня: <b>${s.today_users}</b>
+    <div style="opacity:.6;font-size:12px;margin-top:6px;">
+      Нажми, чтобы показать UserID и username
+    </div>
+  </div>
+
+  <div class="admin-card">
+    🛒 Кликов сегодня: <b>${s.today_product_clicks}</b>
+  </div>
+
+  <div class="users-box">
+    <div class="users-toolbar">
+      <button onclick="showUsers('all')">Показать всех</button>
+      <button onclick="showUsers('today')">Только сегодня</button>
+      <button onclick="copyUsersToClipboard()">Скопировать</button>
+    </div>
+    <div id="usersListBox" class="users-empty">
+      Нажми на карточку пользователей или кнопку выше.
+    </div>
+  </div>
+
+  <h3 style="margin-top:25px;">🔥 Топ категории</h3>
+  ${renderTop(s.top_categories)}
+
+  <h3 style="margin-top:25px;">💰 Топ товары</h3>
+  ${renderTop(s.top_products)}
+`;
   } catch(e){
     panel.innerHTML = `<button class="close-x" onclick="closeAdmin()">✕</button>Ошибка загрузки данных`;
   }
@@ -1015,6 +1125,116 @@ function enableRipples(){
 
   document.querySelectorAll(".action-btn, .price-btn").forEach(attach);
 }
+
+async function fetchUsersFromServer(scope){
+  // scope: "all" | "today"
+  // Пробуем несколько форматов, чтобы не зависеть от реализации Apps Script:
+  // 1) ?action=users&scope=all
+  // 2) ?users=1&scope=all
+  const urls = [
+    `${ANALYTICS_URL}?action=users&scope=${encodeURIComponent(scope)}`,
+    `${ANALYTICS_URL}?users=1&scope=${encodeURIComponent(scope)}`
+  ];
+
+  for(const url of urls){
+    try{
+      const r = await fetch(url);
+      const j = await r.json();
+
+      // Поддерживаем разные схемы ответа:
+      // { users: [{user_id, username}, ...] }
+      // { users: { "123":"name", ... } }
+      // { all_users: [...]} / { today_users_list: [...] } и т.д.
+      let list = null;
+
+      if(Array.isArray(j?.users)) list = j.users;
+      else if(j?.users && typeof j.users === "object") {
+        list = Object.entries(j.users).map(([id, name]) => ({ user_id: Number(id), username: String(name || "") }));
+      }
+      else if(Array.isArray(j?.all_users) && scope === "all") list = j.all_users;
+      else if(Array.isArray(j?.today_users_list) && scope === "today") list = j.today_users_list;
+
+      if(list){
+        // нормализуем
+        return list
+          .map(u => ({
+            user_id: Number(u.user_id ?? u.id ?? 0),
+            username: String(u.username ?? u.user ?? u.name ?? "").trim()
+          }))
+          .filter(u => u.user_id);
+      }
+    }catch(e){
+      // пробуем следующий url
+    }
+  }
+  return null; // сервер не поддерживает
+}
+
+function renderUsersList(list, titleText){
+  const box = document.getElementById("usersListBox");
+  if(!box) return;
+
+  if(!list || list.length === 0){
+    box.innerHTML = `<div class="users-empty">Нет данных по пользователям.</div>`;
+    return;
+  }
+
+  const html = list.slice(0, 200).map(u => `
+    <div class="user-row">
+      <div class="user-id">${u.user_id}</div>
+      <div class="user-name">@${(u.username || "—")}</div>
+    </div>
+  `).join("");
+
+  box.innerHTML = `
+    <div class="users-empty" style="margin-bottom:10px;">${titleText} (показано: ${Math.min(list.length,200)}${list.length>200?" из "+list.length:""})</div>
+    <div class="users-list">${html}</div>
+  `;
+}
+
+async function showUsers(scope){
+  const box = document.getElementById("usersListBox");
+  if(box) box.innerHTML = `<div class="users-empty">Загрузка списка пользователей…</div>`;
+
+  const list = await fetchUsersFromServer(scope);
+
+  if(list === null){
+    // сервер не отдаёт список
+    if(box){
+      box.innerHTML = `
+        <div class="users-empty">
+          Серверная аналитика сейчас отдаёт только числа, но не список пользователей.<br><br>
+          Нужно добавить в Google Apps Script обработчик <b>action=users</b> (all/today), чтобы возвращать массив:
+          <br><br>
+          <code>{ users: [{ user_id: 123, username: "name" }, ...] }</code>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  renderUsersList(list, scope === "today" ? "Новые пользователи сегодня" : "Все уникальные пользователи");
+}
+
+function copyUsersToClipboard(){
+  const box = document.getElementById("usersListBox");
+  if(!box) return;
+
+  // Собираем текст из текущего отображения
+  const rows = Array.from(box.querySelectorAll(".user-row")).map(r=>{
+    const id = r.querySelector(".user-id")?.textContent?.trim() || "";
+    const name = r.querySelector(".user-name")?.textContent?.trim() || "";
+    return `${id}\t${name}`;
+  }).filter(Boolean);
+
+  if(rows.length === 0) return;
+
+  const text = rows.join("\n");
+  navigator.clipboard?.writeText(text).then(()=>{
+    haptic("light");
+  }).catch(()=>{});
+}
+
 loadData();
 </script>
 
