@@ -780,7 +780,7 @@ async function loadData(){
     const parts = parseCSVLine(row);
     const category = (parts[0] || "").trim();
     const price = (parts[1] || "").trim();
-    const link = (parts[2] || "").trim();
+    const link = parts.slice(2).join(",").trim();
 
     if(!category) return;
     if(!data[category]) data[category] = [];
