@@ -563,6 +563,111 @@ h1{
     inset 0 -14px 22px rgba(0,0,0,.45),
     0 8px 18px rgba(0,0,0,.55);
 }
+
+/* ===== Live Theme Switcher ===== */
+
+/* Плавный переход оттенков/фона/теней */
+body, .category-card, .price-btn, .action-btn, .bottom-actions, .admin-card{
+  transition: background .35s ease, color .35s ease, box-shadow .35s ease, border-color .35s ease, filter .35s ease;
+}
+
+/* Тема по умолчанию (у тебя уже есть) — Classic Green */
+:root{
+  --bg:#000000;
+  --card1:#1DB954;
+  --card2:#16a34a;
+
+  --panelGlass: rgba(12,12,12,.45);
+  --text:#ffffff;
+  --muted: rgba(255,255,255,.70);
+  --stroke: rgba(255,255,255,.92);
+  --fill: rgba(255,255,255,.06);
+}
+
+/* Luxury Graphite (пример второй темы) */
+body.theme-lux{
+  --bg:#070708;
+  --card1:#2a2a2e;      /* градиент на категориях станет “графит” */
+  --card2:#111114;
+
+  --panelGlass: rgba(10,10,12,.52);
+  --text:#ffffff;
+  --muted: rgba(255,255,255,.72);
+  --stroke: rgba(255,255,255,.90);
+  --fill: rgba(255,255,255,.05);
+}
+
+/* Применяем переменные к уже существующим элементам */
+body{
+  background: var(--bg);
+  color: var(--text);
+}
+
+.bottom-actions{
+  background: var(--panelGlass);
+}
+
+/* Иконки из твоей системы */
+.picon, .picon-sm{
+  stroke: var(--stroke);
+}
+.picon{
+  fill: var(--fill);
+}
+
+/* Чуть изменим подсветку “зелёного” в luxury: пусть будет более холодной */
+body.theme-lux .bottom-actions{
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.68),
+    0 0 50px rgba(255,255,255,.05);
+}
+
+/* Кнопка-тогглер */
+.theme-toggle{
+  position:fixed;
+  top:18px;
+  left:18px;
+  z-index:1001;
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  height:38px;
+  padding:0 12px;
+  border-radius:14px;
+
+  background: rgba(17,17,17,.55);
+  border:1px solid rgba(255,255,255,.12);
+  color:#fff;
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  cursor:pointer;
+  user-select:none;
+}
+
+.theme-toggle:active{ transform: scale(.98); }
+
+.theme-dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background: linear-gradient(135deg, var(--card1), var(--card2));
+  box-shadow: 0 0 14px rgba(29,185,84,.25);
+}
+
+body.theme-lux .theme-dot{
+  box-shadow: 0 0 14px rgba(255,255,255,.12);
+}
+
+.theme-label{
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.4px;
+  opacity:.9;
+}
+
 </style>
 </head>
 
@@ -925,7 +1030,10 @@ function closeAdmin(){
   const pricesVisible = document.getElementById("prices").style.display === "block";
   if(!pricesVisible) showBottom();
 }
-
+<div id="themeToggle" class="theme-toggle" onclick="toggleTheme()">
+  <div class="theme-dot"></div>
+  <div id="themeLabel" class="theme-label">Classic</div>
+</div>
 /* ===== SWIPE BACK SYSTEM ===== */
 let startX = 0;
 let currentX = 0;
@@ -1015,6 +1123,31 @@ function enableRipples(){
 
   document.querySelectorAll(".action-btn, .price-btn").forEach(attach);
 }
+/* ===== Theme Switcher ===== */
+const THEME_KEY = "smartdeal_theme"; // classic | lux
+
+function applyTheme(theme){
+  const t = (theme === "lux") ? "lux" : "classic";
+  document.body.classList.toggle("theme-lux", t === "lux");
+
+  // подпись на кнопке
+  const label = document.getElementById("themeLabel");
+  if(label) label.textContent = (t === "lux") ? "Luxury" : "Classic";
+
+  // сохраняем выбор
+  localStorage.setItem(THEME_KEY, t);
+
+  // лёгкая тактильная отдача
+  haptic(t === "lux" ? "medium" : "light");
+}
+
+function toggleTheme(){
+  const current = localStorage.getItem(THEME_KEY) || "classic";
+  applyTheme(current === "lux" ? "classic" : "lux");
+}
+
+// применяем при старте
+applyTheme(localStorage.getItem(THEME_KEY) || "classic");
 loadData();
 </script>
 
