@@ -8,17 +8,26 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
+/* ===== Base theme vars ===== */
 :root{
   --bg:#000000;
   --card1:#1DB954;
   --card2:#16a34a;
+
+  --panelGlass: rgba(12,12,12,.45);
+  --text:#ffffff;
+  --muted: rgba(255,255,255,.70);
+  --stroke: rgba(255,255,255,.92);
+  --fill: rgba(255,255,255,.06);
+
+  --iconStrokeW: 1.7;
 }
 
 body{
   margin:0;
   background:var(--bg);
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  color:#fff;
+  color:var(--text);
   overflow-x:hidden;
   padding-bottom:90px;
   position:relative;
@@ -67,6 +76,11 @@ h1{
   opacity:0;
   transform:translateY(50px) scale(.9);
   filter:blur(14px);
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.14), transparent 45%),
+    radial-gradient(circle at 80% 85%, rgba(0,0,0,.35), transparent 55%),
+    linear-gradient(135deg,var(--card1),var(--card2));
 }
 
 .category-card.show{
@@ -154,14 +168,7 @@ h1{
   align-items:center;
   justify-content:center;
   background:rgba(29,185,84,.12);
-  color:#1DB954;
-  font-size:16px;
-}
-
-.price-arrow{
-  font-size:18px;
-  opacity:.4;
-  transition:.3s;
+  color:transparent;
 }
 
 .price-btn:hover{
@@ -170,11 +177,6 @@ h1{
   box-shadow:
     0 15px 40px rgba(29,185,84,.25),
     inset 0 1px 0 rgba(255,255,255,.08);
-}
-
-.price-btn:hover .price-arrow{
-  opacity:1;
-  transform:translateX(6px);
 }
 
 .price-btn:active{ transform:scale(.97); }
@@ -195,12 +197,12 @@ h1{
 }
 
 /* ===============================
-   BOTTOM ACTIONS — CLEAN VERSION
+   BOTTOM ACTIONS
    =============================== */
 
 .bottom-actions{
   position:fixed;
-  bottom:18px;
+  bottom: calc(18px + env(safe-area-inset-bottom));
   left:50%;
   transform:translateX(-50%) translateY(30px);
   width:90%;
@@ -213,6 +215,21 @@ h1{
   opacity:0;
   transition:.6s cubic-bezier(.22,1,.36,1);
   z-index:50;
+
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+  padding-left:14px;
+  padding-right:14px;
+
+  background: var(--panelGlass);
+  border: none;
+  border-radius: 22px;
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.65),
+    0 0 50px rgba(29,185,84,.08);
 }
 
 .bottom-actions.show{
@@ -293,7 +310,7 @@ h1{
 .bottom-buttons .action-btn{
   flex:1;
   min-width:0;
-  white-space:nowrap;        /* ✅ запрет переноса */
+  white-space:nowrap;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -328,19 +345,6 @@ h1{
 
 .action-btn:active{ transform:scale(.96); }
 
-/* Accent button */
-
-.action-btn.primary{
-  border:none;
-  background:linear-gradient(135deg,var(--card1),var(--card2));
-  box-shadow:0 10px 30px rgba(29,185,84,.35);
-}
-
-.action-btn.primary:hover{
-  box-shadow:0 15px 40px rgba(29,185,84,.45);
-}
-
-/* ===== Button Content Layout Fix ===== */
 .btn-content{
   display:inline-flex;
   align-items:center;
@@ -355,7 +359,7 @@ h1{
   position:fixed;
   top:18px !important;
   right:18px !important;
-  z-index:1001; /* ✅ выше bottom-actions (50) и panel (1000) */
+  z-index:1001;
   background:#111;
   border:1px solid rgba(255,255,255,.15);
   color:#fff;
@@ -395,41 +399,6 @@ h1{
   border-radius:12px;
   cursor:pointer;
   font-size:14px;
-}
-/* ===== Apple Glass Upgrade (Index 18) ===== */
-
-/* Safe-area (iPhone) + glass look */
-.bottom-actions{
-  bottom: calc(18px + env(safe-area-inset-bottom));
-  padding-bottom: calc(14px + env(safe-area-inset-bottom));
-  padding-left:14px;
-  padding-right:14px;
-
-  background: rgba(12,12,12,.45); /* чуть легче */
-  border: none; /* ❌ убираем рамку */
-  border-radius: 22px;
-
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.65),
-    0 0 50px rgba(29,185,84,.08);
-}
-
-/* Buttons: slightly more “springy” */
-.action-btn,
-.price-btn{
-  transition: all .45s cubic-bezier(.22,1.4,.36,1);
-}
-
-/* Cards: material highlight */
-.category-card{
-  border: 1px solid rgba(255,255,255,.08);
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,.14), transparent 45%),
-    radial-gradient(circle at 80% 85%, rgba(0,0,0,.35), transparent 55%),
-    linear-gradient(135deg,var(--card1),var(--card2));
 }
 
 /* ===== Skeleton loading ===== */
@@ -471,18 +440,13 @@ h1{
 @keyframes ripple{
   to{ transform:scale(3.2); opacity:0; }
 }
-/* ===== Premium Icon System ===== */
-:root{
-  --iconStroke: rgba(255,255,255,.92);
-  --iconFill: rgba(255,255,255,.06);
-  --iconStrokeW: 1.7;
-}
 
+/* ===== Premium Icon System ===== */
 .picon{
   width:46px;
   height:46px;
-  stroke:var(--iconStroke);
-  fill:var(--iconFill);
+  stroke:var(--stroke);
+  fill:var(--fill);
   stroke-width:var(--iconStrokeW);
   stroke-linecap:round;
   stroke-linejoin:round;
@@ -492,7 +456,7 @@ h1{
 .picon-sm{
   width:18px;
   height:18px;
-  stroke:var(--iconStroke);
+  stroke:var(--stroke);
   fill:none;
   stroke-width:1.9;
   stroke-linecap:round;
@@ -500,15 +464,7 @@ h1{
   opacity:.92;
 }
 
-/* Иконка в price-icon вместо эмодзи */
-.price-icon{
-  background:rgba(29,185,84,.12);
-  color:transparent; /* на всякий случай, если текст останется */
-}
-/* ===== 3D Arrow for Price Cards (Index 20) ===== */
-
-/* превращаем правую часть в объёмную /* ===== Smaller Arrow (50% size) ===== */
-
+/* ===== 3D Arrow (fixed comment + size) ===== */
 .price-arrow{
   width:17px;
   height:17px;
@@ -535,16 +491,11 @@ h1{
 .price-arrow svg{
   width:10px;
   height:10px;
-}
-/* “объём” самой SVG-стрелки */
-.price-arrow svg{
   filter:
     drop-shadow(0 2px 0 rgba(0,0,0,.55))
     drop-shadow(0 0 8px rgba(29,185,84,.18));
   transform: translateY(-.5px);
 }
-
-/* hover: капсула чуть приподнимается и наклоняется */
 .price-btn:hover .price-arrow{
   transform: translateY(-2px) rotateX(8deg);
   border-color: rgba(29,185,84,.35);
@@ -554,8 +505,6 @@ h1{
     0 14px 28px rgba(29,185,84,.18),
     0 18px 40px rgba(0,0,0,.55);
 }
-
-/* tap: “нажатие” */
 .price-btn:active .price-arrow{
   transform: translateY(0) scale(.96);
   box-shadow:
@@ -564,65 +513,23 @@ h1{
     0 8px 18px rgba(0,0,0,.55);
 }
 
-/* ===== Live Theme Switcher ===== */
-
-/* Плавный переход оттенков/фона/теней */
-body, .category-card, .price-btn, .action-btn, .bottom-actions, .admin-card{
-  transition: background .35s ease, color .35s ease, box-shadow .35s ease, border-color .35s ease, filter .35s ease;
-}
-
-/* Тема по умолчанию (у тебя уже есть) — Classic Green */
-:root{
-  --bg:#000000;
-  --card1:#1DB954;
-  --card2:#16a34a;
-
-  --panelGlass: rgba(12,12,12,.45);
-  --text:#ffffff;
-  --muted: rgba(255,255,255,.70);
-  --stroke: rgba(255,255,255,.92);
-  --fill: rgba(255,255,255,.06);
-}
-
-/* Luxury Graphite (пример второй темы) */
+/* ===== Theme: Luxury ===== */
 body.theme-lux{
   --bg:#070708;
-  --card1:#2a2a2e;      /* градиент на категориях станет “графит” */
+  --card1:#2a2a2e;
   --card2:#111114;
 
   --panelGlass: rgba(10,10,12,.52);
-  --text:#ffffff;
-  --muted: rgba(255,255,255,.72);
   --stroke: rgba(255,255,255,.90);
   --fill: rgba(255,255,255,.05);
 }
-
-/* Применяем переменные к уже существующим элементам */
-body{
-  background: var(--bg);
-  color: var(--text);
-}
-
-.bottom-actions{
-  background: var(--panelGlass);
-}
-
-/* Иконки из твоей системы */
-.picon, .picon-sm{
-  stroke: var(--stroke);
-}
-.picon{
-  fill: var(--fill);
-}
-
-/* Чуть изменим подсветку “зелёного” в luxury: пусть будет более холодной */
 body.theme-lux .bottom-actions{
   box-shadow:
     0 20px 60px rgba(0,0,0,.68),
     0 0 50px rgba(255,255,255,.05);
 }
 
-/* Кнопка-тогглер */
+/* ===== Theme Toggle Button ===== */
 .theme-toggle{
   position:fixed;
   top:18px;
@@ -646,7 +553,6 @@ body.theme-lux .bottom-actions{
   cursor:pointer;
   user-select:none;
 }
-
 .theme-toggle:active{ transform: scale(.98); }
 
 .theme-dot{
@@ -656,18 +562,15 @@ body.theme-lux .bottom-actions{
   background: linear-gradient(135deg, var(--card1), var(--card2));
   box-shadow: 0 0 14px rgba(29,185,84,.25);
 }
-
 body.theme-lux .theme-dot{
   box-shadow: 0 0 14px rgba(255,255,255,.12);
 }
-
 .theme-label{
   font-size:12px;
   font-weight:700;
   letter-spacing:.4px;
   opacity:.9;
 }
-
 </style>
 </head>
 
@@ -675,13 +578,19 @@ body.theme-lux .theme-dot{
 
 <h1>Smart Deal</h1>
 
+<!-- ✅ Theme toggle MUST be in BODY, not in <script> -->
+<div id="themeToggle" class="theme-toggle" onclick="toggleTheme()">
+  <div class="theme-dot"></div>
+  <div id="themeLabel" class="theme-label">Classic</div>
+</div>
+
 <!-- ✅ swipeContainer содержит ТОЛЬКО экраны -->
 <div id="swipeContainer" class="swipeable">
   <div class="categories" id="categories"></div>
   <div class="prices" id="prices"></div>
 </div>
 
-<!-- ✅ Нижняя панель отдельно, НЕ внутри swipeContainer -->
+<!-- ✅ Нижняя панель отдельно -->
 <div class="bottom-actions" id="bottomActions">
   <div class="signature-wrapper">
     <div class="signature">Design and Developed by Fomintsev Denis</div>
@@ -690,30 +599,29 @@ body.theme-lux .theme-dot{
 
   <div class="bottom-buttons">
     <button class="action-btn outline" onclick="openFeedback()">
-  <span class="btn-content">
-    <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M20 12c0 3.9-3.6 7-8 7-1 0-2-.1-2.9-.4L5 20l1-3.2C4.8 15.7 4 13.9 4 12c0-3.9 3.6-7 8-7s8 3.1 8 7z"></path>
-      <path d="M8 11.5h8"></path>
-      <path d="M8 14.5h5.5"></path>
-    </svg>
-    <span>Обратная связь</span>
-  </span>
-</button>
+      <span class="btn-content">
+        <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 12c0 3.9-3.6 7-8 7-1 0-2-.1-2.9-.4L5 20l1-3.2C4.8 15.7 4 13.9 4 12c0-3.9 3.6-7 8-7s8 3.1 8 7z"></path>
+          <path d="M8 11.5h8"></path>
+          <path d="M8 14.5h5.5"></path>
+        </svg>
+        <span>Обратная связь</span>
+      </span>
+    </button>
 
-<button class="action-btn outline" onclick="openSite()">
-  <span class="btn-content">
-    <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="8.5"></circle>
-      <path d="M3.8 12h16.4"></path>
-      <path d="M12 3.5c2.2 2.3 3.5 5.2 3.5 8.5S14.2 18.2 12 20.5c-2.2-2.3-3.5-5.2-3.5-8.5S9.8 5.8 12 3.5z"></path>
-    </svg>
-    <span>Зайти на сайт</span>
-  </span>
-</button>
+    <button class="action-btn outline" onclick="openSite()">
+      <span class="btn-content">
+        <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.5"></circle>
+          <path d="M3.8 12h16.4"></path>
+          <path d="M12 3.5c2.2 2.3 3.5 5.2 3.5 8.5S14.2 18.2 12 20.5c-2.2-2.3-3.5-5.2-3.5-8.5S9.8 5.8 12 3.5z"></path>
+        </svg>
+        <span>Зайти на сайт</span>
+      </span>
+    </button>
   </div>
 </div>
 
-<!-- ✅ Админ-кнопка отдельно, фиксирована и над всем -->
 <button id="adminBtn" class="admin-btn" style="display:none;">⚙</button>
 <div id="adminPanel" class="admin-panel"></div>
 
@@ -795,7 +703,6 @@ async function loadData(){
     const row = rawRow.trim();
     if(!row) return;
 
-    // ✅ чуть безопаснее: link собираем из "остатка", если там были запятые
     const parts = row.split(",");
     const category = (parts[0] || "").trim();
     const price = (parts[1] || "").trim();
@@ -808,9 +715,7 @@ async function loadData(){
 
   renderCategories();
   enableRipples();
-  setTimeout(()=>{
-    document.getElementById("bottomActions").classList.add("show");
-  }, 700);
+  setTimeout(()=>{ document.getElementById("bottomActions").classList.add("show"); }, 700);
 }
 
 /* ===== Icons ===== */
@@ -858,7 +763,7 @@ function renderCategories(){
   const container = document.getElementById("categories");
   container.innerHTML = "";
   container.style.display = "grid";
-  showBottom(); // ✅ на главном экране панель показываем
+  showBottom();
 
   Object.keys(data).forEach((category,index)=>{
     const div = document.createElement("div");
@@ -895,7 +800,7 @@ function showPrices(category){
   const pricesDiv = document.getElementById("prices");
 
   haptic("medium");
-  hideBottom(); // ✅ чтобы не перекрывало цены
+  hideBottom();
 
   categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
@@ -905,22 +810,22 @@ function showPrices(category){
     const btn=document.createElement("button");
     btn.className="price-btn";
     btn.innerHTML = `
-  <div class="price-left">
-    <div class="price-icon">
-      <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M7 8.5c0-1.9 1.7-3.5 5-3.5s5 1.2 5 3.1-1.4 2.5-5 2.9-5 1.1-5 2.9 1.7 3.1 5 3.1 5-1.6 5-3.5"></path>
-        <path d="M12 4v16"></path>
-      </svg>
-    </div>
-    <div>${item.price || ""}</div>
-  </div>
-  <div class="price-arrow">
-    <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 12h12"></path>
-      <path d="M13 7l5 5-5 5"></path>
-    </svg>
-  </div>
-`;
+      <div class="price-left">
+        <div class="price-icon">
+          <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 8.5c0-1.9 1.7-3.5 5-3.5s5 1.2 5 3.1-1.4 2.5-5 2.9-5 1.1-5 2.9 1.7 3.1 5 3.1 5-1.6 5-3.5"></path>
+            <path d="M12 4v16"></path>
+          </svg>
+        </div>
+        <div>${item.price || ""}</div>
+      </div>
+      <div class="price-arrow">
+        <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h12"></path>
+          <path d="M13 7l5 5-5 5"></path>
+        </svg>
+      </div>
+    `;
 
     btn.onclick=()=>{
       const key=category+" | "+(item.price || "");
@@ -962,12 +867,12 @@ function showPrices(category){
   enableRipples();
 }
 
-/* ===== Admin Panel (server) ===== */
+/* ===== Admin Panel ===== */
 document.getElementById("adminBtn").onclick = async () => {
   const panel = document.getElementById("adminPanel");
   panel.style.display = "block";
   panel.innerHTML = `<button class="close-x" onclick="closeAdmin()">✕</button>Загрузка...`;
-  hideBottom(); // ✅ чтобы не мешало
+  hideBottom();
 
   try{
     const response = await fetch(ANALYTICS_URL);
@@ -1026,20 +931,16 @@ function renderTop(obj){
 
 function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
-  // возвращаем нижнюю панель только если мы на главном экране
   const pricesVisible = document.getElementById("prices").style.display === "block";
   if(!pricesVisible) showBottom();
 }
-<div id="themeToggle" class="theme-toggle" onclick="toggleTheme()">
-  <div class="theme-dot"></div>
-  <div id="themeLabel" class="theme-label">Classic</div>
-</div>
+
 /* ===== SWIPE BACK SYSTEM ===== */
 let startX = 0;
 let currentX = 0;
 let isSwiping = false;
-const swipeZone = 40; // зона от левого края
-const threshold = 90; // сколько нужно провести
+const swipeZone = 40;
+const threshold = 90;
 
 const swipeContainer = document.getElementById("swipeContainer");
 
@@ -1049,7 +950,7 @@ swipeContainer.addEventListener("touchstart", e => {
   if(e.touches[0].clientX < swipeZone){
     isSwiping = true;
     startX = e.touches[0].clientX;
-    currentX = startX; // ✅ фикс: если не было touchmove
+    currentX = startX;
   }
 });
 
@@ -1088,6 +989,8 @@ swipeContainer.addEventListener("touchend", () => {
 
   isSwiping = false;
 });
+
+/* ===== Skeleton ===== */
 function renderSkeleton(){
   const container = document.getElementById("categories");
   container.innerHTML = "";
@@ -1098,6 +1001,8 @@ function renderSkeleton(){
     container.appendChild(sk);
   }
 }
+
+/* ===== Ripple ===== */
 function enableRipples(){
   const attach = (el) => {
     if(!el || el.dataset.ripple) return;
@@ -1115,7 +1020,6 @@ function enableRipples(){
       ripple.style.left = x + "px";
       ripple.style.top = y + "px";
 
-      // важно: у кнопок уже overflow:hidden
       el.appendChild(ripple);
       setTimeout(()=>ripple.remove(), 650);
     }, { passive:true });
@@ -1123,6 +1027,7 @@ function enableRipples(){
 
   document.querySelectorAll(".action-btn, .price-btn").forEach(attach);
 }
+
 /* ===== Theme Switcher ===== */
 const THEME_KEY = "smartdeal_theme"; // classic | lux
 
@@ -1130,14 +1035,10 @@ function applyTheme(theme){
   const t = (theme === "lux") ? "lux" : "classic";
   document.body.classList.toggle("theme-lux", t === "lux");
 
-  // подпись на кнопке
   const label = document.getElementById("themeLabel");
   if(label) label.textContent = (t === "lux") ? "Luxury" : "Classic";
 
-  // сохраняем выбор
   localStorage.setItem(THEME_KEY, t);
-
-  // лёгкая тактильная отдача
   haptic(t === "lux" ? "medium" : "light");
 }
 
@@ -1148,6 +1049,7 @@ function toggleTheme(){
 
 // применяем при старте
 applyTheme(localStorage.getItem(THEME_KEY) || "classic");
+
 loadData();
 </script>
 
