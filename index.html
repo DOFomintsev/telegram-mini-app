@@ -519,6 +519,12 @@ h1{
     inset 0 1px 0 rgba(255,255,255,.06);
 }
 
+/* ===== Admin swipe-back ===== */
+.admin-panel{
+  will-change: transform;
+  transition: transform .25s ease;
+}
+
 /* ===== Users (admin) ===== */
 .users-box{ margin-top:14px; }
 
@@ -1064,6 +1070,86 @@ function closeAdmin(){
   const pricesVisible = document.getElementById("prices").style.display === "block";
   if(!pricesVisible) showBottom();
 }
+
+/* ===== SWIPE BACK (Admin Panel) ===== */
+(function enableAdminSwipeBack(){
+  const adminPanel = document.getElementById("adminPanel");
+  if(!adminPanel) return;
+
+  let startX = 0, startY = 0, currentX = 0;
+  let isSwiping = false;
+  let locked = false; // определили направление
+
+  const swipeZone = 40;    // зона от левого края
+  const threshold = 90;    // сколько нужно провести
+  const vertTolerance = 14; // допуск по вертикали до "фикса" свайпа
+
+  adminPanel.addEventListener("touchstart", (e) => {
+    if(adminPanel.style.display !== "block") return;
+
+    const t = e.touches[0];
+    if(t.clientX > swipeZone) return;
+
+    isSwiping = true;
+    locked = false;
+    startX = t.clientX;
+    startY = t.clientY;
+    currentX = startX;
+
+    // на всякий случай: чтобы не было залипания после прошлых анимаций
+    adminPanel.style.transition = "transform .25s ease";
+  }, { passive:true });
+
+  adminPanel.addEventListener("touchmove", (e) => {
+    if(!isSwiping) return;
+
+    const t = e.touches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+
+    // фиксируем, что это именно горизонтальный свайп, а не скролл
+    if(!locked){
+      if(Math.abs(dy) > vertTolerance && Math.abs(dy) > Math.abs(dx)){
+        // это скорее вертикальный скролл — не мешаем
+        isSwiping = false;
+        adminPanel.style.transform = "translateX(0)";
+        return;
+      }
+      if(Math.abs(dx) > 6) locked = true;
+    }
+
+    if(dx > 0){
+      // когда реально тянем вправо — лучше не скроллить контент панели
+      e.preventDefault();
+      currentX = t.clientX;
+      adminPanel.style.transform = `translateX(${dx}px)`;
+    }
+  }, { passive:false });
+
+  adminPanel.addEventListener("touchend", () => {
+    if(!isSwiping) return;
+
+    const dx = currentX - startX;
+
+    if(dx > threshold){
+      adminPanel.style.transform = "translateX(100%)";
+
+      setTimeout(() => {
+        closeAdmin();                 // ✅ закрываем админку
+        adminPanel.style.transition = "none";
+        adminPanel.style.transform = "translateX(0)";
+        // возвращаем transition обратно
+        requestAnimationFrame(() => {
+          adminPanel.style.transition = "transform .25s ease";
+        });
+      }, 200);
+    } else {
+      adminPanel.style.transform = "translateX(0)";
+    }
+
+    isSwiping = false;
+  }, { passive:true });
+})();
 
 /* ===== SWIPE BACK SYSTEM ===== */
 let startX = 0;
