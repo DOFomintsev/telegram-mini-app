@@ -1,3 +1,7 @@
+Telegram Bot Index 22
+
++ Объёмные стрелочки
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -563,216 +567,12 @@ h1{
     inset 0 -14px 22px rgba(0,0,0,.45),
     0 8px 18px rgba(0,0,0,.55);
 }
-
-/* ===== Admin Users Buttons + List ===== */
-.admin-card.clickable{
-  cursor:pointer;
-  transition:all .25s cubic-bezier(.22,1,.36,1);
-}
-
-.admin-card.clickable:hover{
-  transform:translateY(-2px);
-  border-color:rgba(29,185,84,.35);
-  box-shadow:0 14px 36px rgba(29,185,84,.12);
-}
-
-.users-box{
-  margin-top:14px;
-}
-
-.users-toolbar{
-  display:flex;
-  gap:10px;
-  margin:10px 0 12px;
-}
-
-.users-toolbar button{
-  flex:1;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.10);
-  background:linear-gradient(145deg,#0f0f0f,#171717);
-  color:#fff;
-  cursor:pointer;
-}
-
-.users-list{
-  background:linear-gradient(145deg,#0f0f0f,#171717);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;
-  padding:12px;
-}
-
-.user-row{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  padding:10px 0;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  font-size:13px;
-}
-
-.user-row:last-child{ border-bottom:none; }
-
-.user-id{
-  opacity:.9;
-  font-variant-numeric: tabular-nums;
-}
-
-.user-name{
-  opacity:.75;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  max-width:55%;
-  text-align:right;
-}
-
-.users-empty{
-  opacity:.75;
-  font-size:13px;
-  line-height:1.5;
-}
-/* ===== Topbar (title + mascot) ===== */
-.topbar{
-  position:relative;
-  padding:24px 0 10px;
-}
-
-.topbar h1{
-  text-align:center;
-  margin:0;
-  font-size:22px;
-  font-weight:700;
-
-  opacity:0;
-  transform:translateY(-20px);
-  animation:titleAppear .8s ease forwards;
-}
-
-/* ===== Bot Mascot (top-left near title) ===== */
-.bot-mascot{
-  position:absolute;
-  left:16px;
-  top:18px;
-  width:44px;
-  height:44px;
-  z-index:60;
-  pointer-events:none;
-  opacity:.95;
-
-  transform-origin: 50% 80%;
-  animation: botIdle 3.4s ease-in-out infinite;
-}
-
-.bot-glow{
-  position:absolute;
-  inset:-10px;
-  border-radius:999px;
-  background: radial-gradient(circle, rgba(29,185,84,.20), transparent 60%);
-  filter: blur(7px);
-  opacity:.9;
-  animation: botGlow 2.8s ease-in-out infinite;
-}
-
-.bot-svg{
-  width:100%;
-  height:100%;
-  stroke: rgba(255,255,255,.92);
-  fill: rgba(255,255,255,.05);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,.55));
-}
-
-/* idle: дыхание + микро-кач */
-@keyframes botIdle{
-  0%,100%{ transform: translateY(0) rotate(-1deg) scale(1); }
-  50%{ transform: translateY(-4px) rotate(1deg) scale(1.02); }
-}
-@keyframes botGlow{
-  0%,100%{ opacity:.65; transform: scale(1); }
-  50%{ opacity:1; transform: scale(1.08); }
-}
-
-/* базовое мигание */
-.bot-eyes{
-  transform-origin: 32px 30px;
-  animation: botBlink 5.2s infinite;
-}
-@keyframes botBlink{
-  0%, 8%, 100% { opacity:1; transform: scaleY(1); }
-  9%, 10% { opacity:.15; transform: scaleY(.12); }
-  11%, 12% { opacity:1; transform: scaleY(1); }
-}
-
-/* ===== Emotion States (classes on #botMascot) ===== */
-.bot-mascot.happy{ animation: botHappy .9s cubic-bezier(.22,1.4,.36,1) 1; }
-@keyframes botHappy{
-  0%{ transform: translateY(0) rotate(0) scale(1); }
-  40%{ transform: translateY(-6px) rotate(-6deg) scale(1.05); }
-  100%{ transform: translateY(0) rotate(0) scale(1); }
-}
-.bot-mascot.happy .mouth{ d:path("M24 38c5 6 11 6 16 0"); } /* мягкая “улыбка” (визуально) */
-
-.bot-mascot.excite{ animation: botExcite .55s cubic-bezier(.22,1.4,.36,1) 1; }
-@keyframes botExcite{
-  0%{ transform: translateY(0) scale(1); }
-  35%{ transform: translateY(-5px) scale(1.06); }
-  70%{ transform: translateY(1px) scale(.98); }
-  100%{ transform: translateY(0) scale(1); }
-}
-
-.bot-mascot.wink .eye-l{ opacity:.15; transform: scaleY(.12); transform-origin: 26px 30px; }
-.bot-mascot.wink{ animation: botWink .55s ease 1; }
-@keyframes botWink{ 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
-
-.bot-mascot.think .brow-l{ transform: translateY(-1px) rotate(-10deg); transform-origin: 26px 24px; }
-.bot-mascot.think .brow-r{ transform: translateY(1px) rotate(10deg); transform-origin: 38px 24px; }
-
-.bot-mascot.sad{ animation: botSad .7s ease 1; }
-@keyframes botSad{
-  0%{ transform: translateY(0) rotate(0) scale(1); }
-  100%{ transform: translateY(2px) rotate(-2deg) scale(.99); }
-}
-.bot-mascot.sad .mouth{ opacity:.75; } /* чуть “грустнее” */
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-  <div id="botMascot" class="bot-mascot" aria-hidden="true">
-    <div class="bot-glow"></div>
-
-    <svg class="bot-svg" viewBox="0 0 64 64">
-      <!-- голова -->
-      <rect x="14" y="16" width="36" height="30" rx="12"></rect>
-      <!-- антенна -->
-      <path d="M32 10v6"></path>
-      <circle cx="32" cy="9" r="2"></circle>
-
-      <!-- глаза -->
-      <g class="bot-eyes">
-        <circle class="eye eye-l" cx="26" cy="30" r="3"></circle>
-        <circle class="eye eye-r" cx="38" cy="30" r="3"></circle>
-      </g>
-
-      <!-- брови (эмоции) -->
-      <path class="brow brow-l" d="M22 25c2-2 6-2 8 0"></path>
-      <path class="brow brow-r" d="M34 25c2-2 6-2 8 0"></path>
-
-      <!-- рот -->
-      <path class="mouth" d="M26 39c4 3 8 3 12 0"></path>
-
-      <!-- тело -->
-      <rect x="22" y="46" width="20" height="10" rx="5"></rect>
-    </svg>
-  </div>
-
-  <h1>Smart Deal</h1>
-</div>
+<h1>Smart Deal</h1>
 
 <!-- ✅ swipeContainer содержит ТОЛЬКО экраны -->
 <div id="swipeContainer" class="swipeable">
@@ -840,80 +640,6 @@ function haptic(type="light"){
   if(tg.HapticFeedback){
     tg.HapticFeedback.impactOccurred(type);
   }
-}
-
-// ===== Bot Mascot Emotions =====
-const botEl = () => document.getElementById("botMascot");
-const botMouth = () => botEl()?.querySelector(".mouth");
-const botBrowL = () => botEl()?.querySelector(".brow-l");
-const botBrowR = () => botEl()?.querySelector(".brow-r");
-
-function botSetMouth(state){
-  const mouth = botMouth();
-  if(!mouth) return;
-
-  // neutral / smile / wow / sad
-  const paths = {
-    neutral: "M26 39c4 3 8 3 12 0",
-    smile:   "M24 38c5 6 11 6 16 0",
-    wow:     "M30 40c1 2 3 2 4 0",          // маленький “о”
-    sad:     "M24 41c5-4 11-4 16 0"        // перевёрнутая улыбка
-  };
-  mouth.setAttribute("d", paths[state] || paths.neutral);
-}
-
-function botEmotion(name, ms=650){
-  const el = botEl();
-  if(!el) return;
-
-  // сброс предыдущих эмоций
-  el.classList.remove("happy","excite","wink","think","sad","swipe");
-  // брови reset
-  botBrowL()?.removeAttribute("style");
-  botBrowR()?.removeAttribute("style");
-  botSetMouth("neutral");
-
-  // состояние
-  if(name === "happy"){ botSetMouth("smile"); el.classList.add("happy"); }
-  if(name === "excite"){ botSetMouth("wow"); el.classList.add("excite"); }
-  if(name === "wink"){ botSetMouth("smile"); el.classList.add("wink"); }
-  if(name === "think"){ el.classList.add("think"); }
-  if(name === "sad"){ botSetMouth("sad"); el.classList.add("sad"); }
-
-  // авто-сброс
-  clearTimeout(el._emoT);
-  el._emoT = setTimeout(()=>{
-    el.classList.remove("happy","excite","wink","think","sad","swipe");
-    botSetMouth("neutral");
-    botBrowL()?.removeAttribute("style");
-    botBrowR()?.removeAttribute("style");
-  }, ms);
-}
-
-// плавная реакция на свайп: intensity 0..1
-function botSwipeIntensity(t){
-  const el = botEl();
-  if(!el) return;
-  const clamped = Math.max(0, Math.min(1, t));
-
-  // лёгкий наклон и “фокус”
-  el.style.transform = `translateY(${-4*clamped}px) rotate(${(-6*clamped).toFixed(2)}deg) scale(${(1+0.03*clamped).toFixed(3)})`;
-  botSetMouth(clamped > 0.6 ? "wow" : "neutral");
-  if(clamped > 0.25){
-    botBrowL()?.setAttribute("style", "transform: translateY(-1px) rotate(-10deg); transform-origin:26px 24px;");
-    botBrowR()?.setAttribute("style", "transform: translateY(1px) rotate(10deg); transform-origin:38px 24px;");
-  }else{
-    botBrowL()?.removeAttribute("style");
-    botBrowR()?.removeAttribute("style");
-  }
-
-  clearTimeout(el._swT);
-  el._swT = setTimeout(()=>{
-    el.style.transform = ""; // вернём idle-анимацию
-    botSetMouth("neutral");
-    botBrowL()?.removeAttribute("style");
-    botBrowR()?.removeAttribute("style");
-  }, 180);
 }
 
 function openFeedback(){
@@ -1151,64 +877,25 @@ document.getElementById("adminBtn").onclick = async () => {
       : 0;
 
     panel.innerHTML = `
-  <button class="close-x" onclick="closeAdmin()">✕</button>
+      <button class="close-x" onclick="closeAdmin()">✕</button>
+      <h2 style="margin-bottom:20px;">📊 Smart Deal Admin 3.0</h2>
 
-  <h2 style="margin-bottom:20px;">📊 Smart Deal Admin 3.0</h2>
+      <div class="admin-card">🚀 Всего запусков: <b>${s.launches}</b></div>
+      <div class="admin-card">👤 Всего пользователей: <b>${s.unique_users}</b></div>
+      <div class="admin-card">🛒 Всего кликов: <b>${s.product_clicks}</b></div>
+      <div class="admin-card">📈 Общая конверсия: <b>${conversion}%</b></div>
 
-  <div class="admin-card">
-    🚀 Всего запусков: <b>${s.launches}</b>
-  </div>
+      <h3 style="margin-top:25px;">📅 Сегодня</h3>
+      <div class="admin-card">🚀 Запусков сегодня: <b>${s.today_launches}</b></div>
+      <div class="admin-card">👤 Новых сегодня: <b>${s.today_users}</b></div>
+      <div class="admin-card">🛒 Кликов сегодня: <b>${s.today_product_clicks}</b></div>
 
-  <div class="admin-card clickable" onclick="showUsers('all')">
-    👤 Всего пользователей: <b>${s.unique_users}</b>
-    <div style="opacity:.6;font-size:12px;margin-top:6px;">
-      Нажми, чтобы показать UserID и UserName
-    </div>
-  </div>
+      <h3 style="margin-top:25px;">🔥 Топ категории</h3>
+      ${renderTop(s.top_categories)}
 
-  <div class="admin-card">
-    🛒 Всего кликов: <b>${s.product_clicks}</b>
-  </div>
-
-  <div class="admin-card">
-    📈 Общая конверсия: 
-    <b>${s.launches > 0 ? ((s.product_clicks / s.launches) * 100).toFixed(1) : 0}%</b>
-  </div>
-
-  <h3 style="margin-top:25px;">📅 Сегодня</h3>
-
-  <div class="admin-card">
-    🚀 Запусков сегодня: <b>${s.today_launches}</b>
-  </div>
-
-  <div class="admin-card clickable" onclick="showUsers('today')">
-    👤 Новых сегодня: <b>${s.today_users}</b>
-    <div style="opacity:.6;font-size:12px;margin-top:6px;">
-      Нажми, чтобы показать UserID и UserName
-    </div>
-  </div>
-
-  <div class="admin-card">
-    🛒 Кликов сегодня: <b>${s.today_product_clicks}</b>
-  </div>
-
-  <div class="users-box">
-    <div class="users-toolbar">
-      <button onclick="showUsers('all')">Показать всех</button>
-      <button onclick="showUsers('today')">Только сегодня</button>
-      <button onclick="copyUsersToClipboard()">Скопировать</button>
-    </div>
-    <div id="usersListBox" class="users-empty">
-      Нажми на карточку пользователей или кнопку выше.
-    </div>
-  </div>
-
-  <h3 style="margin-top:25px;">🔥 Топ категории</h3>
-  ${renderTop(s.top_categories)}
-
-  <h3 style="margin-top:25px;">💰 Топ товары</h3>
-  ${renderTop(s.top_products)}
-`;
+      <h3 style="margin-top:25px;">💰 Топ товары</h3>
+      ${renderTop(s.top_products)}
+    `;
   } catch(e){
     panel.innerHTML = `<button class="close-x" onclick="closeAdmin()">✕</button>Ошибка загрузки данных`;
   }
@@ -1332,116 +1019,6 @@ function enableRipples(){
 
   document.querySelectorAll(".action-btn, .price-btn").forEach(attach);
 }
-
-async function fetchUsersFromServer(scope){
-  // scope: "all" | "today"
-  // Пробуем несколько форматов, чтобы не зависеть от реализации Apps Script:
-  // 1) ?action=users&scope=all
-  // 2) ?users=1&scope=all
-  const urls = [
-    `${ANALYTICS_URL}?action=users&scope=${encodeURIComponent(scope)}`,
-    `${ANALYTICS_URL}?users=1&scope=${encodeURIComponent(scope)}`
-  ];
-
-  for(const url of urls){
-    try{
-      const r = await fetch(url);
-      const j = await r.json();
-
-      // Поддерживаем разные схемы ответа:
-      // { users: [{user_id, username}, ...] }
-      // { users: { "123":"name", ... } }
-      // { all_users: [...]} / { today_users_list: [...] } и т.д.
-      let list = null;
-
-      if(Array.isArray(j?.users)) list = j.users;
-      else if(j?.users && typeof j.users === "object") {
-        list = Object.entries(j.users).map(([id, name]) => ({ user_id: Number(id), username: String(name || "") }));
-      }
-      else if(Array.isArray(j?.all_users) && scope === "all") list = j.all_users;
-      else if(Array.isArray(j?.today_users_list) && scope === "today") list = j.today_users_list;
-
-      if(list){
-        // нормализуем
-        return list
-          .map(u => ({
-            user_id: Number(u.user_id ?? u.id ?? 0),
-            username: String(u.username ?? u.user ?? u.name ?? "").trim()
-          }))
-          .filter(u => u.user_id);
-      }
-    }catch(e){
-      // пробуем следующий url
-    }
-  }
-  return null; // сервер не поддерживает
-}
-
-function renderUsersList(list, titleText){
-  const box = document.getElementById("usersListBox");
-  if(!box) return;
-
-  if(!list || list.length === 0){
-    box.innerHTML = `<div class="users-empty">Нет данных по пользователям.</div>`;
-    return;
-  }
-
-  const html = list.slice(0, 200).map(u => `
-    <div class="user-row">
-      <div class="user-id">${u.user_id}</div>
-      <div class="user-name">@${(u.username || "—")}</div>
-    </div>
-  `).join("");
-
-  box.innerHTML = `
-    <div class="users-empty" style="margin-bottom:10px;">${titleText} (показано: ${Math.min(list.length,200)}${list.length>200?" из "+list.length:""})</div>
-    <div class="users-list">${html}</div>
-  `;
-}
-
-async function showUsers(scope){
-  const box = document.getElementById("usersListBox");
-  if(box) box.innerHTML = `<div class="users-empty">Загрузка списка пользователей…</div>`;
-
-  const list = await fetchUsersFromServer(scope);
-
-  if(list === null){
-    // сервер не отдаёт список
-    if(box){
-      box.innerHTML = `
-        <div class="users-empty">
-          Серверная аналитика сейчас отдаёт только числа, но не список пользователей.<br><br>
-          Нужно добавить в Google Apps Script обработчик <b>action=users</b> (all/today), чтобы возвращать массив:
-          <br><br>
-          <code>{ users: [{ user_id: 123, username: "name" }, ...] }</code>
-        </div>
-      `;
-    }
-    return;
-  }
-
-  renderUsersList(list, scope === "today" ? "Новые пользователи сегодня" : "Все уникальные пользователи");
-}
-
-function copyUsersToClipboard(){
-  const box = document.getElementById("usersListBox");
-  if(!box) return;
-
-  // Собираем текст из текущего отображения
-  const rows = Array.from(box.querySelectorAll(".user-row")).map(r=>{
-    const id = r.querySelector(".user-id")?.textContent?.trim() || "";
-    const name = r.querySelector(".user-name")?.textContent?.trim() || "";
-    return `${id}\t${name}`;
-  }).filter(Boolean);
-
-  if(rows.length === 0) return;
-
-  const text = rows.join("\n");
-  navigator.clipboard?.writeText(text).then(()=>{
-    haptic("light");
-  }).catch(()=>{});
-}
-
 loadData();
 </script>
 
