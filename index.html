@@ -633,13 +633,146 @@ h1{
   font-size:13px;
   line-height:1.5;
 }
+/* ===== Topbar (title + mascot) ===== */
+.topbar{
+  position:relative;
+  padding:24px 0 10px;
+}
 
+.topbar h1{
+  text-align:center;
+  margin:0;
+  font-size:22px;
+  font-weight:700;
+
+  opacity:0;
+  transform:translateY(-20px);
+  animation:titleAppear .8s ease forwards;
+}
+
+/* ===== Bot Mascot (top-left near title) ===== */
+.bot-mascot{
+  position:absolute;
+  left:16px;
+  top:18px;
+  width:44px;
+  height:44px;
+  z-index:60;
+  pointer-events:none;
+  opacity:.95;
+
+  transform-origin: 50% 80%;
+  animation: botIdle 3.4s ease-in-out infinite;
+}
+
+.bot-glow{
+  position:absolute;
+  inset:-10px;
+  border-radius:999px;
+  background: radial-gradient(circle, rgba(29,185,84,.20), transparent 60%);
+  filter: blur(7px);
+  opacity:.9;
+  animation: botGlow 2.8s ease-in-out infinite;
+}
+
+.bot-svg{
+  width:100%;
+  height:100%;
+  stroke: rgba(255,255,255,.92);
+  fill: rgba(255,255,255,.05);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.55));
+}
+
+/* idle: дыхание + микро-кач */
+@keyframes botIdle{
+  0%,100%{ transform: translateY(0) rotate(-1deg) scale(1); }
+  50%{ transform: translateY(-4px) rotate(1deg) scale(1.02); }
+}
+@keyframes botGlow{
+  0%,100%{ opacity:.65; transform: scale(1); }
+  50%{ opacity:1; transform: scale(1.08); }
+}
+
+/* базовое мигание */
+.bot-eyes{
+  transform-origin: 32px 30px;
+  animation: botBlink 5.2s infinite;
+}
+@keyframes botBlink{
+  0%, 8%, 100% { opacity:1; transform: scaleY(1); }
+  9%, 10% { opacity:.15; transform: scaleY(.12); }
+  11%, 12% { opacity:1; transform: scaleY(1); }
+}
+
+/* ===== Emotion States (classes on #botMascot) ===== */
+.bot-mascot.happy{ animation: botHappy .9s cubic-bezier(.22,1.4,.36,1) 1; }
+@keyframes botHappy{
+  0%{ transform: translateY(0) rotate(0) scale(1); }
+  40%{ transform: translateY(-6px) rotate(-6deg) scale(1.05); }
+  100%{ transform: translateY(0) rotate(0) scale(1); }
+}
+.bot-mascot.happy .mouth{ d:path("M24 38c5 6 11 6 16 0"); } /* мягкая “улыбка” (визуально) */
+
+.bot-mascot.excite{ animation: botExcite .55s cubic-bezier(.22,1.4,.36,1) 1; }
+@keyframes botExcite{
+  0%{ transform: translateY(0) scale(1); }
+  35%{ transform: translateY(-5px) scale(1.06); }
+  70%{ transform: translateY(1px) scale(.98); }
+  100%{ transform: translateY(0) scale(1); }
+}
+
+.bot-mascot.wink .eye-l{ opacity:.15; transform: scaleY(.12); transform-origin: 26px 30px; }
+.bot-mascot.wink{ animation: botWink .55s ease 1; }
+@keyframes botWink{ 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
+
+.bot-mascot.think .brow-l{ transform: translateY(-1px) rotate(-10deg); transform-origin: 26px 24px; }
+.bot-mascot.think .brow-r{ transform: translateY(1px) rotate(10deg); transform-origin: 38px 24px; }
+
+.bot-mascot.sad{ animation: botSad .7s ease 1; }
+@keyframes botSad{
+  0%{ transform: translateY(0) rotate(0) scale(1); }
+  100%{ transform: translateY(2px) rotate(-2deg) scale(.99); }
+}
+.bot-mascot.sad .mouth{ opacity:.75; } /* чуть “грустнее” */
 </style>
 </head>
 
 <body>
 
-<h1>Smart Deal</h1>
+<div class="topbar">
+  <div id="botMascot" class="bot-mascot" aria-hidden="true">
+    <div class="bot-glow"></div>
+
+    <svg class="bot-svg" viewBox="0 0 64 64">
+      <!-- голова -->
+      <rect x="14" y="16" width="36" height="30" rx="12"></rect>
+      <!-- антенна -->
+      <path d="M32 10v6"></path>
+      <circle cx="32" cy="9" r="2"></circle>
+
+      <!-- глаза -->
+      <g class="bot-eyes">
+        <circle class="eye eye-l" cx="26" cy="30" r="3"></circle>
+        <circle class="eye eye-r" cx="38" cy="30" r="3"></circle>
+      </g>
+
+      <!-- брови (эмоции) -->
+      <path class="brow brow-l" d="M22 25c2-2 6-2 8 0"></path>
+      <path class="brow brow-r" d="M34 25c2-2 6-2 8 0"></path>
+
+      <!-- рот -->
+      <path class="mouth" d="M26 39c4 3 8 3 12 0"></path>
+
+      <!-- тело -->
+      <rect x="22" y="46" width="20" height="10" rx="5"></rect>
+    </svg>
+  </div>
+
+  <h1>Smart Deal</h1>
+</div>
 
 <!-- ✅ swipeContainer содержит ТОЛЬКО экраны -->
 <div id="swipeContainer" class="swipeable">
@@ -707,6 +840,80 @@ function haptic(type="light"){
   if(tg.HapticFeedback){
     tg.HapticFeedback.impactOccurred(type);
   }
+}
+
+// ===== Bot Mascot Emotions =====
+const botEl = () => document.getElementById("botMascot");
+const botMouth = () => botEl()?.querySelector(".mouth");
+const botBrowL = () => botEl()?.querySelector(".brow-l");
+const botBrowR = () => botEl()?.querySelector(".brow-r");
+
+function botSetMouth(state){
+  const mouth = botMouth();
+  if(!mouth) return;
+
+  // neutral / smile / wow / sad
+  const paths = {
+    neutral: "M26 39c4 3 8 3 12 0",
+    smile:   "M24 38c5 6 11 6 16 0",
+    wow:     "M30 40c1 2 3 2 4 0",          // маленький “о”
+    sad:     "M24 41c5-4 11-4 16 0"        // перевёрнутая улыбка
+  };
+  mouth.setAttribute("d", paths[state] || paths.neutral);
+}
+
+function botEmotion(name, ms=650){
+  const el = botEl();
+  if(!el) return;
+
+  // сброс предыдущих эмоций
+  el.classList.remove("happy","excite","wink","think","sad","swipe");
+  // брови reset
+  botBrowL()?.removeAttribute("style");
+  botBrowR()?.removeAttribute("style");
+  botSetMouth("neutral");
+
+  // состояние
+  if(name === "happy"){ botSetMouth("smile"); el.classList.add("happy"); }
+  if(name === "excite"){ botSetMouth("wow"); el.classList.add("excite"); }
+  if(name === "wink"){ botSetMouth("smile"); el.classList.add("wink"); }
+  if(name === "think"){ el.classList.add("think"); }
+  if(name === "sad"){ botSetMouth("sad"); el.classList.add("sad"); }
+
+  // авто-сброс
+  clearTimeout(el._emoT);
+  el._emoT = setTimeout(()=>{
+    el.classList.remove("happy","excite","wink","think","sad","swipe");
+    botSetMouth("neutral");
+    botBrowL()?.removeAttribute("style");
+    botBrowR()?.removeAttribute("style");
+  }, ms);
+}
+
+// плавная реакция на свайп: intensity 0..1
+function botSwipeIntensity(t){
+  const el = botEl();
+  if(!el) return;
+  const clamped = Math.max(0, Math.min(1, t));
+
+  // лёгкий наклон и “фокус”
+  el.style.transform = `translateY(${-4*clamped}px) rotate(${(-6*clamped).toFixed(2)}deg) scale(${(1+0.03*clamped).toFixed(3)})`;
+  botSetMouth(clamped > 0.6 ? "wow" : "neutral");
+  if(clamped > 0.25){
+    botBrowL()?.setAttribute("style", "transform: translateY(-1px) rotate(-10deg); transform-origin:26px 24px;");
+    botBrowR()?.setAttribute("style", "transform: translateY(1px) rotate(10deg); transform-origin:38px 24px;");
+  }else{
+    botBrowL()?.removeAttribute("style");
+    botBrowR()?.removeAttribute("style");
+  }
+
+  clearTimeout(el._swT);
+  el._swT = setTimeout(()=>{
+    el.style.transform = ""; // вернём idle-анимацию
+    botSetMouth("neutral");
+    botBrowL()?.removeAttribute("style");
+    botBrowR()?.removeAttribute("style");
+  }, 180);
 }
 
 function openFeedback(){
