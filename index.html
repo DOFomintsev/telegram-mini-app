@@ -633,13 +633,199 @@ h1{
   font-size:13px;
   line-height:1.5;
 }
-  
+
+/* ================================
+   PREMIUM MOTION PACK (Index 23)
+   1) Parallax liquid light (cards)
+   2) iOS spring press (all taps)
+   3) Shared transition (category -> prices)
+   4) Header micro motion
+   5) Edge swipe hint (once)
+   6) Scroll reveal for prices
+   7) Ambient particles background
+   ================================ */
+
+/* smoother overall */
+:root{
+  --easeSpring: cubic-bezier(.22,1.4,.36,1);
+  --easeSoft: cubic-bezier(.22,1,.36,1);
+}
+
+/* 4) Header micro motion */
+h1{
+  position:relative;
+  text-shadow:
+    0 6px 22px rgba(0,0,0,.55),
+    0 0 30px rgba(29,185,84,.18);
+  animation: headerBreath 5.5s var(--easeSoft) infinite;
+}
+@keyframes headerBreath{
+  0%,100%{ filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+  50%{ filter: drop-shadow(0 10px 22px rgba(29,185,84,.12)); }
+}
+
+/* 7) Ambient particles background */
+.ambient{
+  position:fixed;
+  inset:-20%;
+  z-index:0;
+  pointer-events:none;
+  opacity:.10;
+  filter: blur(18px);
+  transform: translateZ(0);
+  background:
+    radial-gradient(40vmax 40vmax at 20% 20%, rgba(29,185,84,.35), transparent 60%),
+    radial-gradient(35vmax 35vmax at 80% 30%, rgba(255,255,255,.16), transparent 62%),
+    radial-gradient(38vmax 38vmax at 60% 90%, rgba(29,185,84,.18), transparent 65%),
+    radial-gradient(30vmax 30vmax at 15% 85%, rgba(255,255,255,.10), transparent 60%);
+  animation: ambientFloat 12s var(--easeSoft) infinite alternate;
+}
+@keyframes ambientFloat{
+  from{ transform: translate3d(-1.2%, -0.6%, 0) scale(1); }
+  to{ transform: translate3d(1.2%, 0.8%, 0) scale(1.02); }
+}
+
+/* ensure content above ambient */
+body > *{ position:relative; z-index:1; }
+
+/* 2) iOS spring press (re-usable) */
+.springy{
+  transform: translateZ(0);
+  transition: transform .45s var(--easeSpring), filter .45s var(--easeSoft);
+}
+.springy.is-pressed{
+  transform: scale(.985) translateY(1px);
+  filter: brightness(1.04);
+}
+
+/* apply spring to main tappables */
+.category-card,
+.price-btn,
+.action-btn{
+  transform: translateZ(0);
+}
+
+/* 1) Parallax liquid light for category cards */
+.category-card{
+  --lx: 50%;
+  --ly: 50%;
+}
+.category-card::after{
+  opacity:.75;
+  background:
+    radial-gradient(circle at var(--lx) var(--ly), rgba(255,255,255,.22), transparent 55%);
+  transition: opacity .35s var(--easeSoft);
+}
+.category-card:hover::after{ opacity:.92; }
+
+/* 3) Shared transition overlay (clone) */
+.shared-clone{
+  position:fixed;
+  z-index:2000;
+  margin:0 !important;
+  will-change: transform, opacity, filter;
+  pointer-events:none;
+  border-radius:24px;
+  overflow:hidden;
+  transform: translateZ(0);
+  box-shadow:
+    0 20px 55px rgba(0,0,0,.55),
+    0 0 50px rgba(29,185,84,.14);
+}
+
+/* 5) Edge swipe hint */
+.swipe-hint{
+  position:fixed;
+  left:10px;
+  top:110px;
+  z-index:1200;
+  width:28px;
+  height:54px;
+  border-radius:16px;
+  opacity:0;
+  pointer-events:none;
+
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.20), transparent 60%),
+    linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.10);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -12px 20px rgba(0,0,0,.35),
+    0 14px 40px rgba(0,0,0,.55);
+}
+.swipe-hint::after{
+  content:"";
+  position:absolute;
+  left:9px;
+  top:18px;
+  width:10px;
+  height:18px;
+  border-radius:999px;
+  background: rgba(255,255,255,.55);
+  filter: blur(.2px);
+  opacity:.55;
+  transform: translateX(0);
+}
+.swipe-hint.show{
+  animation: swipeHintAnim 1.25s var(--easeSoft) 1;
+}
+@keyframes swipeHintAnim{
+  0%{ opacity:0; transform: translateX(-6px); }
+  20%{ opacity:.9; }
+  55%{ opacity:.9; transform: translateX(12px); }
+  100%{ opacity:0; transform: translateX(-2px); }
+}
+
+/* 6) Price reveal on scroll */
+.price-btn{
+  opacity:0;
+  transform: translateY(14px);
+  filter: blur(10px);
+  transition:
+    opacity .55s var(--easeSoft),
+    transform .55s var(--easeSpring),
+    filter .55s var(--easeSoft),
+    box-shadow .35s var(--easeSoft),
+    border-color .35s var(--easeSoft);
+}
+.price-btn.inview{
+  opacity:1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* keep your hover effect, but make it more premium */
+.price-btn:hover{
+  transform: translateY(-5px);
+}
+
+/* 2) Make ripple feel softer */
+.ripple{
+  opacity:.22;
+  filter: blur(.2px);
+}
+
+/* Reduce motion accessibility */
+@media (prefers-reduced-motion: reduce){
+  .ambient, h1, .swipe-hint{ animation:none !important; }
+  *{ transition:none !important; }
+}
+
 </style>
 </head>
 
 <body>
 
 <h1>Smart Deal</h1>
+
+<!-- Premium Motion Pack: ambient background + swipe hint -->
+<div class="ambient" aria-hidden="true"></div>
+<div id="swipeHint" class="swipe-hint" aria-hidden="true"></div>
 
 <!-- ✅ swipeContainer содержит ТОЛЬКО экраны -->
 <div id="swipeContainer" class="swipeable">
@@ -824,7 +1010,7 @@ function renderCategories(){
   const container = document.getElementById("categories");
   container.innerHTML = "";
   container.style.display = "grid";
-  showBottom(); // ✅ на главном экране панель показываем
+  showBottom();
 
   Object.keys(data).forEach((category,index)=>{
     const div = document.createElement("div");
@@ -835,7 +1021,7 @@ function renderCategories(){
       <div class="label">${category}</div>
     `;
 
-    div.onclick = ()=>{
+    div.onclick = async ()=>{
       if(!stats.categories[category]) stats.categories[category]=0;
       stats.categories[category]++;
 
@@ -847,49 +1033,60 @@ function renderCategories(){
       });
 
       localStorage.setItem("smartDealStats", JSON.stringify(stats));
+
+      // эмоция: medium на вход в категорию
+      haptic("medium");
+
+      // 3) shared transition
+      await playCategoryToPricesTransition(div);
+
       showPrices(category);
     };
 
     container.appendChild(div);
     setTimeout(()=>div.classList.add("show"), index*140);
   });
-}
 
+  // Motion pack hooks after render
+  initMotionPack();
+}
 /* ===== Prices ===== */
 function showPrices(category){
   const categoriesBlock = document.getElementById("categories");
   const pricesDiv = document.getElementById("prices");
 
-  haptic("medium");
-  hideBottom(); // ✅ чтобы не перекрывало цены
-
+  hideBottom();
   categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
   pricesDiv.innerHTML="";
 
   (data[category] || []).forEach((item,index)=>{
-    const btn=document.createElement("button");
-    btn.className="price-btn";
-    btn.innerHTML = `
-  <div class="price-left">
-    <div class="price-icon">
-      <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M7 8.5c0-1.9 1.7-3.5 5-3.5s5 1.2 5 3.1-1.4 2.5-5 2.9-5 1.1-5 2.9 1.7 3.1 5 3.1 5-1.6 5-3.5"></path>
-        <path d="M12 4v16"></path>
-      </svg>
-    </div>
-    <div>${item.price || ""}</div>
-  </div>
-  <div class="price-arrow">
-    <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 12h12"></path>
-      <path d="M13 7l5 5-5 5"></path>
-    </svg>
-  </div>
-`;
+    const btn = document.createElement("button");
+    btn.className = "price-btn";
+    btn.style.transitionDelay = (index * 55) + "ms"; // 6) nicer cascade
 
-    btn.onclick=()=>{
-      const key=category+" | "+(item.price || "");
+    btn.innerHTML = `
+      <div class="price-left">
+        <div class="price-icon">
+          <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 8.5c0-1.9 1.7-3.5 5-3.5s5 1.2 5 3.1-1.4 2.5-5 2.9-5 1.1-5 2.9 1.7 3.1 5 3.1 5-1.6 5-3.5"></path>
+            <path d="M12 4v16"></path>
+          </svg>
+        </div>
+        <div>${item.price || ""}</div>
+      </div>
+      <div class="price-arrow">
+        <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h12"></path>
+          <path d="M13 7l5 5-5 5"></path>
+        </svg>
+      </div>
+    `;
+
+    btn.onclick = ()=>{
+      haptic("light"); // эмоция: лёгкий клик
+
+      const key = category+" | "+(item.price || "");
       if(!stats.products[key]) stats.products[key]=0;
       stats.products[key]++;
 
@@ -907,27 +1104,32 @@ function showPrices(category){
     };
 
     pricesDiv.appendChild(btn);
-
-    setTimeout(()=>{
-      btn.style.opacity="1";
-      btn.style.transform="translateY(0)";
-    },index*80);
   });
 
-  const back=document.createElement("div");
-  back.className="back-btn";
-  back.innerText="← Назад";
-  back.onclick=()=>{
+  const back = document.createElement("div");
+  back.className = "back-btn";
+  back.innerText = "← Назад";
+  back.onclick = ()=>{
+    haptic("medium");
     pricesDiv.style.display="none";
     categoriesBlock.style.display="grid";
     renderCategories();
     showBottom();
   };
-
   pricesDiv.appendChild(back);
-  enableRipples();
-}
 
+  // existing effects
+  enableRipples();
+
+  // 6) reveal on scroll
+  setupPriceReveal();
+
+  // 2) spring press attach (for new elements)
+  bindSpringPress();
+
+  // 5) swipe hint once
+  maybeShowSwipeHint();
+}
 /* ===== Admin Panel (server) ===== */
 document.getElementById("adminBtn").onclick = async () => {
   const panel = document.getElementById("adminPanel");
@@ -1072,6 +1274,7 @@ swipeContainer.addEventListener("touchend", () => {
   const diff = currentX - startX;
 
   if(diff > threshold){
+    haptic("medium"); // эмоция на успешный свайп назад
     swipeContainer.style.transform = "translateX(100%)";
 
     setTimeout(()=>{
@@ -1234,7 +1437,149 @@ function copyUsersToClipboard(){
     haptic("light");
   }).catch(()=>{});
 }
+/* ================================
+   PREMIUM MOTION PACK (Index 23)
+   ================================ */
 
+const MOTION = {
+  swipeHintKey: "smartdeal_swipe_hint_shown_v1"
+};
+
+/* 2) spring press binder */
+function bindSpringPress(){
+  const selector = ".category-card, .price-btn, .action-btn, .admin-card.clickable, .users-toolbar button";
+  const add = (el)=>{
+    if(!el || el.dataset.springy) return;
+    el.dataset.springy = "1";
+    el.classList.add("springy");
+
+    const pressOn = ()=> el.classList.add("is-pressed");
+    const pressOff = ()=> el.classList.remove("is-pressed");
+
+    el.addEventListener("pointerdown", pressOn, { passive:true });
+    el.addEventListener("pointerup", pressOff, { passive:true });
+    el.addEventListener("pointercancel", pressOff, { passive:true });
+    el.addEventListener("pointerleave", pressOff, { passive:true });
+  };
+  document.querySelectorAll(selector).forEach(add);
+}
+
+/* 1) Parallax liquid light for categories */
+function bindCategoryParallax(){
+  const container = document.getElementById("categories");
+  if(!container) return;
+
+  // on move inside container: update each card based on its own center
+  const onMove = (clientX, clientY)=>{
+    const cards = container.querySelectorAll(".category-card");
+    cards.forEach(card=>{
+      const r = card.getBoundingClientRect();
+      const x = ((clientX - r.left) / r.width) * 100;
+      const y = ((clientY - r.top) / r.height) * 100;
+      // clamp
+      const cx = Math.max(0, Math.min(100, x));
+      const cy = Math.max(0, Math.min(100, y));
+      card.style.setProperty("--lx", cx.toFixed(1) + "%");
+      card.style.setProperty("--ly", cy.toFixed(1) + "%");
+    });
+  };
+
+  // pointer events (desktop + mobile)
+  container.onpointermove = (e)=> onMove(e.clientX, e.clientY);
+  container.ontouchmove = (e)=>{
+    const t = e.touches?.[0];
+    if(t) onMove(t.clientX, t.clientY);
+  };
+
+  // reset when leaving
+  container.onpointerleave = ()=>{
+    container.querySelectorAll(".category-card").forEach(card=>{
+      card.style.setProperty("--lx", "50%");
+      card.style.setProperty("--ly", "50%");
+    });
+  };
+}
+
+/* 6) Price reveal on scroll */
+let priceObserver = null;
+function setupPriceReveal(){
+  if(priceObserver) priceObserver.disconnect();
+
+  priceObserver = new IntersectionObserver((entries)=>{
+    for(const e of entries){
+      if(e.isIntersecting){
+        e.target.classList.add("inview");
+        priceObserver.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll(".price-btn").forEach(btn=>{
+    priceObserver.observe(btn);
+  });
+}
+
+/* 5) Edge swipe hint (once) */
+function maybeShowSwipeHint(){
+  // only on prices screen
+  const pricesVisible = document.getElementById("prices")?.style.display === "block";
+  if(!pricesVisible) return;
+
+  // once
+  if(localStorage.getItem(MOTION.swipeHintKey) === "1") return;
+
+  const hint = document.getElementById("swipeHint");
+  if(!hint) return;
+
+  localStorage.setItem(MOTION.swipeHintKey, "1");
+  hint.classList.remove("show");
+  // slight delay so it appears after price screen shows
+  setTimeout(()=>{
+    hint.classList.add("show");
+    setTimeout(()=> hint.classList.remove("show"), 1400);
+  }, 380);
+}
+
+/* 3) Shared transition: animate clicked category card into next screen */
+async function playCategoryToPricesTransition(cardEl){
+  if(!cardEl) return;
+
+  const r = cardEl.getBoundingClientRect();
+  const clone = cardEl.cloneNode(true);
+  clone.classList.remove("show");
+  clone.classList.add("shared-clone");
+
+  clone.style.left = r.left + "px";
+  clone.style.top = r.top + "px";
+  clone.style.width = r.width + "px";
+  clone.style.height = r.height + "px";
+
+  document.body.appendChild(clone);
+
+  // animate to center-ish, then fade
+  const targetX = (window.innerWidth / 2) - (r.width / 2);
+  const targetY = Math.max(90, r.top - 40);
+
+  const anim = clone.animate([
+    { transform: "translate3d(0,0,0) scale(1)", opacity: 1, filter: "blur(0px)" },
+    { transform: `translate3d(${targetX - r.left}px, ${targetY - r.top}px, 0) scale(1.02)`, opacity: 0.96, filter: "blur(0px)" },
+    { transform: `translate3d(${targetX - r.left}px, ${targetY - r.top + 10}px, 0) scale(1.05)`, opacity: 0, filter: "blur(6px)" }
+  ], {
+    duration: 520,
+    easing: "cubic-bezier(.22,1,.36,1)",
+    fill: "forwards"
+  });
+
+  try{ await anim.finished; }catch(e){}
+  clone.remove();
+}
+
+/* call after any rerender */
+function initMotionPack(){
+  bindSpringPress();
+  bindCategoryParallax();
+}
+initMotionPack();
 loadData();
 </script>
 
