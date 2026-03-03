@@ -1665,14 +1665,6 @@ function renderFavs(){
       </div>
     `;
 
-      <div class="price-arrow">
-        <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5 12h12"></path>
-          <path d="M13 7l5 5-5 5"></path>
-        </svg>
-      </div>
-    `;
-
     btn.addEventListener("click", ()=>{
       if(f.link) tg.openLink(f.link);
     });
@@ -1700,7 +1692,6 @@ function renderFavs(){
 
   enableRipples();
 }
-
 window.closeFavs = closeFavs;
 
 /* Swipe-back for favorites */
