@@ -666,9 +666,19 @@ h1{
               box-shadow .2s var(--ease);
 }
 
+/* ===== Favorites: outline -> gold ON ===== */
+:root{
+  --gold: #FFD34D;
+  --gold2:#D4AF37;
+}
+
 .fav-star svg{
-  width:16px;     /* было 12px */
+  width:16px;
   height:16px;
+  stroke: rgba(255,255,255,.92);
+  stroke-width:2;
+  fill: none;                 /* контур */
+  opacity:.95;
 }
 
 .fav-star:hover{
@@ -682,8 +692,11 @@ h1{
 .fav-star:active{ transform:scale(.96); }
 
 .fav-star.on svg{
-  fill: rgba(29,185,84,.55);
-  filter: drop-shadow(0 0 10px rgba(29,185,84,.25));
+  stroke: var(--gold);
+  fill: rgba(255,211,77,.22); /* лёгкая заливка */
+  filter:
+    drop-shadow(0 0 10px rgba(255,211,77,.45))
+    drop-shadow(0 0 22px rgba(212,175,55,.22));
 }
 
 /* ===== Top favorites button ===== */
@@ -925,6 +938,13 @@ function showBottom(){
   document.getElementById("bottomActions")?.classList.remove("hidden");
 }
 
+function showFavTop(){
+  document.getElementById("favTopBtn")?.style.setProperty("display","flex");
+}
+function hideFavTop(){
+  document.getElementById("favTopBtn")?.style.setProperty("display","none");
+}
+
 /* ===== LOCAL STATS (fallback) ===== */
 let stats = JSON.parse(localStorage.getItem("smartDealStats")) || {
   launches:0,
@@ -1066,6 +1086,7 @@ function renderCategories(){
   container.innerHTML = "";
   container.style.display = "grid";
   showBottom();
+  showFavTop();
 
   Object.keys(data).sort((a,b)=>a.localeCompare(b,'ru')).forEach((category,index)=>{
     const div = document.createElement("div");
@@ -1105,6 +1126,7 @@ function showPrices(category){
 
   haptic("medium");
   hideBottom();
+  hideFavTop();
 
   categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
@@ -1119,15 +1141,18 @@ function showPrices(category){
   const btn = document.createElement("button");
   btn.className = "price-btn";
   btn.innerHTML = `
-    <div class="price-left">
-      <div class="price-icon">
-        <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M7 8.5c0-1.9 1.7-3.5 5-3.5s5 1.2 5 3.1-1.4 2.5-5 2.9-5 1.1-5 2.9 1.7 3.1 5 3.1 5-1.6 5-3.5"></path>
-          <path d="M12 4v16"></path>
-        </svg>
-      </div>
-      <div>${item.price || ""}</div>
-    </div>
+    btn.innerHTML = `
+  <div class="price-left">
+    <div>${item.price || ""}</div>
+  </div>
+
+  <div class="price-arrow">
+    <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 12h12"></path>
+      <path d="M13 7l5 5-5 5"></path>
+    </svg>
+  </div>
+`;
 
     <div class="price-arrow">
       <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
@@ -1207,6 +1232,7 @@ document.getElementById("adminBtn").onclick = async () => {
   panel.style.display = "block";
   panel.innerHTML = `<button class="close-x" onclick="closeAdmin()">✕</button>Загрузка...`;
   hideBottom();
+  hideFavTop();
 
   try{
     const response = await fetch(ANALYTICS_URL);
@@ -1303,7 +1329,12 @@ function renderTop(obj){
 function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
   const pricesVisible = document.getElementById("prices").style.display === "block";
-  if(!pricesVisible) showBottom();
+  if(!pricesVisible){
+    showBottom();
+    showFavTop();   // ✅ только на главном
+  }else{
+    hideFavTop();   // ✅ если в ценах — не показываем
+  }
 }
 
 /* ===== SWIPE BACK (Admin Panel) ===== */
@@ -1596,6 +1627,7 @@ function openFavs(){
   hideBottom();
   favPanel.style.display = "block";
   renderFavs();
+  hideFavTop();
 }
 
 function closeFavs(){
@@ -1604,7 +1636,12 @@ function closeFavs(){
   favPanel.style.transition = "transform .25s ease";
 
   const pricesVisible = document.getElementById("prices").style.display === "block";
-  if(!pricesVisible) showBottom();
+  if(!pricesVisible){
+    showBottom();
+    showFavTop();    // ✅ вернулись на главный
+  }else{
+    hideFavTop();    // ✅ если закрыли избранное поверх цен (на всякий)
+  }
 }
 
 function renderFavs(){
@@ -1625,16 +1662,18 @@ function renderFavs(){
     btn.style.opacity = "1";
     btn.style.transform = "translateY(0)";
     btn.innerHTML = `
-      <div class="price-left">
-        <div class="price-icon">
-          <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M20 12c0 3.9-3.6 7-8 7-1 0-2-.1-2.9-.4L5 20l1-3.2C4.8 15.7 4 13.9 4 12c0-3.9 3.6-7 8-7s8 3.1 8 7z"></path>
-            <path d="M8 11.5h8"></path>
-            <path d="M8 14.5h5.5"></path>
-          </svg>
-        </div>
-        <div>${f.price || "Товар"}</div>
-      </div>
+      btn.innerHTML = `
+  <div class="price-left">
+    <div>${f.price || "Товар"}</div>
+  </div>
+
+  <div class="price-arrow">
+    <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 12h12"></path>
+      <path d="M13 7l5 5-5 5"></path>
+    </svg>
+  </div>
+`;
 
       <div class="price-arrow">
         <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
