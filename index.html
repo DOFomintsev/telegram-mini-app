@@ -854,6 +854,32 @@ h1{
 
 .clear-favs:active{ transform: scale(.98); }
 
+/* ===== Left side numbering ===== */
+.price-row{
+  display:flex;
+  align-items:stretch;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.row-num{
+  flex:0 0 30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:14px;
+  font-weight:800;
+  opacity:.55;
+  letter-spacing:.3px;
+}
+
+.row-num::after{
+  content:".";
+  margin-left:2px;
+  opacity:.4;
+}
+
 </style>
 </head>
 
@@ -1221,23 +1247,25 @@ function showPrices(category){
   const row = document.createElement("div");
   row.className = "price-row";
 
+  /* ===== Номер без ведущего 0 ===== */
+  const num = document.createElement("div");
+  num.className = "row-num";
+  num.textContent = index + 1;
+
   const btn = document.createElement("button");
   btn.className = "price-btn";
-  const num = String(index + 1).padStart(2, "0");
+  btn.innerHTML = `
+    <div class="price-left">
+      <div>${item.price || ""}</div>
+    </div>
 
-btn.innerHTML = `
-  <div class="price-left">
-    <span class="num-badge">${num}</span>
-    <div>${item.price || ""}</div>
-  </div>
-
-  <div class="price-arrow">
-    <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 12h12"></path>
-      <path d="M13 7l5 5-5 5"></path>
-    </svg>
-  </div>
-`;
+    <div class="price-arrow">
+      <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 12h12"></path>
+        <path d="M13 7l5 5-5 5"></path>
+      </svg>
+    </div>
+  `;
 
   btn.onclick = ()=>{
     const key=category+" | "+(item.price || "");
@@ -1252,6 +1280,37 @@ btn.innerHTML = `
       product: item.price,
       price: item.price
     });
+
+    localStorage.setItem("smartDealStats", JSON.stringify(stats));
+    if(item.link) tg.openLink(item.link);
+  };
+
+  const star = document.createElement("button");
+  star.type = "button";
+  star.className = "fav-star" + (isFav(fullItem) ? " on" : "");
+  star.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3.5l2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 18.6 6.3 21.1l1.1-6.4L2.8 10.2l6.4-.9L12 3.5z"></path>
+    </svg>
+  `;
+
+  star.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    const added = toggleFav(fullItem);
+    star.classList.toggle("on", added);
+  });
+
+  row.appendChild(num);   // ← номер слева
+  row.appendChild(btn);
+  row.appendChild(star);
+
+  pricesDiv.appendChild(row);
+
+  setTimeout(()=>{
+    btn.style.opacity="1";
+    btn.style.transform="translateY(0)";
+  }, index*80);
+});
 
     localStorage.setItem("smartDealStats", JSON.stringify(stats));
     if(item.link) tg.openLink(item.link);
