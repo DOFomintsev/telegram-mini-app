@@ -1253,13 +1253,14 @@ function showPrices(category){
     `;
 
     star.addEventListener("click", (e)=>{
-      e.stopPropagation();
-      const added = toggleFav(fullItem);
-      star.classList.toggle("on", added);
+  e.stopPropagation();
+  const added = toggleFav(fullItem);
+  star.classList.toggle("on", added);
 
-      star.style.transform = "scale(1.06)";
-      setTimeout(()=> star.style.transform = "", 120);
-    });
+  // ✅ не перетираем translateY(0) (иначе будет “рывок”)
+  star.style.transform = "translateY(0) scale(1.06)";
+  setTimeout(()=> star.style.transform = "translateY(0)", 120);
+});
 
     row.appendChild(numCol);
     row.appendChild(btn);
