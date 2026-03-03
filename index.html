@@ -203,13 +203,6 @@ h1{
   min-width:0;
 }
 
-.price-left > div:last-child{
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
 .price-btn:active{ transform:scale(.97); }
 
 .back-btn{
@@ -1259,9 +1252,6 @@ function showPrices(category){
       const added = toggleFav(fullItem);
       star.classList.toggle("on", added);
 
-      // ✅ обновляем бейдж + золотую звезду сверху
-      updateFavBadge();
-
       star.style.transform = "scale(1.06)";
       setTimeout(()=> star.style.transform = "", 120);
     });
@@ -1714,7 +1704,6 @@ function closeFavs(){
 
 function clearFavs(){
   setFavs([]);
-  updateFavBadge();   // ✅ добавить
   renderFavs();
   haptic("medium");
 }
@@ -1773,7 +1762,6 @@ function renderFavs(){
   e.stopPropagation();
   const arr = getFavs().filter(x => x.id !== f.id);
   setFavs(arr);
-  updateFavBadge();   // ✅ добавить
   renderFavs();
 });
 
