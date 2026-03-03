@@ -199,10 +199,7 @@ h1{
   align-items:center;
   gap:12px;
   min-width:0;
-}
-/* ✅ Текст товара в одну строку (без переносов) */
-.price-left{
-  flex: 1;
+  flex:1;
 }
 
 .price-left > div{
@@ -452,6 +449,9 @@ h1{
   overflow-y:auto;
   display:none;
   z-index:1000;
+
+  will-change: transform;
+  transition: transform .25s ease;
 }
 
 .admin-panel .close-x{
@@ -500,12 +500,6 @@ h1{
   box-shadow:
     0 16px 44px rgba(29,185,84,.12),
     inset 0 1px 0 rgba(255,255,255,.06);
-}
-
-/* ===== Admin swipe-back ===== */
-.admin-panel{
-  will-change: transform;
-  transition: transform .25s ease;
 }
 
 /* ===== Users (admin) ===== */
@@ -627,6 +621,8 @@ h1{
   flex:0 0 38px;   /* было 26px */
   width:38px;
   border-radius:16px;
+  opacity:0;
+  transform:translateY(12px);
 
   display:flex;
   align-items:center;
