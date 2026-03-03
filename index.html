@@ -722,6 +722,22 @@ h1{
 
 .fav-top svg{ width:18px; height:18px; }
 
+/* ===== Top favorites star: outline + gold when has items ===== */
+.fav-top svg{
+  stroke: rgba(255,255,255,.92);
+  stroke-width:2;
+  fill:none;                 /* контур */
+  opacity:.95;
+}
+
+.fav-top.has-items svg{
+  stroke: var(--gold);
+  fill: rgba(255,211,77,.18);
+  filter:
+    drop-shadow(0 0 10px rgba(255,211,77,.45))
+    drop-shadow(0 0 22px rgba(212,175,55,.22));
+}
+
 .fav-badge{
   position:absolute;
   top:-6px;
@@ -777,6 +793,66 @@ h1{
   line-height:1.5;
   padding:12px 0;
 }
+
+/* ===== Favorite subtitle (category) ===== */
+.fav-sub{
+  display:block;
+  margin-top:4px;
+  font-size:12px;
+  opacity:.68;
+  letter-spacing:.2px;
+}
+
+/* ===== Pretty numbering badge ===== */
+.num-badge{
+  flex:0 0 auto;
+  min-width:34px;
+  height:22px;
+  padding:0 8px;
+  border-radius:999px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.6px;
+
+  background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.10);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 8px 18px rgba(0,0,0,.35);
+
+  opacity:.92;
+}
+
+.clear-favs{
+  margin: 10px 0 18px;
+  width:100%;
+  border-radius:16px;
+  padding:12px 14px;
+
+  background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.10);
+  color:#fff;
+
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+
+  transition: transform .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease);
+}
+
+.clear-favs:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,211,77,.45);
+  box-shadow: 0 14px 34px rgba(255,211,77,.10);
+}
+
+.clear-favs:active{ transform: scale(.98); }
 
 </style>
 </head>
@@ -898,8 +974,15 @@ function toggleFav(item){
 
 function updateFavBadge(){
   const badge = document.getElementById("favBadge");
-  if(!badge) return;
+  const topBtn = document.getElementById("favTopBtn");
+  if(!badge || !topBtn) return;
+
   const n = getFavs().length;
+
+  // подсветка звезды сверху
+  topBtn.classList.toggle("has-items", n > 0);
+
+  // бейдж
   if(n > 0){
     badge.style.display = "flex";
     badge.textContent = String(n);
@@ -1140,8 +1223,11 @@ function showPrices(category){
 
   const btn = document.createElement("button");
   btn.className = "price-btn";
-  btn.innerHTML = `
+  const num = String(index + 1).padStart(2, "0");
+
+btn.innerHTML = `
   <div class="price-left">
+    <span class="num-badge">${num}</span>
     <div>${item.price || ""}</div>
   </div>
 
@@ -1635,14 +1721,24 @@ function closeFavs(){
   }
 }
 
+function clearFavs(){
+  setFavs([]);
+  renderFavs();
+  haptic("medium");
+}
+window.clearFavs = clearFavs;
+
 function renderFavs(){
   const list = getFavs().slice().sort((a,b)=>b.ts - a.ts);
 
   favPanel.innerHTML = `
-    <button class="close-x" onclick="closeFavs()">✕</button>
-    <h2 style="margin-bottom:18px;">⭐ Избранное</h2>
-    ${list.length ? "" : `<div class="fav-empty">Пока пусто. Нажми ⭐ справа от товара, чтобы добавить его сюда.</div>`}
-  `;
+  <button class="close-x" onclick="closeFavs()">✕</button>
+  <h2 style="margin-bottom:12px;">⭐ Избранное</h2>
+
+  ${list.length ? `<button class="clear-favs" onclick="clearFavs()">Очистить избранное</button>` : ""}
+
+  ${list.length ? "" : `<div class="fav-empty">Пока пусто. Нажми ⭐ справа от товара, чтобы добавить его сюда.</div>`}
+`;
 
   list.forEach((f)=>{
     const row = document.createElement("div");
@@ -1654,8 +1750,11 @@ function renderFavs(){
     btn.style.transform = "translateY(0)";
     btn.innerHTML = `
       <div class="price-left">
-        <div>${f.price || "Товар"}</div>
-      </div>
+  <div>
+    ${f.price || "Товар"}
+    <span class="fav-sub">${f.category || ""}</span>
+  </div>
+</div>
 
       <div class="price-arrow">
         <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
