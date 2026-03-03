@@ -683,9 +683,9 @@ h1{
 
 .fav-star:hover{
   transform: translateY(-2px);
-  border-color: rgba(29,185,84,.35);
+  border-color: rgba(255,211,77,.55);
   box-shadow:
-    0 14px 34px rgba(29,185,84,.12),
+    0 14px 34px rgba(255,211,77,.12),
     inset 0 1px 0 rgba(255,255,255,.06);
 }
 
@@ -1141,7 +1141,6 @@ function showPrices(category){
   const btn = document.createElement("button");
   btn.className = "price-btn";
   btn.innerHTML = `
-    btn.innerHTML = `
   <div class="price-left">
     <div>${item.price || ""}</div>
   </div>
@@ -1153,14 +1152,6 @@ function showPrices(category){
     </svg>
   </div>
 `;
-
-    <div class="price-arrow">
-      <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M5 12h12"></path>
-        <path d="M13 7l5 5-5 5"></path>
-      </svg>
-    </div>
-  `;
 
   btn.onclick = ()=>{
     const key=category+" | "+(item.price || "");
@@ -1662,18 +1653,17 @@ function renderFavs(){
     btn.style.opacity = "1";
     btn.style.transform = "translateY(0)";
     btn.innerHTML = `
-      btn.innerHTML = `
-  <div class="price-left">
-    <div>${f.price || "Товар"}</div>
-  </div>
+      <div class="price-left">
+        <div>${f.price || "Товар"}</div>
+      </div>
 
-  <div class="price-arrow">
-    <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M5 12h12"></path>
-      <path d="M13 7l5 5-5 5"></path>
-    </svg>
-  </div>
-`;
+      <div class="price-arrow">
+        <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h12"></path>
+          <path d="M13 7l5 5-5 5"></path>
+        </svg>
+      </div>
+    `;
 
       <div class="price-arrow">
         <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
