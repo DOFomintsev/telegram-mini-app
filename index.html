@@ -13,7 +13,6 @@
   --card1:#1DB954;
   --card2:#16a34a;
   --gold: #FFD34D;
-  --gold2:#D4AF37;
 
   /* Icon system */
   --iconStroke: rgba(255,255,255,.92);
@@ -28,7 +27,6 @@
   --lineSoft: rgba(255,255,255,.08);
   --lineSofter: rgba(255,255,255,.06);
   --text: #fff;
-  --muted: rgba(255,255,255,.75);
 
   /* Motion */
   --spring: cubic-bezier(.22,1.4,.36,1);
@@ -201,6 +199,17 @@ h1{
   align-items:center;
   gap:12px;
   min-width:0;
+}
+/* ✅ Текст товара в одну строку (без переносов) */
+.price-left{
+  flex: 1;
+}
+
+.price-left > div{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
 .price-btn:active{ transform:scale(.97); }
