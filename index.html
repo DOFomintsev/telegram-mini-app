@@ -631,6 +631,143 @@ h1{
 @keyframes ripple{
   to{ transform:scale(3.2); opacity:0; }
 }
+
+/* ===== Favorites UI (star as separate element next to row) ===== */
+.price-row{
+  display:flex;
+  gap:12px;
+  align-items:stretch;
+  margin-bottom:16px;
+}
+
+.price-row .price-btn{
+  margin-bottom:0; /* потому что теперь margin у строки */
+  flex:1;
+  min-width:0;
+}
+
+.fav-star{
+  flex:0 0 52px;
+  width:52px;
+  border-radius:20px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:1px solid rgba(255,255,255,.10);
+  background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.60),
+    inset 0 1px 0 rgba(255,255,255,.05);
+
+  cursor:pointer;
+  transition: transform .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease);
+}
+
+.fav-star:hover{
+  transform: translateY(-2px);
+  border-color: rgba(29,185,84,.35);
+  box-shadow:
+    0 14px 34px rgba(29,185,84,.12),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.fav-star:active{ transform:scale(.96); }
+
+.fav-star svg{
+  width:20px;
+  height:20px;
+  stroke: rgba(255,255,255,.92);
+  stroke-width:1.9;
+  fill: rgba(255,255,255,.06);
+}
+
+.fav-star.on svg{
+  fill: rgba(29,185,84,.55);
+  filter: drop-shadow(0 0 10px rgba(29,185,84,.25));
+}
+
+/* ===== Top favorites button ===== */
+.fav-top{
+  position:fixed;
+  top:18px;
+  left:18px;
+  z-index:1001;
+  width:42px;
+  height:42px;
+  border-radius:14px;
+
+  background:rgba(17,17,17,.85);
+  border:1px solid rgba(255,255,255,.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.fav-top svg{ width:18px; height:18px; }
+
+.fav-badge{
+  position:absolute;
+  top:-6px;
+  right:-6px;
+  min-width:18px;
+  height:18px;
+  padding:0 6px;
+  border-radius:999px;
+  background:rgba(29,185,84,.95);
+  color:#000;
+  font-size:11px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 25px rgba(29,185,84,.25);
+}
+
+/* ===== Favorites panel ===== */
+.fav-panel{
+  position:fixed;
+  inset:0;
+  background:#000;
+  padding:25px;
+  overflow-y:auto;
+  display:none;
+  z-index:999;
+  will-change: transform;
+  transition: transform .25s ease;
+}
+
+.fav-panel .close-x{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:1002;
+
+  background:rgba(17,17,17,.85);
+  border:1px solid rgba(255,255,255,.15);
+  color:#fff;
+
+  padding:10px 12px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:14px;
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.fav-empty{
+  opacity:.75;
+  line-height:1.5;
+  padding:12px 0;
+}
+
 </style>
 </head>
 
@@ -674,6 +811,15 @@ h1{
   </div>
 </div>
 
+<button id="favTopBtn" class="fav-top" title="Избранное">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 3.5l2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 18.6 6.3 21.1l1.1-6.4L2.8 10.2l6.4-.9L12 3.5z"></path>
+  </svg>
+  <div id="favBadge" class="fav-badge" style="display:none;">0</div>
+</button>
+
+<div id="favPanel" class="fav-panel"></div>
+
 <button id="adminBtn" class="admin-btn" style="display:none;">⚙</button>
 <div id="adminPanel" class="admin-panel"></div>
 
@@ -691,6 +837,68 @@ function sendAnalytics(data){
 
 const user = tg.initDataUnsafe?.user;
 const isAdmin = user && user.id === ADMIN_ID;
+
+/* ===== Favorites (per-user localStorage) ===== */
+const FAV_KEY = `smartDealFav_v2_${user?.id || 0}`;
+
+function getFavs(){
+  try{
+    const raw = localStorage.getItem(FAV_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+
+function setFavs(arr){
+  localStorage.setItem(FAV_KEY, JSON.stringify(arr));
+  updateFavBadge();
+}
+
+function favId(item){
+  return `${item.category}|||${item.price || ""}|||${item.link || ""}`;
+}
+
+function isFav(item){
+  const id = favId(item);
+  return getFavs().some(x => x.id === id);
+}
+
+function toggleFav(item){
+  const id = favId(item);
+  const list = getFavs();
+  const idx = list.findIndex(x => x.id === id);
+
+  if(idx >= 0){
+    list.splice(idx, 1);
+    haptic("light");
+  }else{
+    list.push({
+      id,
+      category: item.category,
+      price: item.price || "",
+      link: item.link || "",
+      ts: Date.now()
+    });
+    haptic("medium");
+  }
+
+  setFavs(list);
+  return idx < 0; // true если добавили
+}
+
+function updateFavBadge(){
+  const badge = document.getElementById("favBadge");
+  if(!badge) return;
+  const n = getFavs().length;
+  if(n > 0){
+    badge.style.display = "flex";
+    badge.textContent = String(n);
+  }else{
+    badge.style.display = "none";
+  }
+}
+
+updateFavBadge();
 
 if(isAdmin){
   document.getElementById("adminBtn").style.display="block";
@@ -906,51 +1114,81 @@ function showPrices(category){
   pricesDiv.innerHTML="";
 
   (data[category] || []).forEach((item,index)=>{
-    const btn=document.createElement("button");
-    btn.className="price-btn";
-    btn.innerHTML = `
-      <div class="price-left">
-        <div class="price-icon">
-          <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 8.5c0-1.9 1.7-3.5 5-3.5s5 1.2 5 3.1-1.4 2.5-5 2.9-5 1.1-5 2.9 1.7 3.1 5 3.1 5-1.6 5-3.5"></path>
-            <path d="M12 4v16"></path>
-          </svg>
-        </div>
-        <div>${item.price || ""}</div>
-      </div>
-      <div class="price-arrow">
+  const fullItem = { ...item, category };
+
+  const row = document.createElement("div");
+  row.className = "price-row";
+
+  const btn = document.createElement("button");
+  btn.className = "price-btn";
+  btn.innerHTML = `
+    <div class="price-left">
+      <div class="price-icon">
         <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5 12h12"></path>
-          <path d="M13 7l5 5-5 5"></path>
+          <path d="M7 8.5c0-1.9 1.7-3.5 5-3.5s5 1.2 5 3.1-1.4 2.5-5 2.9-5 1.1-5 2.9 1.7 3.1 5 3.1 5-1.6 5-3.5"></path>
+          <path d="M12 4v16"></path>
         </svg>
       </div>
-    `;
+      <div>${item.price || ""}</div>
+    </div>
 
-    btn.onclick=()=>{
-      const key=category+" | "+(item.price || "");
-      if(!stats.products[key]) stats.products[key]=0;
-      stats.products[key]++;
+    <div class="price-arrow">
+      <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 12h12"></path>
+        <path d="M13 7l5 5-5 5"></path>
+      </svg>
+    </div>
+  `;
 
-      sendAnalytics({
-        user_id: user?.id || 0,
-        username: user?.username || "",
-        action: "product_click",
-        category,
-        product: item.price,
-        price: item.price
-      });
+  btn.onclick = ()=>{
+    const key=category+" | "+(item.price || "");
+    if(!stats.products[key]) stats.products[key]=0;
+    stats.products[key]++;
 
-      localStorage.setItem("smartDealStats", JSON.stringify(stats));
-      if(item.link) tg.openLink(item.link);
-    };
+    sendAnalytics({
+      user_id: user?.id || 0,
+      username: user?.username || "",
+      action: "product_click",
+      category,
+      product: item.price,
+      price: item.price
+    });
 
-    pricesDiv.appendChild(btn);
+    localStorage.setItem("smartDealStats", JSON.stringify(stats));
+    if(item.link) tg.openLink(item.link);
+  };
 
-    setTimeout(()=>{
-      btn.style.opacity="1";
-      btn.style.transform="translateY(0)";
-    },index*80);
+  const star = document.createElement("button");
+  star.type = "button";
+  star.className = "fav-star" + (isFav(fullItem) ? " on" : "");
+  star.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3.5l2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 18.6 6.3 21.1l1.1-6.4L2.8 10.2l6.4-.9L12 3.5z"></path>
+    </svg>
+  `;
+
+  star.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    const added = toggleFav(fullItem);
+    star.classList.toggle("on", added);
+
+    // мини-пульс
+    star.style.transform = "scale(1.06)";
+    setTimeout(()=> star.style.transform = "", 120);
   });
+
+  row.appendChild(btn);
+  row.appendChild(star);
+  pricesDiv.appendChild(row);
+
+  // анимация появления как раньше
+  setTimeout(()=>{
+    btn.style.opacity="1";
+    btn.style.transform="translateY(0)";
+    star.style.opacity="1";
+    star.style.transform="translateY(0)";
+  }, index*80);
+});
 
   const back=document.createElement("div");
   back.className="back-btn";
@@ -1240,7 +1478,7 @@ function enableRipples(){
   };
 
   document
-    .querySelectorAll(".action-btn, .price-btn, .category-card, .admin-card.clickable, .users-toolbar button")
+    .querySelectorAll(".action-btn, .price-btn, .category-card, .admin-card.clickable, .users-toolbar button, .fav-star, .fav-top")
     .forEach(attach);
 }
 
@@ -1347,6 +1585,166 @@ function copyUsersToClipboard(){
 window.closeAdmin = closeAdmin;
 window.showUsers = showUsers;
 window.copyUsersToClipboard = copyUsersToClipboard;
+
+/* ===== Favorites panel open/close + swipe back ===== */
+const favTopBtn = document.getElementById("favTopBtn");
+const favPanel  = document.getElementById("favPanel");
+
+favTopBtn.addEventListener("click", ()=>{
+  haptic("medium");
+  openFavs();
+});
+
+function openFavs(){
+  hideBottom();
+  favPanel.style.display = "block";
+  renderFavs();
+}
+
+function closeFavs(){
+  favPanel.style.display = "none";
+  favPanel.style.transform = "translateX(0)";
+  favPanel.style.transition = "transform .25s ease";
+
+  const pricesVisible = document.getElementById("prices").style.display === "block";
+  if(!pricesVisible) showBottom();
+}
+
+function renderFavs(){
+  const list = getFavs().slice().sort((a,b)=>b.ts - a.ts);
+
+  favPanel.innerHTML = `
+    <button class="close-x" onclick="closeFavs()">✕</button>
+    <h2 style="margin-bottom:18px;">⭐ Избранное</h2>
+    ${list.length ? "" : `<div class="fav-empty">Пока пусто. Нажми ⭐ справа от товара, чтобы добавить его сюда.</div>`}
+  `;
+
+  list.forEach((f)=>{
+    const row = document.createElement("div");
+    row.className = "price-row";
+
+    const btn = document.createElement("button");
+    btn.className = "price-btn";
+    btn.style.opacity = "1";
+    btn.style.transform = "translateY(0)";
+    btn.innerHTML = `
+      <div class="price-left">
+        <div class="price-icon">
+          <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 12c0 3.9-3.6 7-8 7-1 0-2-.1-2.9-.4L5 20l1-3.2C4.8 15.7 4 13.9 4 12c0-3.9 3.6-7 8-7s8 3.1 8 7z"></path>
+            <path d="M8 11.5h8"></path>
+            <path d="M8 14.5h5.5"></path>
+          </svg>
+        </div>
+        <div>${f.price || "Товар"}</div>
+      </div>
+
+      <div class="price-arrow">
+        <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 12h12"></path>
+          <path d="M13 7l5 5-5 5"></path>
+        </svg>
+      </div>
+    `;
+
+    btn.addEventListener("click", ()=>{
+      if(f.link) tg.openLink(f.link);
+    });
+
+    const star = document.createElement("button");
+    star.type = "button";
+    star.className = "fav-star on";
+    star.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3.5l2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 18.6 6.3 21.1l1.1-6.4L2.8 10.2l6.4-.9L12 3.5z"></path>
+      </svg>
+    `;
+
+    star.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      const arr = getFavs().filter(x => x.id !== f.id);
+      setFavs(arr);
+      renderFavs();
+    });
+
+    row.appendChild(btn);
+    row.appendChild(star);
+    favPanel.appendChild(row);
+  });
+
+  enableRipples();
+}
+
+window.closeFavs = closeFavs;
+
+/* Swipe-back for favorites */
+(function enableFavSwipeBack(){
+  let startX=0, startY=0, currentX=0;
+  let isSwiping=false, locked=false;
+
+  const swipeZone = 40;
+  const threshold = 90;
+  const vertTolerance = 14;
+
+  favPanel.addEventListener("touchstart", (e)=>{
+    if(favPanel.style.display !== "block") return;
+    const t = e.touches[0];
+    if(t.clientX > swipeZone) return;
+
+    isSwiping = true;
+    locked = false;
+    startX = t.clientX;
+    startY = t.clientY;
+    currentX = startX;
+
+    favPanel.style.transition = "transform .25s ease";
+  }, { passive:true });
+
+  favPanel.addEventListener("touchmove", (e)=>{
+    if(!isSwiping) return;
+
+    const t = e.touches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+
+    if(!locked){
+      if(Math.abs(dy) > vertTolerance && Math.abs(dy) > Math.abs(dx)){
+        isSwiping = false;
+        favPanel.style.transform = "translateX(0)";
+        return;
+      }
+      if(Math.abs(dx) > 6) locked = true;
+    }
+
+    if(dx > 0){
+      e.preventDefault();
+      currentX = t.clientX;
+      favPanel.style.transform = `translateX(${dx}px)`;
+    }
+  }, { passive:false });
+
+  favPanel.addEventListener("touchend", ()=>{
+    if(!isSwiping) return;
+
+    const dx = currentX - startX;
+
+    if(dx > threshold){
+      favPanel.style.transform = "translateX(100%)";
+      setTimeout(()=>{
+        closeFavs();
+        favPanel.style.transition = "none";
+        favPanel.style.transform = "translateX(0)";
+        requestAnimationFrame(()=>{
+          favPanel.style.transition = "transform .25s ease";
+        });
+      }, 200);
+    }else{
+      favPanel.style.transform = "translateX(0)";
+    }
+
+    isSwiping = false;
+  }, { passive:true });
+})();
 
 loadData();
 </script>
