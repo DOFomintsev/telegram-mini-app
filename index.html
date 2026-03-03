@@ -165,34 +165,35 @@ h1{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:14px;
+  gap:8px;
 
   background:var(--surface1);
   border:1px solid var(--lineSofter);
   color:var(--text);
-  padding:18px 20px;
-  margin-bottom:16px;
-  border-radius:20px;
 
-  font-size:15px;
+  padding:9px 10px;              /* было 18px 20px */
+  border-radius:12px;            /* было 20px */
+
+  font-size:13px;                /* было 15px */
   font-weight:600;
-  letter-spacing:.3px;
+  letter-spacing:.2px;
 
   cursor:pointer;
   position:relative;
   overflow:hidden;
 
   opacity:0;
-  transform:translateY(15px);
+  transform:translateY(10px);     /* было 15px */
 
   box-shadow:
-    0 8px 25px rgba(0,0,0,.60),
+    0 4px 12px rgba(0,0,0,.55),   /* уменьшили */
     inset 0 1px 0 rgba(255,255,255,.05);
 
-  /* FIX: removed "filter" from transition (it isn't used on price-btn) */
-  transition: transform .45s var(--spring), box-shadow .45s var(--spring), border-color .45s var(--spring);
+  transition: transform .35s var(--spring),
+              box-shadow .35s var(--spring),
+              border-color .35s var(--spring);
 }
-
+  
 .price-left{
   display:flex;
   align-items:center;
@@ -208,12 +209,14 @@ h1{
 }
 
 .price-icon{
-  width:34px;
-  height:34px;
-  border-radius:10px;
+  width:22px;         /* было 34px */
+  height:22px;        /* было 34px */
+  border-radius:6px;  /* было 10px */
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   background:rgba(29,185,84,.12);
   color:transparent;
   flex:0 0 auto;
@@ -240,9 +243,10 @@ h1{
 
 /* ===== 3D Arrow (right) ===== */
 .price-arrow{
-  width:17px;
-  height:17px;
-  border-radius:6px;
+  width:12px;     /* было 17px */
+  height:12px;    /* было 17px */
+  border-radius:4px;
+
   display:flex;
   align-items:center;
   justify-content:center;
@@ -255,20 +259,17 @@ h1{
 
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.08),
-    inset 0 -4px 8px rgba(0,0,0,.35),
-    0 4px 10px rgba(0,0,0,.5);
+    inset 0 -3px 6px rgba(0,0,0,.35),
+    0 3px 8px rgba(0,0,0,.5);
 
-  transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
-  flex:0 0 auto;
+  transition: transform .25s var(--ease),
+              box-shadow .25s var(--ease),
+              border-color .25s var(--ease);
 }
 
 .price-arrow svg{
-  width:10px;
-  height:10px;
-  filter:
-    drop-shadow(0 2px 0 rgba(0,0,0,.55))
-    drop-shadow(0 0 8px rgba(29,185,84,.18));
-  transform: translateY(-.5px);
+  width:7px;     /* было 10px */
+  height:7px;
 }
 
 .price-btn:hover .price-arrow{
@@ -635,9 +636,9 @@ h1{
 /* ===== Favorites UI (star as separate element next to row) ===== */
 .price-row{
   display:flex;
-  gap:12px;
+  gap:8px;
   align-items:stretch;
-  margin-bottom:16px;
+  margin-bottom:10px;
 }
 
 .price-row .price-btn{
@@ -647,8 +648,8 @@ h1{
 }
 
 .fav-star{
-  flex:0 0 52px;
-  width:52px;
+  flex:0 0 26px;
+  width:26px;
   border-radius:20px;
 
   display:flex;
@@ -677,8 +678,8 @@ h1{
 .fav-star:active{ transform:scale(.96); }
 
 .fav-star svg{
-  width:20px;
-  height:20px;
+  width:12px;
+  height:12px;
   stroke: rgba(255,255,255,.92);
   stroke-width:1.9;
   fill: rgba(255,255,255,.06);
