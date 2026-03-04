@@ -945,6 +945,22 @@ h1{
   margin-top: 10px;
 }
 
+/* ===== Category title on prices screen ===== */
+.prices-title{
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.2px;
+  margin: 4px 0 14px;
+  opacity:.95;
+}
+
+.prices-subline{
+  height:1px;
+  width:100%;
+  margin: 0 0 14px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+}
+  
 </style>
 </head>
 
@@ -1397,6 +1413,17 @@ function showPrices(category){
   categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
   pricesDiv.innerHTML="";
+
+  // ✅ Заголовок категории сверху списка
+const title = document.createElement("div");
+title.className = "prices-title";
+title.textContent = category;
+
+const line = document.createElement("div");
+line.className = "prices-subline";
+
+pricesDiv.appendChild(title);
+pricesDiv.appendChild(line);
 
   (data[category] || []).forEach((item,index)=>{
     const fullItem = { ...item, category };
