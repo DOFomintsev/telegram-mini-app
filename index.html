@@ -1170,11 +1170,18 @@ function getIcon(category){
   // куда положишь JSON (лучше на твой домен рядом с html)
   // пример: https://niceprice.pro/assets/lottie/phone.json
   const map = {
-    "Смартфоны": "assets/lottie/phone.json",
-    "Ноутбуки": "assets/lottie/laptop.json",
-    "Планшеты": "assets/lottie/tablet.json",
-    "Телевизоры": "assets/lottie/tv.json"
-  };
+  "Смартфоны":
+  "https://niceprice.pro/smartdeal-assets/assets/lottie/phone.json",
+
+  "Ноутбуки":
+  "https://niceprice.pro/smartdeal-assets/assets/lottie/laptop.json",
+
+  "Планшеты":
+  "https://niceprice.pro/smartdeal-assets/assets/lottie/tablet.json",
+
+  "Телевизоры":
+  "https://niceprice.pro/smartdeal-assets/assets/lottie/tv.json"
+};
 
   const path = map[category] || null;
 
