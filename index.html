@@ -63,12 +63,39 @@ body::before{
 /* ===== Title ===== */
 h1{
   text-align:center;
-  padding:24px 0 10px;
-  font-size:22px;
-  font-weight:700;
+
+  padding:26px 0 14px;
+
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:.6px;
+
+  background: linear-gradient(
+    110deg,
+    #8f6b1f 0%,
+    #d4af37 25%,
+    #f6e27a 45%,
+    #ffffff 50%,
+    #f6e27a 55%,
+    #d4af37 75%,
+    #8f6b1f 100%
+  );
+
+  background-size:250% auto;
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  text-shadow:
+    0 0 8px rgba(212,175,55,.35),
+    0 0 18px rgba(212,175,55,.15);
+
   opacity:0;
-  transform:translateY(-20px);
-  animation:titleAppear .8s var(--ease) forwards;
+  transform:translateY(-24px);
+
+  animation:
+    titleAppear .8s var(--ease) forwards,
+    goldShimmer 7s linear infinite;
 }
 
 @keyframes titleAppear{
