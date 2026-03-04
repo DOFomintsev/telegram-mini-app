@@ -910,51 +910,6 @@ h1{
 .fav-group-title:first-of-type{
   margin-top: 10px;
 }
-
-/* ===== Favorites premium group header (Lottie) ===== */
-/* ===== Favorites group header (NO big frame) ===== */
-.fav-group-head{
-  display:flex;
-  align-items:center;     /* ✅ вертикально по центру */
-  gap:12px;
-
-  margin: 16px 2px 10px;
-  padding: 0;             /* ✅ без внутренней плашки */
-
-  background: transparent; /* ✅ убрали фон */
-  border: none;            /* ✅ убрали рамку */
-  box-shadow: none;        /* ✅ убрали тень */
-  border-radius: 0;
-}
-
-.fav-group-head:first-of-type{
-  margin-top: 10px;
-}
-
-.fav-group-title{
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: .2px;
-  opacity: .92;
-  line-height: 1.1;
-}
-
-/* Lottie icon — слева, по центру высоты */
-.fav-group-lottie{
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
-
-  display:flex;            /* ✅ чтобы контейнер был центрирован */
-  align-items:center;
-  justify-content:center;
-}
-
-.fav-group-lottie > div{
-  width:100%;
-  height:100%;
-  filter: drop-shadow(0 0 10px rgba(255,211,77,.14));
-}
   
 </style>
 </head>
@@ -1370,36 +1325,6 @@ function initLottieIcons(){
     }catch(e){
       container.style.display = "none";
       if(fallback) fallback.style.display = "flex";
-    }
-  });
-}  
-
-function initFavGroupLottieIcons(){
-  if(!window.lottie) return;
-
-  document.querySelectorAll(".fav-group-lottie[data-lottie]").forEach((wrap)=>{
-    if(wrap.dataset.inited) return;
-    wrap.dataset.inited = "1";
-
-    const path = wrap.getAttribute("data-lottie");
-    const container = wrap.querySelector("div");
-    if(!container) return;
-
-    try{
-      const anim = lottie.loadAnimation({
-        container,
-        renderer: "svg",
-        loop: true,
-        autoplay: true,
-        path
-      });
-
-      anim.addEventListener("data_failed", ()=>{
-        // если не загрузилось — просто скрываем (без фоллбэка, премиум-минимализм)
-        wrap.style.display = "none";
-      });
-    }catch(e){
-      wrap.style.display = "none";
     }
   });
 }
@@ -1944,102 +1869,65 @@ function renderFavs(){
   const list = getFavs().slice().sort((a,b)=>b.ts - a.ts);
 
   favPanel.innerHTML = `
-    <button class="close-x" onclick="closeFavs()">✕</button>
-    <h2 style="margin-bottom:12px;">⭐ Избранное</h2>
+  <button class="close-x" onclick="closeFavs()">✕</button>
+  <h2 style="margin-bottom:12px;">⭐ Избранное</h2>
 
-    ${list.length ? `<button class="clear-favs" onclick="clearFavs()">Очистить избранное</button>` : ""}
+  ${list.length ? `<button class="clear-favs" onclick="clearFavs()">Очистить избранное</button>` : ""}
 
-    ${list.length ? "" : `<div class="fav-empty">Пока пусто. Нажми ⭐ справа от товара, чтобы добавить его сюда.</div>`}
-  `;
+  ${list.length ? "" : `<div class="fav-empty">Пока пусто. Нажми ⭐ справа от товара, чтобы добавить его сюда.</div>`}
+`;
 
-  if(!list.length){
-    enableRipples();
-    return;
-  }
+  list.forEach((f)=>{
+    const row = document.createElement("div");
+    row.className = "price-row";
 
-  // 🔥 тот же маппинг, что и в категориях (можешь оставить только нужные)
-  const lottieMap = {
-    "Смартфоны": "https://niceprice.pro/smartdeal-assets/phone.json",
-    "Ноутбуки": "https://niceprice.pro/smartdeal-assets/laptop.json",
-    "Планшеты": "https://niceprice.pro/smartdeal-assets/tablet.json",
-    "Телевизоры": "https://niceprice.pro/smartdeal-assets/tv.json"
-  };
-
-  // ✅ Группируем по категории
-  const groups = list.reduce((acc, item)=>{
-    const cat = (item.category || "Без категории").trim();
-    (acc[cat] ||= []).push(item);
-    return acc;
-  }, {});
-
-  // ✅ Сортировка категорий (ru)
-  const categories = Object.keys(groups).sort((a,b)=>a.localeCompare(b,'ru'));
-
-  categories.forEach((cat)=>{
-    // ===== Header (Lottie + title) =====
-    const head = document.createElement("div");
-    head.className = "fav-group-head";
-
-    const lottiePath = lottieMap[cat] || "";
-    head.innerHTML = `
-      ${lottiePath ? `<div class="fav-group-lottie" data-lottie="${lottiePath}"><div></div></div>` : ""}
-      <div class="fav-group-title">${cat}</div>
-    `;
-    favPanel.appendChild(head);
-
-    // ===== Items =====
-    groups[cat].forEach((f)=>{
-      const row = document.createElement("div");
-      row.className = "price-row";
-
-      const btn = document.createElement("button");
-      btn.className = "price-btn";
-      btn.style.opacity = "1";
-      btn.style.transform = "translateY(0)";
-
-      // ✅ Категорию снизу НЕ показываем — только товар
-      btn.innerHTML = `
-        <div class="price-left">
-          <div>${f.price || "Товар"}</div>
+    const btn = document.createElement("button");
+    btn.className = "price-btn";
+    btn.style.opacity = "1";
+    btn.style.transform = "translateY(0)";
+    btn.innerHTML = `
+      <div class="price-left">
+        <div>
+          ${f.price || "Товар"}
+          <span class="fav-sub">${f.category || ""}</span>
         </div>
+      </div>
 
-        <div class="price-arrow">
-          <svg class="picon-sm" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M5 12h12"></path>
-            <path d="M13 7l5 5-5 5"></path>
-          </svg>
-        </div>
-      `;
-
-      btn.addEventListener("click", ()=>{
-        if(f.link) tg.openLink(f.link);
-      });
-
-      const star = document.createElement("button");
-      star.type = "button";
-      star.className = "fav-star on";
-      star.innerHTML = `
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 3.5l2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 18.6 6.3 21.1l1.1-6.4L2.8 10.2l6.4-.9L12 3.5z"></path>
+      <div class="price-arrow">
+        <svg class="picon-sm" viewBox="0 0 24 24">
+          <path d="M5 12h12"></path>
+          <path d="M13 7l5 5-5 5"></path>
         </svg>
-      `;
+      </div>
+    `;
 
-      star.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        const arr = getFavs().filter(x => x.id !== f.id);
-        setFavs(arr);
-        updateFavBadge();
-        renderFavs();
-      });
-
-      row.appendChild(btn);
-      row.appendChild(star);
-      favPanel.appendChild(row);
+    btn.addEventListener("click", ()=>{
+      if(f.link) tg.openLink(f.link);
     });
+
+    const star = document.createElement("button");
+    star.type = "button";
+    star.className = "fav-star on";
+    star.innerHTML = `
+      <svg viewBox="0 0 24 24">
+        <path d="M12 3.5l2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 18.6 6.3 21.1l1.1-6.4L2.8 10.2l6.4-.9L12 3.5z"></path>
+      </svg>
+    `;
+
+    star.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      const arr = getFavs().filter(x => x.id !== f.id);
+      setFavs(arr);
+      updateFavBadge();
+      renderFavs();
+    });
+
+    row.appendChild(btn);
+    row.appendChild(star);
+    favPanel.appendChild(row);
   });
 
   enableRipples();
-  initFavGroupLottieIcons(); // ✅ запускаем Lottie для заголовков
 }
 
 window.closeFavs = closeFavs;
