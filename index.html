@@ -1105,6 +1105,16 @@ function hideFavTop(){
   document.getElementById("favTopBtn")?.style.setProperty("display","none");
 }
 
+function showAdminBtn(){
+  if(isAdmin){
+    document.getElementById("adminBtn")?.style.setProperty("display","block");
+  }
+}
+
+function hideAdminBtn(){
+  document.getElementById("adminBtn")?.style.setProperty("display","none");
+}
+
 /* ===== LOCAL STATS (fallback) ===== */
 let stats = JSON.parse(localStorage.getItem("smartDealStats")) || {
   launches:0,
@@ -1283,6 +1293,7 @@ function renderCategories(){
   container.style.display = "grid";
   showBottom();
   showFavTop();
+  showAdminBtn();
 
   Object.keys(data).sort((a,b)=>a.localeCompare(b,'ru')).forEach((category,index)=>{
     const div = document.createElement("div");
@@ -1357,6 +1368,7 @@ function showPrices(category){
   haptic("medium");
   hideBottom();
   hideFavTop();
+  hideAdminBtn();
 
   categoriesBlock.style.display="none";
   pricesDiv.style.display="block";
@@ -1861,6 +1873,7 @@ function openFavs(){
   favPanel.style.display = "block";
   renderFavs();
   hideFavTop();
+  hideAdminBtn();
 }
 
 function closeFavs(){
@@ -1872,6 +1885,7 @@ function closeFavs(){
   if(!pricesVisible){
     showBottom();
     showFavTop();    // ✅ вернулись на главный
+    showAdminBtn();
   }else{
     hideFavTop();    // ✅ если закрыли избранное поверх цен (на всякий)
   }
