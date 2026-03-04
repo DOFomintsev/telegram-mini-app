@@ -843,20 +843,38 @@ h1{
   position:relative;
   z-index:1;
 
-  /* убираем рамку */
   background:none;
   border:none;
-  box-shadow:none;
 
-  overflow:visible;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  /* мягкое свечение */
+  filter:
+    drop-shadow(0 0 8px rgba(255,211,77,.18))
+    drop-shadow(0 0 18px rgba(255,211,77,.10));
 }
 
 /* сам контейнер Lottie */
 .lottie-icon{
   width:100%;
   height:100%;
-  transform: scale(1.08);
-  filter: drop-shadow(0 0 10px rgba(255,211,77,.18));
+  transform:scale(1.08);
+
+  filter:
+    drop-shadow(0 0 10px rgba(255,211,77,.18))
+    drop-shadow(0 0 20px rgba(255,211,77,.08));
+}
+
+.lottie-wrap{
+  animation: iconFloat 4s ease-in-out infinite;
+}
+
+@keyframes iconFloat{
+  0%{ transform:translateY(0px); }
+  50%{ transform:translateY(-2px); }
+  100%{ transform:translateY(0px); }
 }
 
 /* fallback SVG (если lottie не загрузился) */
