@@ -842,36 +842,13 @@ h1{
   margin:0 auto 14px;
   position:relative;
   z-index:1;
-  border-radius:18px;
 
-  /* glass + gold aura */
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255,255,255,.12), transparent 55%),
-    linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  /* убираем рамку */
+  background:none;
+  border:none;
+  box-shadow:none;
 
-  border:1px solid rgba(255,211,77,.18);
-  box-shadow:
-    0 14px 40px rgba(0,0,0,.45),
-    0 0 0 1px rgba(255,211,77,.07) inset,
-    0 0 22px rgba(255,211,77,.10);
-
-  overflow:hidden;
-}
-
-.lottie-wrap::after{
-  content:"";
-  position:absolute;
-  inset:-60%;
-  background: linear-gradient(90deg, transparent, rgba(255,211,77,.22), transparent);
-  transform: translateX(-35%) rotate(18deg);
-  animation: luxShimmer 3.8s linear infinite;
-  opacity:.55;
-  pointer-events:none;
-}
-
-@keyframes luxShimmer{
-  0%{ transform: translateX(-35%) rotate(18deg); }
-  100%{ transform: translateX(35%) rotate(18deg); }
+  overflow:visible;
 }
 
 /* сам контейнер Lottie */
