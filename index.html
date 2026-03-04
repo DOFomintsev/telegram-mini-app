@@ -423,6 +423,20 @@ h1{
   white-space:nowrap;
 }
 
+/* ===== Top buttons smooth show/hide ===== */
+.top-fade{
+  opacity: 0;
+  transform: translateY(-6px) scale(.98);
+  transition: opacity .28s var(--ease), transform .28s var(--ease);
+  pointer-events: none;
+}
+
+.top-fade.is-visible{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}  
+  
 /* ===== Admin ===== */
 .admin-btn{
   position:fixed;
@@ -974,7 +988,7 @@ h1{
   </div>
 </div>
 
-<button id="favTopBtn" class="fav-top" title="Избранное">
+<button id="favTopBtn" class="fav-top top-fade" title="Избранное">
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M12 3.5l2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 18.6 6.3 21.1l1.1-6.4L2.8 10.2l6.4-.9L12 3.5z"></path>
   </svg>
@@ -983,7 +997,7 @@ h1{
 
 <div id="favPanel" class="fav-panel"></div>
 
-<button id="adminBtn" class="admin-btn" style="display:none;">⚙</button>
+<button id="adminBtn" class="admin-btn top-fade" style="display:none;">⚙</button>
 <div id="adminPanel" class="admin-panel"></div>
 
 <script>
@@ -1053,12 +1067,9 @@ function updateFavBadge(){
   const badge = document.getElementById("favBadge");
   const topBtn = document.getElementById("favTopBtn");
   if(!badge || !topBtn) return;
-
   const n = getFavs().length;
-
   // подсветка звезды сверху
   topBtn.classList.toggle("has-items", n > 0);
-
   // бейдж
   if(n > 0){
     badge.style.display = "flex";
@@ -1067,13 +1078,14 @@ function updateFavBadge(){
     badge.style.display = "none";
   }
 }
-
 updateFavBadge();
-
+// старт: скрываем кнопки (они появятся плавно)
+document.getElementById("favTopBtn")?.classList.remove("is-visible");
+document.getElementById("adminBtn")?.classList.remove("is-visible"); 
 if(isAdmin){
   document.getElementById("adminBtn").style.display="block";
 }
-
+  
 function haptic(type="light"){
   if(tg.HapticFeedback){
     tg.HapticFeedback.impactOccurred(type);
@@ -1099,20 +1111,32 @@ function showBottom(){
 }
 
 function showFavTop(){
-  document.getElementById("favTopBtn")?.style.setProperty("display","flex");
+  const el = document.getElementById("favTopBtn");
+  if(!el) return;
+  el.style.display = "flex";
+  requestAnimationFrame(()=> el.classList.add("is-visible"));
 }
+
 function hideFavTop(){
-  document.getElementById("favTopBtn")?.style.setProperty("display","none");
+  const el = document.getElementById("favTopBtn");
+  if(!el) return;
+  el.classList.remove("is-visible");
+  setTimeout(()=>{ el.style.display = "none"; }, 280);
 }
 
 function showAdminBtn(){
-  if(isAdmin){
-    document.getElementById("adminBtn")?.style.setProperty("display","block");
-  }
+  if(!isAdmin) return;
+  const el = document.getElementById("adminBtn");
+  if(!el) return;
+  el.style.display = "block";
+  requestAnimationFrame(()=> el.classList.add("is-visible"));
 }
 
 function hideAdminBtn(){
-  document.getElementById("adminBtn")?.style.setProperty("display","none");
+  const el = document.getElementById("adminBtn");
+  if(!el) return;
+  el.classList.remove("is-visible");
+  setTimeout(()=>{ el.style.display = "none"; }, 280);
 }
 
 /* ===== LOCAL STATS (fallback) ===== */
