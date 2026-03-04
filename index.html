@@ -988,7 +988,7 @@ h1{
   </div>
 </div>
 
-<button id="favTopBtn" class="fav-top top-fade" title="Избранное">
+<button id="favTopBtn" class="fav-top top-fade" title="Избранное" style="display:none">
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M12 3.5l2.8 5.8 6.4.9-4.6 4.5 1.1 6.4L12 18.6 6.3 21.1l1.1-6.4L2.8 10.2l6.4-.9L12 3.5z"></path>
   </svg>
@@ -1598,11 +1598,14 @@ function renderTop(obj){
 function closeAdmin(){
   document.getElementById("adminPanel").style.display="none";
   const pricesVisible = document.getElementById("prices").style.display === "block";
+
   if(!pricesVisible){
     showBottom();
-    showFavTop();   // ✅ только на главном
+    showFavTop();
+    showAdminBtn();   // ✅ ДОБАВЬ ЭТО
   }else{
-    hideFavTop();   // ✅ если в ценах — не показываем
+    hideFavTop();
+    hideAdminBtn();   // ✅ и это логично, если ты скрываешь админку вне главного
   }
 }
 
