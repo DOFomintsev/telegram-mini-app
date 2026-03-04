@@ -947,11 +947,27 @@ h1{
 
 /* ===== Category title on prices screen ===== */
 .prices-title{
+  width:100%;
+  text-align:center;
+
   font-size:16px;
   font-weight:800;
-  letter-spacing:.2px;
-  margin: 4px 0 14px;
-  opacity:.95;
+  letter-spacing:.3px;
+
+  margin:-6px 0 16px;   /* поднимает ближе к Smart Deal */
+  padding:12px 14px;
+
+  border-radius:16px;
+
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.08), transparent 55%),
+    linear-gradient(145deg,#0f0f0f,#171717);
+
+  border:1px solid rgba(255,255,255,.10);
+
+  box-shadow:
+    0 12px 28px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.05);
 }
 
 .prices-subline{
@@ -1419,11 +1435,7 @@ const title = document.createElement("div");
 title.className = "prices-title";
 title.textContent = category;
 
-const line = document.createElement("div");
-line.className = "prices-subline";
-
 pricesDiv.appendChild(title);
-pricesDiv.appendChild(line);
 
   (data[category] || []).forEach((item,index)=>{
     const fullItem = { ...item, category };
