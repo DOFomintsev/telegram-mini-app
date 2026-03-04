@@ -1502,6 +1502,7 @@ document.getElementById("adminBtn").onclick = async () => {
   panel.innerHTML = `<button class="close-x" onclick="closeAdmin()">✕</button>Загрузка...`;
   hideBottom();
   hideFavTop();
+  hideAdminBtn();
 
   try{
     const response = await fetch(ANALYTICS_URL);
