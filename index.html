@@ -912,18 +912,19 @@ h1{
 }
 
 /* ===== Favorites premium group header (Lottie) ===== */
+/* ===== Favorites group header (NO big frame) ===== */
 .fav-group-head{
   display:flex;
-  align-items:center;
+  align-items:center;     /* ✅ вертикально по центру */
   gap:12px;
 
-  margin: 18px 2px 10px;
-  padding: 10px 12px;
+  margin: 16px 2px 10px;
+  padding: 0;             /* ✅ без внутренней плашки */
 
-  border-radius: 16px;
-  background: linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-  border: 1px solid rgba(255,255,255,.10);
-  box-shadow: 0 10px 26px rgba(0,0,0,.35);
+  background: transparent; /* ✅ убрали фон */
+  border: none;            /* ✅ убрали рамку */
+  box-shadow: none;        /* ✅ убрали тень */
+  border-radius: 0;
 }
 
 .fav-group-head:first-of-type{
@@ -935,13 +936,18 @@ h1{
   font-weight: 800;
   letter-spacing: .2px;
   opacity: .92;
+  line-height: 1.1;
 }
 
-/* Lottie in header — БЕЗ квадратной рамки */
+/* Lottie icon — слева, по центру высоты */
 .fav-group-lottie{
-  width: 34px;
-  height: 34px;
-  flex: 0 0 34px;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+
+  display:flex;            /* ✅ чтобы контейнер был центрирован */
+  align-items:center;
+  justify-content:center;
 }
 
 .fav-group-lottie > div{
