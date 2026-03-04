@@ -6,6 +6,7 @@
 <title>Smart Deal</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js"></script>  
 
 <style>
 :root{
@@ -13,7 +14,6 @@
   --card1:#1DB954;
   --card2:#16a34a;
   --gold: #FFD34D;
-  --gold2:#D4AF37;
 
   /* Icon system */
   --iconStroke: rgba(255,255,255,.92);
@@ -28,7 +28,6 @@
   --lineSoft: rgba(255,255,255,.08);
   --lineSofter: rgba(255,255,255,.06);
   --text: #fff;
-  --muted: rgba(255,255,255,.75);
 
   /* Motion */
   --spring: cubic-bezier(.22,1.4,.36,1);
@@ -836,6 +835,67 @@ h1{
   margin-bottom:12px;
 }
 
+/* ===== LUX LOTTIE ICONS ===== */
+.lottie-wrap{
+  width:56px;
+  height:56px;
+  margin:0 auto 14px;
+  position:relative;
+  z-index:1;
+  border-radius:18px;
+
+  /* glass + gold aura */
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.12), transparent 55%),
+    linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+
+  border:1px solid rgba(255,211,77,.18);
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.45),
+    0 0 0 1px rgba(255,211,77,.07) inset,
+    0 0 22px rgba(255,211,77,.10);
+
+  overflow:hidden;
+}
+
+.lottie-wrap::after{
+  content:"";
+  position:absolute;
+  inset:-60%;
+  background: linear-gradient(90deg, transparent, rgba(255,211,77,.22), transparent);
+  transform: translateX(-35%) rotate(18deg);
+  animation: luxShimmer 3.8s linear infinite;
+  opacity:.55;
+  pointer-events:none;
+}
+
+@keyframes luxShimmer{
+  0%{ transform: translateX(-35%) rotate(18deg); }
+  100%{ transform: translateX(35%) rotate(18deg); }
+}
+
+/* сам контейнер Lottie */
+.lottie-icon{
+  width:100%;
+  height:100%;
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 10px rgba(255,211,77,.18));
+}
+
+/* fallback SVG (если lottie не загрузился) */
+.lottie-fallback{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+}
+.lottie-fallback svg{
+  width:42px;
+  height:42px;
+  filter: drop-shadow(0 0 10px rgba(255,211,77,.12));
+}  
+  
 </style>
 </head>
 
@@ -1107,41 +1167,71 @@ async function loadData(){
 
 /* ===== Icons ===== */
 function getIcon(category){
-  const icons = {
-    "Смартфоны": `
-      <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="7" y="2.5" width="10" height="19" rx="2.2"></rect>
-        <line x1="10" y1="5.5" x2="14" y2="5.5"></line>
-        <circle cx="12" cy="18.2" r="0.9" fill="none"></circle>
-      </svg>
-    `,
-    "Ноутбуки": `
-      <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="5" y="6" width="14" height="9" rx="2"></rect>
-        <path d="M3.5 17.2h17"></path>
-        <path d="M8 17.2l.8 1.6h6.4l.8-1.6"></path>
-      </svg>
-    `,
-    "Планшеты": `
-      <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="6" y="3.2" width="12" height="17.6" rx="2.2"></rect>
-        <circle cx="12" cy="17.8" r="0.9" fill="none"></circle>
-      </svg>
-    `,
-    "Телевизоры": `
-      <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="4" y="6" width="16" height="10" rx="2.2"></rect>
-        <path d="M9 20h6"></path>
-        <path d="M12 16v4"></path>
-      </svg>
-    `
+  // куда положишь JSON (лучше на твой домен рядом с html)
+  // пример: https://niceprice.pro/assets/lottie/phone.json
+  const map = {
+    "Смартфоны": "assets/lottie/phone.json",
+    "Ноутбуки": "assets/lottie/laptop.json",
+    "Планшеты": "assets/lottie/tablet.json",
+    "Телевизоры": "assets/lottie/tv.json"
   };
 
-  return icons[category] || `
-    <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="8"></circle>
-      <path d="M9.5 12h5"></path>
-    </svg>
+  const path = map[category] || null;
+
+  // fallback SVG (твой старый стиль)
+  const fallbackSvg = (()=>{
+    const icons = {
+      "Смартфоны": `
+        <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="7" y="2.5" width="10" height="19" rx="2.2"></rect>
+          <line x1="10" y1="5.5" x2="14" y2="5.5"></line>
+          <circle cx="12" cy="18.2" r="0.9" fill="none"></circle>
+        </svg>
+      `,
+      "Ноутбуки": `
+        <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="6" width="14" height="9" rx="2"></rect>
+          <path d="M3.5 17.2h17"></path>
+          <path d="M8 17.2l.8 1.6h6.4l.8-1.6"></path>
+        </svg>
+      `,
+      "Планшеты": `
+        <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="6" y="3.2" width="12" height="17.6" rx="2.2"></rect>
+          <circle cx="12" cy="17.8" r="0.9" fill="none"></circle>
+        </svg>
+      `,
+      "Телевизоры": `
+        <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="6" width="16" height="10" rx="2.2"></rect>
+          <path d="M9 20h6"></path>
+          <path d="M12 16v4"></path>
+        </svg>
+      `
+    };
+    return icons[category] || `
+      <svg class="picon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="8"></circle>
+        <path d="M9.5 12h5"></path>
+      </svg>
+    `;
+  })();
+
+  // если есть lottie-путь — создаём контейнер с data-lottie
+  if(path){
+    return `
+      <div class="lottie-wrap" data-lottie="${path}">
+        <div class="lottie-icon"></div>
+        <div class="lottie-fallback" style="display:none;">${fallbackSvg}</div>
+      </div>
+    `;
+  }
+
+  // иначе просто fallback
+  return `
+    <div class="lottie-wrap">
+      <div class="lottie-fallback">${fallbackSvg}</div>
+    </div>
   `;
 }
 
@@ -1182,8 +1272,42 @@ function renderCategories(){
   });
 
   enableRipples();
+  initLottieIcons();
 }
 
+function initLottieIcons(){
+  if(!window.lottie) return;
+
+  document.querySelectorAll(".lottie-wrap[data-lottie]").forEach((wrap)=>{
+    if(wrap.dataset.inited) return;
+    wrap.dataset.inited = "1";
+
+    const path = wrap.getAttribute("data-lottie");
+    const container = wrap.querySelector(".lottie-icon");
+    const fallback  = wrap.querySelector(".lottie-fallback");
+
+    try{
+      const anim = lottie.loadAnimation({
+        container,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path
+      });
+
+      // если файл не загрузился — показываем fallback
+      anim.addEventListener("data_failed", ()=>{
+        container.style.display = "none";
+        if(fallback) fallback.style.display = "flex";
+      });
+
+    }catch(e){
+      container.style.display = "none";
+      if(fallback) fallback.style.display = "flex";
+    }
+  });
+}  
+  
 /* ===== Prices ===== */
 function showPrices(category){
   const categoriesBlock = document.getElementById("categories");
